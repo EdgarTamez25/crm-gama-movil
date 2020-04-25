@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card>
           <v-card-actions>
-              <v-card-title><img src="@/assets/logo.png" height="50px"></v-card-title>
+              <v-card-title><img src="@/assets/logo.png" height="40px"></v-card-title>
             <v-card-title>GAMA ETIQUETAS</v-card-title>
           </v-card-actions>
 

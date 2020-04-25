@@ -84,8 +84,8 @@
 
                 <v-col cols="12">
                   <v-col cols="12" class="text-center my-5"> <!-- LOGO DE LA VISTA -->
-                    <img src="@/assets/logo.png" width="120" height="100%"  > <br>
-                      <strong> CRM 2020 <br>  GAMA ETIQUETAS </strong>
+                    <img src="@/assets/logo2.png" width="120" height="100%"  > <br>
+                      <!-- <strong> CRM 2020 <br>  GAMA ETIQUETAS </strong> -->
                   </v-col>
 
                   <v-text-field  
@@ -172,6 +172,7 @@ export default {
     iniciarSesion(){
       this.logeado = true;
       this.drawer= false;
+      this.$router.push({ name: 'compromisos'})
     }
   }
 };
