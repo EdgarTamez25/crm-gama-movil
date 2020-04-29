@@ -20,3 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 ////================================== COMPROMISOS ==================================================
 Route::post('compromisosxvend' ,'compromisosController@CompromisosxVend')   -> name('CompromisosxVend');
+Route::post('reagendar'        ,'compromisosController@Reagendar')          -> name('Reagendar');
+Route::post('confirmarcita'    ,'compromisosController@ConfirmarCita')      -> name('ConfirmarCita');
+
+
+

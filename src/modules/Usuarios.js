@@ -17,21 +17,28 @@ export default{
 		},
 	},
 	actions:{
-		consultaUsuarios({commit}){
-			// Limpio Arreglo y Genero Consulta
-			commit('LOADING',true); commit('USUARIOS', [])
+		// Login({commit}, usuario){
+		// 	// Limpio Arreglo y Genero Consulta
+		// 	commit('LOADING',true); commit('USUARIOS', [])
 
-			Vue.http.get('catusuarios').then(response=>{
-				commit('USUARIOS', response.body)
-			}).catch((error)=>{
-				console.log('error',error)
-			}).finally(() => commit('LOADING', false)) 
-		},
+		// 	Vue.http.get('catusuarios').then(response=>{
+		// 		commit('USUARIOS', response.body)
+		// 	}).catch((error)=>{
+		// 		console.log('error',error)
+		// 	}).finally(() => commit('LOADING', false)) 
+		// },
 
-		eliminarUsuario({commit}){
+		Login({commit}, payload){
+			return new Promise((resolve, reject) => {
+			  // Vue.http.post('login', payload).then(response =>{
+				// 	console.log('respuesta', response.body)
+					
+			  // }).catch((error)=>{
+				// 	reject(error)
+				// })
+		})
+	},
 
-			
-		}
 
   },
 

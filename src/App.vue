@@ -122,7 +122,7 @@
           </v-row>
         </v-row>
 
-        <v-footer absolute class="rosa" dark v-if="!logeado">
+        <v-footer absolute class="rosa" dark v-if="!logeado" >
           <v-col class="text-center" cols="12" > <strong>Gama Etiquetas</strong>  —  {{ new Date().getFullYear() }}</v-col>
         </v-footer>
 
@@ -133,15 +133,15 @@
 </template>
 
 <script>
-// import HOME from '@/views/Home.vue'
-export default {
-  name: 'App',
-  components:{
-  },
-  data: () => ({
-     logeado   :false,
-     correo: '',
-     contrasenia: '',
+  import {mapGetters, mapActions} from 'vuex'
+  export default {
+    name: 'App',
+    components:{
+    },
+    data: () => ({
+      logeado   :false,
+      correo: '',
+      contrasenia: '',
 
       // ALERTAS
       snackbar: false,
@@ -162,18 +162,33 @@ export default {
           ],
         },
       ],
-  }),
+    }),
 
-  created(){
-    // this.$router.push({ name: 'Home'})
-  },
+    created(){
+      // this.$router.push({ name: 'Home'})
+    },
 
-  methods:{
-    iniciarSesion(){
-      this.logeado = true;
-      this.drawer= false;
-      this.$router.push({ name: 'compromisos'})
+    computed:{
+			// IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
+			// ...mapGetters('Usuarios'  ,['getUsuarios']),
+		},
+
+    methods:{
+      // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+      ...mapActions('Usuarios'  ,['Login']),
+      
+      iniciarSesion(){
+        var md5 = require('md5');
+        var usuario = { correo: this.correo, contrasenia: md5(this.contrasenia) }
+
+        // this.Login(usuario).then((response)=>{
+          
+        // })
+
+        this.logeado = true;
+        this.drawer= false;
+        this.$router.push({ name: 'compromisos'})
+      }
     }
-  }
-};
+  };
 </script>

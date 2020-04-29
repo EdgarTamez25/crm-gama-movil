@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Compromisos from '@/views/Compromisos/Compromisos.vue';
+import Det_Compromiso from '@/views/Compromisos/Det_Compromiso.vue';
+
 
 Vue.use(VueRouter)
 
@@ -11,6 +13,8 @@ var router = new VueRouter({
   routes : [
     { path: '/',  name: 'Home',  component: Home },
     { path: '/compromisos',  name: 'compromisos',  component: Compromisos },
+    { path: '/det_compromiso',  name: 'det_compromiso',  component: Det_Compromiso },
+
   ]
 })
 
