@@ -68,7 +68,7 @@
       
     </v-app-bar>
 
-    <v-content >
+    <v-content class="">
       <v-container >
         <router-view v-if="logeado"/>
 
@@ -128,7 +128,8 @@
 
       </v-container>
     </v-content>
-
+    
+    
   </v-app>
 </template>
 
@@ -156,8 +157,10 @@
           model: false,
 
           children: [
-            { text: 'Inicio'      ,path: '/'         , icon: 'home'          , nivel: 'Usuario'},
-            { text: 'Compromisos' ,path: 'compromisos'  , icon: 'chrome_reader_mode'          , nivel: 'Usuario'},
+            { text: 'Inicio'      ,path: '/'           , icon: 'home'                , nivel: 'Usuario'},
+            { text: 'Compromisos' ,path: 'compromisos' , icon: 'chrome_reader_mode'  , nivel: 'Usuario'},
+            { text: 'Pendientes'  ,path: 'pendientes'  , icon: 'calendar_today'      , nivel: 'Usuario'},
+
 
           ],
         },
@@ -176,6 +179,8 @@
     methods:{
       // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
       ...mapActions('Usuarios'  ,['Login']),
+      // ...mapActions('Rutas'  ,['AnalizaRutas']),
+
       
       iniciarSesion(){
         var md5 = require('md5');
@@ -187,7 +192,9 @@
 
         this.logeado = true;
         this.drawer= false;
+        // this.AnalizaRutas();
         this.$router.push({ name: 'compromisos'})
+
       }
     }
   };

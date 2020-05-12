@@ -3,7 +3,9 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Compromisos from '@/views/Compromisos/Compromisos.vue';
 import Det_Compromiso from '@/views/Compromisos/Det_Compromiso.vue';
+import Pendientes from '@/views/Pendientes/Pendientes.vue';
 
+// import EnRuta from '@/views/Rutas/EnRuta.vue';
 
 Vue.use(VueRouter)
 
@@ -14,6 +16,11 @@ var router = new VueRouter({
     { path: '/',  name: 'Home',  component: Home },
     { path: '/compromisos',  name: 'compromisos',  component: Compromisos },
     { path: '/det_compromiso',  name: 'det_compromiso',  component: Det_Compromiso },
+    { path: '/pendientes',  name: 'pendientes',  component: Pendientes },
+
+
+    // { path: '/en_ruta',  name: 'en_ruta',  component: EnRuta },
+
 
   ]
 })

@@ -18,19 +18,17 @@ export default{
 	},
 	actions:{
 		consultaCompromisos({commit}, payload){
-			console.log('Recibo', payload)
-			// Limpio Arreglo y Genero Consulta
-			commit('LOADING',true); commit('COMPROMISOS', [])
+				commit('LOADING',true); commit('COMPROMISOS', []) // Limpio Arreglo y Genero Consulta
 
-			Vue.http.post('compromisosxvend', payload).then(response=>{
-			console.log('compromisos', response.body)
-
-				commit('COMPROMISOS', response.body)
-			}).catch((error)=>{
-				console.log('error',error)
-			}).finally(() => commit('LOADING', false)) 
+				Vue.http.post('compromisosxvend', payload).then(response=>{
+					console.log('compromisos vx', response.body)
+					commit('COMPROMISOS', response.body)
+					// resolve(true)
+				}).catch((error)=>{
+					console.log('error',error)
+				}).finally(() => commit('LOADING', false))
+		
 		},
-
   },
 
 	getters:{

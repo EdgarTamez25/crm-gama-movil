@@ -1,16 +1,16 @@
 <template>
 	<v-content class="pa-0">
-		<v-row>
-			<v-col cols="12" class="text-center">
+		<v-row no-gutters>
+			<v-col cols="12" class="text-center my-2">
 				<strong>COMPROMISOS</strong>
 			</v-col>
 
-			<v-col cols="10" >
+			<v-col cols="10" > <!-- CONTROLADOR DE FECHA  -->
 				<v-dialog ref="fechaCompromiso" v-model="fechaModal" :return-value.sync="fecha" persistent 	width="290px"	>
 					<template v-slot:activator="{ on }">
 						<v-text-field
 							v-model="fecha" label="Fecha de compromiso" append-icon="event" readonly 	v-on="on"
-							outlined 	dense color="rosa"
+							outlined 	dense color="rosa" 
 						></v-text-field>
 					</template>
 
@@ -22,16 +22,20 @@
 				</v-dialog>
 			</v-col>
 
-			<v-col cols="2">
+			<v-col cols="1" class="mx-3"> <!-- BOTON DE RECARGA -->
 				<v-btn  class="gris" icon dark @click="consultar" ><v-icon>refresh</v-icon> </v-btn>
-			</v-col>		
+			</v-col>	
 
-			<v-col cols="12">
+			<v-col cols="12" class="text-center" v-if="Loading" >  <!-- PROGRES -->
+				<v-progress-circular :size="100" :width="7" color="celeste" indeterminate ></v-progress-circular>
+			</v-col>	
+
+			<v-col cols="12" v-if="getCompromisos.length"> <!-- TABLA DE COMPROMISOS -->
 				<v-card flat>
 					<v-data-table 
 					:headers="headers"
 					:items="getCompromisos"
-					height="450px"
+					height="500px"
 					hide-default-footer
 					hide-default-header
 					:loading ="Loading"
@@ -46,28 +50,53 @@
 					</template>
 
 					<template v-slot:item.action="{ item }" > 
-						<v-btn  class="celeste" dark  ><v-icon> airport_shuttle </v-icon></v-btn> <!-- Editar -->
-						<v-btn  class="success" dark @click="editar(item)"><v-icon> remove_red_eye </v-icon></v-btn> <!-- Editar -->
+						<!-- <v-btn class="celeste" dark @click="abrirModal(1, item)"><v-icon> airport_shuttle </v-icon></v-btn> FORMAR RUTA  -->
+						<v-btn class="success" dark @click="editar(item)"><v-icon> remove_red_eye </v-icon></v-btn> <!-- DETALLE -->
 					</template>
 
 				</v-data-table>
 				</v-card>
 			</v-col>
+
+			<v-col cols="12"  v-if="!getCompromisos.length && !Loading">  <!-- ALERTA => NO HAY COMPROMISOS -->
+				<v-alert prominent text color="rosa">
+					<v-row align="center">
+						<v-col class="grow">No hay compromisos pendientes. <br> Actualice la vista o revise sus proximos compromisos.</v-col>
+						<v-col class="shrink">
+							<v-btn fab small color="celeste" dark :to="{name:'pendientes'}"> <v-icon> calendar_today </v-icon> </v-btn>
+						</v-col>
+					</v-row>
+				</v-alert>
+			</v-col>
+
+			<!-- <v-dialog persistent v-model="dialog" width="600px" >	
+				<v-card>
+					<formaRuta :param="param" :edit="edit" @modal="dialog = $event" />
+				</v-card>
+			</v-dialog> -->
+		
 		</v-row>
 	</v-content>
 </template>
 
 <script>
-	import {mapGetters, mapActions} from 'vuex'
+	import {mapGetters, mapActions} from 'vuex';
+	// import formaRuta  from '@/views/Rutas/formaRuta.vue';
+
 	export default {
+		components: { }, //formaRuta
 		data(){
 			return{
 				search: '',
 				dialog: false,
+				param: 0,
+				edit:'',
+
 				headers: [
+								{ text: '#'								, align: 'left'	 , value: 'id' },
 								{ text: 'Categoria'					, align: 'left'	 , value: 'nomcatego' },
 								{ text: 'Cliente'					  , align: 'left'	 , value: 'nomcli' },
-								{ text: 'Fecha'							, align: 'left'	 , value: 'fecha' },
+								// { text: 'Fecha'							, align: 'left'	 , value: 'fecha' },
 								{ text: 'Hora'							, align: 'left'	 , value: 'hora' },
 								{ text: 'Cumplimiento'			, align: 'left'	 , value: 'cumplimiento' },
 								{ text: '', value: 'action' , sortable: false },
@@ -82,14 +111,11 @@
 		},
 
 		created(){
-
 			// ASIGNAR FECHA
 			const n =  new Date(); var y = n.getFullYear(); var m = n.getMonth() + 1; var d = n.getDate();
 			this.fecha = y + "-" + m +"-" + d;
-
 			// LLENAR COMPROMISOS
-			const payload = { id_vendedor: 7 , fecha: this.fecha}
-			this.consultaCompromisos(payload)
+			this.consultar();
 		},
 
 		watch:{
@@ -106,15 +132,29 @@
 		methods:{
 			...mapActions('Compromisos'  ,['consultaCompromisos']), // IMPORTANDO USO DE VUEX
 
-			consultar(){
-				const payload = { id_vendedor: 7 , fecha: this.fecha}
+			consultar(){ // CONSULTAR COMPROMISOS
+				var me = this;
+				const payload = { id_vendedor: 7 , fecha: this.fecha } // FORMO ARRAY CON id DEL VENDEDOR LOGEADO Y FECHA ACTUAL
 				this.consultaCompromisos(payload)
+				console.log('1',this.getCompromisos)
 			},
-			editar(item){
+
+			editar(item){  // VER DETALLE DEL COMPROMISO
 				this.$router.push({name: 'det_compromiso', params:{ detalle:item }})
-			}
+			},
+
+			abrirModal(action, items){
+				this.param = action;
+				this.edit = items;
+				this.dialog = true;
+			},
+
 		}
 
 
 	}
 </script>
+
+<style scoped>
+
+</style>
