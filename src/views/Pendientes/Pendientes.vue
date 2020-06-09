@@ -58,30 +58,17 @@
 						<v-spacer></v-spacer>
 						<v-btn color="white" small  text @click="detalleModal=false"><v-icon  >clear</v-icon></v-btn>
 					</v-card-actions>
-
+					
+					<v-btn color="green" text small block v-if="cumplimiento === 1">Compromiso Cumplido</v-btn>
+					
 					<v-simple-table fixed-header height="auto">
 						<template v-slot:default>
 							<thead>
-								<tr>
-									<th class="text-left">Responsable</th>
-									<th class="text-left">{{ nomvend}}</th>
-								</tr>
-								<tr>
-									<th class="text-left">Cliente</th>
-									<th class="text-left">{{ nomcli }}</th>
-								</tr>
-								<tr>
-									<th class="text-left">Fecha </th>
-									<th class="text-left">{{ fecha }}</th>
-								</tr>
-								<tr>
-									<th class="text-left">Hora</th>
-									<th class="text-left">{{hora}}</th>
-								</tr>
-								<tr v-if="comentarios">
-									<th class="text-left">Comentarios</th>
-									<th class="text-left">{{comentarios}}</th>
-								</tr>
+								<tr><th class="text-left">Responsable</th><th class="text-left">{{ nomvend}}</th></tr>
+								<tr><th class="text-left">Cliente</th><th class="text-left">{{ nomcli }}</th></tr>
+								<tr><th class="text-left">Fecha </th> <th class="text-left">{{ fecha }}</th></tr>
+								<tr><th class="text-left">Hora</th><th class="text-left">{{hora}}</th></tr>
+								<tr v-if="comentarios"><th class="text-left">Comentarios</th><th class="text-left">{{comentarios}}</th></tr>
 							</thead>
 						</template>
 					</v-simple-table>
@@ -136,7 +123,8 @@
 
     computed: {
 				...mapGetters('Compromisos'  ,['getCompromisos','Loading']), // IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
-			
+      	...mapGetters('Usuarios',['getUsuarios']),
+
       pantalla () {
         switch (this.$vuetify.breakpoint.name) {
           case 'xs': return 500
@@ -177,11 +165,7 @@
 		},
 		
     mounted () { this.$refs.calendar.checkChange() 	},// GENERA EL CAMBIO EN EL CALENDARIO
-		watch:{
-			type(){
-				console.log('type', this.type)
-			}
-		},
+	
     methods: {
 			...mapActions('Compromisos'  ,['consultaCompromisos']), 
 
@@ -208,10 +192,9 @@
 
       ActualizaCompromisos ({ start, end }) {
 				const events = [];
-				const payload = { id_vendedor: 7, fecha: this.fechaActual }
+				const payload = { id_vendedor: this.getUsuarios.id , fecha: this.fechaActual }
 				this.$http.post('pendientesxvend',payload).then( response =>{
 					this.compromisos = response.body
-					console.log('compromisos', this.compromisos)
 
 					for(var i = 0; i < this.compromisos.length; i++) {
 						events.push({	name: this.compromisos[i].nomcatego,

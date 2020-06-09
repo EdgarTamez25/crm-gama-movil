@@ -1,7 +1,7 @@
 <template>
 	<v-content class="pa-0">
 		<v-row no-gutters>
-			<v-col cols="12" class="text-center my-2">
+			<v-col cols="12" class="text-center ">
 				<strong>COMPROMISOS</strong>
 			</v-col>
 
@@ -68,12 +68,6 @@
 					</v-row>
 				</v-alert>
 			</v-col>
-
-			<!-- <v-dialog persistent v-model="dialog" width="600px" >	
-				<v-card>
-					<formaRuta :param="param" :edit="edit" @modal="dialog = $event" />
-				</v-card>
-			</v-dialog> -->
 		
 		</v-row>
 	</v-content>
@@ -81,9 +75,9 @@
 
 <script>
 	import {mapGetters, mapActions} from 'vuex';
-	// import formaRuta  from '@/views/Rutas/formaRuta.vue';
-
+	import metodos from '@/mixins/metodos.js'
 	export default {
+		mixins:[metodos],
 		components: { }, //formaRuta
 		data(){
 			return{
@@ -96,11 +90,8 @@
 								{ text: '#'								, align: 'left'	 , value: 'id' },
 								{ text: 'Categoria'					, align: 'left'	 , value: 'nomcatego' },
 								{ text: 'Cliente'					  , align: 'left'	 , value: 'nomcli' },
-								// { text: 'Fecha'							, align: 'left'	 , value: 'fecha' },
 								{ text: 'Hora'							, align: 'left'	 , value: 'hora' },
-								{ text: 'Cumplimiento'			, align: 'left'	 , value: 'cumplimiento' },
 								{ text: '', value: 'action' , sortable: false },
-
 							],
 				Compromisos: [],
 
@@ -112,21 +103,21 @@
 
 		created(){
 			// ASIGNAR FECHA
-			const n =  new Date(); var y = n.getFullYear(); var m = n.getMonth() + 1; var d = n.getDate();
-			this.fecha = y + "-" + m +"-" + d;
+			this.fecha = this.traerFechaActual();
 			// LLENAR COMPROMISOS
 			this.consultar();
 		},
 
 		watch:{
 			fecha: function(){
-				const payload = { id_vendedor: 7 , fecha: this.fecha}
+				const payload = { id_vendedor: this.getUsuarios.id , fecha: this.fecha}
 				this.consultaCompromisos(payload)
 			}
 		},
 
 		computed:{
 			...mapGetters('Compromisos'  ,['Loading','getCompromisos']), // IMPORTANDO USO DE VUEX 
+      ...mapGetters('Usuarios',['getUsuarios']),
 		},
 
 		methods:{
@@ -134,9 +125,8 @@
 
 			consultar(){ // CONSULTAR COMPROMISOS
 				var me = this;
-				const payload = { id_vendedor: 7 , fecha: this.fecha } // FORMO ARRAY CON id DEL VENDEDOR LOGEADO Y FECHA ACTUAL
+				const payload = { id_vendedor: this.getUsuarios.id , fecha: this.fecha } // FORMO ARRAY CON id DEL VENDEDOR LOGEADO Y FECHA ACTUAL
 				this.consultaCompromisos(payload)
-				console.log('1',this.getCompromisos)
 			},
 
 			editar(item){  // VER DETALLE DEL COMPROMISO

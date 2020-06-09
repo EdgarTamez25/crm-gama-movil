@@ -5,30 +5,24 @@ export default {
 			
 		}
 	},
-
-	mounted(){
-		// Jquey para activar la animacion del boton hacia arriba
-		$(document).ready(function(){
-
-			$('.ir-arriba').click(function(){
-				$('body, html').animate({
-					scrollTop: '0px'
-				}, 300);
-			});
-		 
-			$(window).scroll(function(){
-				if( $(this).scrollTop() > 0 ){
-					$('.ir-arriba').slideDown(300);
-				} else {
-					$('.ir-arriba').slideUp(300);
-				}
-			});
-		 
-		});
-
-	},
 	
 	methods: {
+		traerFechaActual(){
+			var f = new Date(); 
+			return f.getFullYear() +'-'+ (f.getMonth() + 1 < 10? '0' + (f.getMonth() + 1): f.getMonth() + 1 ) +'-'+ (f.getDate()<10?'0'+f.getDate():f.getDate());
+		},
 
-  }
+		traerHoraActual(){
+			var f = new Date(); 
+			return (f.getHours()<10? '0'+f.getHours(): f.getHours()) + ':' + (f.getMinutes()<10? '0'+ f.getMinutes(): f.getMinutes())
+		},
+
+		traerMesActual(){
+			var f = new Date();
+			var primerDia = new Date(f.getFullYear(), f.getMonth(), 1).toISOString().substr(0, 10);
+			var ultimoDia = new Date(f.getFullYear(), f.getMonth() + 1, 0).toISOString().substr(0, 10);
+			const fecha = { fechaInicial: primerDia , fechaFinal: ultimoDia}
+			return fecha;
+		},
+  	}
 }
