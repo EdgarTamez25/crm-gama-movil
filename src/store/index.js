@@ -3,8 +3,10 @@ import Vuex from 'vuex'
 
 import Usuarios from '@/modules/Usuarios';
 import Compromisos from '@/modules/Compromisos';
-import Rutas from '@/modules/Rutas';
+// import Rutas from '@/modules/Rutas';
 import Entregas from '@/modules/Entregas';
+import Prospectos from '@/modules/Prospectos';
+
 
 Vue.use(Vuex)
 
@@ -18,7 +20,8 @@ export default new Vuex.Store({
   modules: {
     Usuarios,
     Compromisos,
-    Rutas,
-    Entregas
+    // Rutas,
+    Entregas,
+    Prospectos
   }
 })

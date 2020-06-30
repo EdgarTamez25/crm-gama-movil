@@ -9,8 +9,32 @@ use App\historial;
 
 class compromisosController extends Controller
 {
+
+	public function addcompromiso(Request $req){
+
+		$id = DB::table('compromisos')->insertGetId(
+			['id_vendedor'  => $req -> id_vendedor,  'tipo_compromiso' => $req -> tipo_compromiso,
+			 'id_categoria' => $req -> id_categoria, 'fecha' 					 => $req -> fecha,
+			 'hora' 			  => $req -> hora, 				 'fecha_fin'			 => $req -> fecha_fin,
+			 'hora_fin' 		=> $req -> hora_fin,		 'id_cliente' 		 => $req -> id_cliente,
+			 'fase_venta' 	=> $req -> fase_venta,   'id_usuario'      => $req -> id_vendedor ,  
+			 ]
+		);
+
+		$fecha 				 = $req -> fechaActual; 
+		$hora 				 = $req -> horaActual; 
+		$fase_venta 	 = $req -> fase_venta;
+		$numorden      = "";
+		$aceptado      = 0;
+		$obscierre     = "";
+		
+		$hisorial = $this->Historial($id, $fecha, $hora, $fase_venta, $numorden, $aceptado,$obscierre);
+		return "El compromiso se ha creado correctamente";
+		
+}
+
 	public function CompromisosxVend(Request $request){
-		$compromisos = DB::select('SELECT c.id, c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego, c.enruta,
+		$compromisos = DB::select('SELECT c.id, c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
 																			c.fecha, c.hora, c.fecha_fin, c.hora_fin, c.id_cliente,cli.nombre as nomcli, cli.tel1, cli.tel2, c.comentarios, c.fase_venta, 
 																			c.id_usuario, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus, c.confirma_cita
 																FROM compromisos c LEFT JOIN users v   	   ON v.id   = c.id_vendedor
@@ -39,21 +63,17 @@ class compromisosController extends Controller
 		return "Cita confirmada correctamente.";
 	}
 
-	public function EnRuta(Request $req){
-		$enRuta = DB::update('UPDATE compromisos SET enruta=:enruta WHERE id=:id',
-														['enruta' => $req -> enruta, 'id' => $req -> id ]);
-		return "Compromiso en Ruta";
-	}
+	// public function EnRuta(Request $req){
+	// 	$enRuta = DB::update('UPDATE compromisos SET enruta=:enruta WHERE id=:id',
+	// 													['enruta' => $req -> enruta, 'id' => $req -> id ]);
+	// 	return "Compromiso en Ruta";
+	// }
 
-	public function CompromisosHechos($id){
-		$compromisosH = DB::select('SELECT c.id, c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego, c.fecha, c.hora,
-																		 	 c.fecha_fin, c.hora_fin, c.fecha_cierre, c.hora_cierre, c.id_cliente,cli.nombre as nomcli, cli.tel1, cli.tel2, c.comentarios,
-																		 	 c.fase_venta, c.id_usuario, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus, c.confirma_cita
-																FROM compromisos c LEFT JOIN users v   	   ON v.id   = c.id_vendedor
-																									 LEFT JOIN categorias ca ON ca.id  = c.id_categoria
-																									 LEFT JOIN clientes  cli ON cli.id = c.id_cliente
-																									 LEFT JOIN users u       ON u.id   = c.id_usuario
-																WHERE c.id_vendedor =  ? AND c.cumplimiento = 1 ORDER BY c.fecha DESC ',[$id]);
+	public function CompromisosHechos(Request $req){
+		$compromisosH = DB::select('SELECT c.id, c.fecha, c.hora, c.id_cliente, cli.nombre as nomcli 
+																	FROM compromisos c LEFT JOIN clientes  cli ON cli.id = c.id_cliente
+																WHERE c.id_vendedor =  ? AND c.fecha between ? AND ? AND c.fase_venta = 8 
+																ORDER BY c.fecha DESC ',[$req -> id, $req -> fecha1 , $req -> fecha2]);
 		return $compromisosH;
 	}
 

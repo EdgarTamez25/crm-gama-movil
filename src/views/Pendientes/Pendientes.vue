@@ -1,7 +1,7 @@
 <template>
   <v-row class="fill-height">
     <v-col>
-			<v-card-title class="mt-0 pa-0 mx-5"> PENDIENTES </v-card-title>
+			<v-card-title  class="font-weight-black headline"> PENDIENTES </v-card-title>
       <v-sheet height="70">
         <v-toolbar flat color="white">
           <v-btn fab x-small color="rosa" dark class="ma-1" @click="prev"> <!--  FECHA  ANTERIOR -->

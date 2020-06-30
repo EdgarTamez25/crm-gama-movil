@@ -9,7 +9,10 @@ Vue.config.productionTip = false;
 Vue.use(VueResource)
 
 
-Vue.http.options.root = 'http://127.0.0.1:8000/api/'
+// Vue.http.options.root = 'http://localhost:80/Proyectos/crm-gama-movil/api/public/api/'
+Vue.http.options.root = 'http://producciongama.com:8080/movil/api/public/api/'
+// Vue.http.options.root = 'http://127.0.0.1:8000/api/'
+
  
 Vue.http.interceptors.push((request, next) => {
   request.headers.set('Accept', 'application/json')

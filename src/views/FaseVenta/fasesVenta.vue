@@ -7,15 +7,19 @@
 
 			<v-col cols="12">
 				<v-card-actions>
-					<v-card-title> PROYETOS COTIZADOS </v-card-title>
+					<v-card-title class="font-weight-black headline"> PROYETOS COTIZADOS </v-card-title>
 					<v-spacer></v-spacer>
 				<v-btn  class="gris" icon dark @click="consultar" ><v-icon>refresh</v-icon> </v-btn>
 				</v-card-actions>
 			</v-col>
 
-			<v-col cols="12" class="text-center" v-if="Loading" >  <!-- PROGRES -->
-				<v-progress-circular :size="100" :width="7" color="celeste" indeterminate ></v-progress-circular>
-			</v-col>	
+			<v-container fluid v-if="Loading">
+				<v-row align="center" justify="center" style="height: 300px;">
+					<v-col cols="12" class="text-center"  >  <!-- PROGRES -->
+						<v-progress-circular :size="100" :width="7" color="celeste" indeterminate ></v-progress-circular>
+					</v-col>	
+				</v-row>
+			</v-container>	
 
 			<v-col cols="12">
 				<v-card v-for="(item, i) in getproyectos" :key ="i" class="mt-2" color="celeste">

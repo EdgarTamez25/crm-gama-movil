@@ -1,11 +1,11 @@
 <template>
 	<v-content class="pa-0">
 		<v-row no-gutters>
-			<v-col cols="12" class="text-center ">
-				<strong>COMPROMISOS</strong>
+			<v-col cols="12" class="text-center my-1">
+				<span class="font-weight-black headline">COMPROMISOS</span>
 			</v-col>
 
-			<v-col cols="10" > <!-- CONTROLADOR DE FECHA  -->
+			<v-col cols="7" > <!-- CONTROLADOR DE FECHA  -->
 				<v-dialog ref="fechaCompromiso" v-model="fechaModal" :return-value.sync="fecha" persistent 	width="290px"	>
 					<template v-slot:activator="{ on }">
 						<v-text-field
@@ -22,13 +22,20 @@
 				</v-dialog>
 			</v-col>
 
-			<v-col cols="1" class="mx-3"> <!-- BOTON DE RECARGA -->
-				<v-btn  class="gris" icon dark @click="consultar" ><v-icon>refresh</v-icon> </v-btn>
-			</v-col>	
+			<v-col cols="2" class="mx-1" align="right"> <!-- BOTON DE RECARGA -->
+				<v-btn  class="rosa ma-1" icon dark @click="nuevoCompromiso(1,'')" ><v-icon>chrome_reader_mode</v-icon> </v-btn>
+			</v-col>
+			<v-col cols="2" class="mx-1" align="left">
+				<v-btn  class="gris ma-1" icon dark @click="consultar" ><v-icon>refresh</v-icon> </v-btn>
+			</v-col>
 
-			<v-col cols="12" class="text-center" v-if="Loading" >  <!-- PROGRES -->
-				<v-progress-circular :size="100" :width="7" color="celeste" indeterminate ></v-progress-circular>
-			</v-col>	
+			<v-container fluid v-if="Loading">
+				<v-row align="center" justify="center" style="height: 300px;">
+					<v-col cols="12" class="text-center"  >  <!-- PROGRES -->
+						<v-progress-circular :size="100" :width="7" color="celeste" indeterminate ></v-progress-circular>
+					</v-col>	
+				</v-row>
+			</v-container>	
 
 			<v-col cols="12" v-if="getCompromisos.length"> <!-- TABLA DE COMPROMISOS -->
 				<v-card flat>
@@ -68,6 +75,13 @@
 					</v-row>
 				</v-alert>
 			</v-col>
+
+			<!-- NUEVO COMPROMISO -->
+			<v-dialog persistent v-model="compromisoModal" width="700px" >	
+				<v-card>
+					<ControlCompromiso :param="param" :edit="edit" @modal="compromisoModal = $event" />
+				</v-card>
+			</v-dialog>
 		
 		</v-row>
 	</v-content>
@@ -76,15 +90,19 @@
 <script>
 	import {mapGetters, mapActions} from 'vuex';
 	import metodos from '@/mixins/metodos.js'
+	import ControlCompromiso from '@/views/Compromisos/ControlCompromiso.vue'
+
 	export default {
 		mixins:[metodos],
-		components: { }, //formaRuta
+		components: { ControlCompromiso }, //formaRuta
 		data(){
 			return{
 				search: '',
 				dialog: false,
 				param: 0,
 				edit:'',
+
+				compromisoModal: false,
 
 				headers: [
 								{ text: '#'								, align: 'left'	 , value: 'id' },
@@ -98,14 +116,27 @@
 				// MANEJO DE FECHAS
 				fecha: '',
 				fechaModal: false,
+				prueba:{ id: 1, nombre:'Edgar',apellido:'Tamez'},
+
+					// HORA
+				hora 					 : null,
+        horamodal			 : false,
+				hora_compromiso: false,
+
+				fechacomp				: new Date().toISOString().substr(0, 10),
+				fechamodal2 			: false,
+				fecha_compromiso: false,
 			}
 		},
 
 		created(){
 			// ASIGNAR FECHA
 			this.fecha = this.traerFechaActual();
+			this.fechacomp = this.traerFechaActual();
 			// LLENAR COMPROMISOS
 			this.consultar();
+
+			const objectData = Object.values(this.prueba);
 		},
 
 		watch:{
@@ -129,22 +160,18 @@
 				this.consultaCompromisos(payload)
 			},
 
+			nuevoCompromiso(action, items){
+				this.param = action;
+				this.edit = items;
+				this.compromisoModal = true;
+			},
+		
+
 			editar(item){  // VER DETALLE DEL COMPROMISO
 				this.$router.push({name: 'det_compromiso', params:{ detalle:item }})
 			},
-
-			abrirModal(action, items){
-				this.param = action;
-				this.edit = items;
-				this.dialog = true;
-			},
-
 		}
 
 
 	}
 </script>
-
-<style scoped>
-
-</style>

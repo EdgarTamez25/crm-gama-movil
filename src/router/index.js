@@ -9,11 +9,7 @@ import Pendientes from '@/views/Pendientes/Pendientes.vue';
 import FaseVenta from '@/views/FaseVenta/fasesVenta.vue';
 import Entregas from '@/views/Entregas/Entregas.vue';
 import DetEntrega from '@/views/Entregas/DetEntrega.vue';
-
-
-
-
-// import EnRuta from '@/views/Rutas/EnRuta.vue';
+import Prospectos from '@/views/Prospectos/Prospectos.vue';
 
 Vue.use(VueRouter)
 
@@ -28,7 +24,10 @@ var router = new VueRouter({
     { path: '/pendientes'        ,  name: 'pendientes'        ,  component: Pendientes },
     { path: '/fases.venta'       ,  name: 'fases.venta'       ,  component: FaseVenta },
     { path: '/entregas'          ,  name: 'entregas'          ,  component: Entregas },
-    { path: '/det.entrega'       ,  name: 'det.entrega'    ,  component: DetEntrega },
+    { path: '/det.entrega'       ,  name: 'det.entrega'       ,  component: DetEntrega },
+    { path: '/prospectos'        ,  name: 'prospectos'          ,  component: Prospectos },
+
+
   ]
 })
 

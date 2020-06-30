@@ -7,7 +7,7 @@
       <v-list dense nav class="py-0 white--text" >
         <v-list-item two-line>
           <v-list-item-avatar >
-            <img src="@/assets/person.png" >
+            <img src="person.png" >
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -41,7 +41,7 @@
       
     <!-- NAVBAR -->
     <v-app-bar app color="rosa" dark  v-if ="Logeado">
-      <img src="@/assets/logo.png" height="30" @click.stop="drawer = !drawer">
+      <img src="logo.png" height="30" @click.stop="drawer = !drawer">
       <v-spacer></v-spacer>
       <v-btn icon @click="salir" >
         <v-icon>exit_to_app</v-icon>
@@ -64,7 +64,7 @@
 
                 <v-col cols="12">
                   <v-col cols="12" class="text-center my-5"> <!-- LOGO DE LA VISTA -->
-                    <img src="@/assets/logo2.png" width="120" height="100%"  > <br>
+                    <img src="logo2.png" width="120" height="100%"  > <br>
                   </v-col>
 
                   <v-form v-model="valid" :lazy-validation="lazy">
@@ -128,12 +128,14 @@
           text: 'Administración',
           model: false,
           children: [
-            { text: 'Inicio'                ,path: '/'                , icon: 'home'                ,nivel:{vend:3, chofer:true}},
+            { text: 'Inicio'                ,path: '/'                , icon: 'home'                ,nivel:{vend:3, chofer:false}},
             { text: 'Compromisos'           ,path: 'compromisos'      , icon: 'chrome_reader_mode'  ,nivel:{vend:3, chofer:false}},
             { text: 'Proyectos Cotizados'   ,path: 'fases.venta'      , icon: 'business_center'     ,nivel:{vend:3, chofer:false}},
             { text: 'Pendientes'            ,path: 'pendientes'       , icon: 'calendar_today'      ,nivel:{vend:3, chofer:false}},
             { text: 'Compromisos Realizados',path:'compromisos.hechos', icon:'assignment_turned_in' ,nivel:{vend:3, chofer:false} },
-            { text: 'Entregas'              ,path:'entregas'          , icon:'airport_shuttle'      ,nivel:{vend:false, chofer:true}  }
+            { text: 'Entregas'              ,path:'entregas'          , icon:'airport_shuttle'      ,nivel:{vend:false, chofer:true}  },
+            { text: 'Prospectos'            ,path: 'prospectos'       , icon: 'person'  ,nivel:{vend:3, chofer:false}},
+
           ],
         },
       ],

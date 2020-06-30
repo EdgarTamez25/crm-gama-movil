@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
 	<v-container>
 		<v-row justify="center">
 			<v-col cols="12">
@@ -15,18 +15,18 @@
 
 				<v-divider class="ma-2"></v-divider>
 
-				<v-card-text class="pa-2" align="justify">  <!-- TITULO DE LA MODAL -->
+				<v-card-text class="pa-2" align="justify">  
 					<strong> <p>{{ TITULO_MODAL }} </p> </strong>
 				</v-card-text>
 
-				<v-col cols="12" > <!-- RUTA A SELECCIONAR -->
+				<v-col cols="12" >
 					<v-select 
 						v-model="ruta" :items="rutasDisponible"  item-text="nombre" item-value="id" append-icon="emoji_transportation" outlined  
 						label="Escuela" return-object hide-details dense  color="celeste"
 					></v-select>
 				</v-col>
 		
-				<v-col cols="12"> <!-- BOTON DE GUARDAR -->
+				<v-col cols="12">
 					<v-btn color="rosa" block dark small @click="validaInfo"> {{ param===1? 'Guardar':'Actualizar'}} </v-btn>
 				</v-col>
 			
@@ -40,7 +40,7 @@
 					<!-- <v-btn small :disabled="dialog" persistent :loading="dialog" 
 								 block dark center class="white--text" color="success" @click="validaInfo" v-if="param === 2">
              INICIAR RECORRIDO  
-          </v-btn> -->
+          
 
           <v-dialog v-model="dialog" hide-overlay persistent width="300">
             <v-card color="blue darken-4" dark >
@@ -57,7 +57,7 @@
             </v-card>
 						
           </v-dialog>
-				<!-- </v-card-actions> -->
+			
 
 			</v-col>
 		</v-row>

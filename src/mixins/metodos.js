@@ -24,5 +24,14 @@ export default {
 			const fecha = { fechaInicial: primerDia , fechaFinal: ultimoDia}
 			return fecha;
 		},
-  	}
+
+		consultar_Clientes(){  // AUTOCOMPLETE -> CLIENTES
+			this.$http.get('clientes').then((response)=>{
+				this.clientes = response.body //LLENNO ARRAY
+			}).catch(error =>{
+				console.log('error', error)
+			})
+		},
+		
+  }
 }
