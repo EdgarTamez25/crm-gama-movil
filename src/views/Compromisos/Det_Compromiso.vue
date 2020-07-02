@@ -43,16 +43,17 @@
 					</v-col>
 				</v-row>
       </v-card-text>
-
+			<!-- {{ detalle}} -->
 			<v-col cols="6" align="center"> <!-- TELEFONO 1 -->
 				<v-btn  color="info" outlined block :disabled="detalle.tel1 === '' "><v-icon left>phone</v-icon>
-						<a href="tel:detalle.tel1" style="text-decoration:none;">{{ detalle.tel1? detalle.tel1: 'Sin Contacto' }}</a>
+						<a :href="`tel:${detalle.tel1}`" style="text-decoration:none;">{{ detalle.tel1? detalle.tel1: 'Sin Contacto' }}</a>
+						<!-- <a :href="`tel:${detalle.tel1}`">{{phone}}</a>  -->
 					</v-btn>
 			</v-col>
 
 			<v-col cols="6" align="center" > <!-- TELEFONO 2 -->
 				<v-btn  color="info" outlined block :disabled="detalle.tel2 === '' "><v-icon left>phone</v-icon>
-					<a href="tel:detalle.tel1" style="text-decoration:none;">{{ detalle.tel2? detalle.tel2: 'Sin Contacto' }}</a>
+					<a :href="`tel:${detalle.tel2}`" style="text-decoration:none;">{{ detalle.tel2? detalle.tel2: 'Sin Contacto' }}</a>
 				</v-btn>
 			</v-col>
 

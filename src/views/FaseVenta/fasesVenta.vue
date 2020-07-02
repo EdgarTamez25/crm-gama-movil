@@ -7,7 +7,7 @@
 
 			<v-col cols="12">
 				<v-card-actions>
-					<v-card-title class="font-weight-black headline"> PROYETOS COTIZADOS </v-card-title>
+					<v-card-subtitle class="font-weight-bold "> PROYETOS COTIZADOS </v-card-subtitle>
 					<v-spacer></v-spacer>
 				<v-btn  class="gris" icon dark @click="consultar" ><v-icon>refresh</v-icon> </v-btn>
 				</v-card-actions>

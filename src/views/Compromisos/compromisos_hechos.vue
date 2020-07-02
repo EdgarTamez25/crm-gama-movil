@@ -2,7 +2,7 @@
 	<v-content class="pa-0">
 		<v-row no-gutters>
 			<v-col cols="12" class="text-center my-2">
-				<span class="font-weight-black headline mt-3">COMPROMISOS REALIZADOS </span>
+				<span class="font-weight-bold mt-3">COMPROMISOS REALIZADOS </span>
 			</v-col>
 
 			<v-col cols="5" sm="5" xl="2" class=" mx-1" > <!-- FECHA DE COMPROMISO -->

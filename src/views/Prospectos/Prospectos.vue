@@ -3,7 +3,7 @@
 		<v-row no-gutters>
 
   		<v-col cols="12">
-				<v-card-actions class="font-weight-black headline"> PROSPECTOS </v-card-actions>
+				<v-card-actions class="font-weight-bold"> PROSPECTOS </v-card-actions>
 
 				<v-card class="" flat >
 					<v-card-actions>

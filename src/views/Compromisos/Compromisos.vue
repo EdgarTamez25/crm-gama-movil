@@ -2,7 +2,7 @@
 	<v-content class="pa-0">
 		<v-row no-gutters>
 			<v-col cols="12" class="text-center my-1">
-				<span class="font-weight-black headline">COMPROMISOS</span>
+				<span class="font-weight-bold ">COMPROMISOS</span>
 			</v-col>
 
 			<v-col cols="7" > <!-- CONTROLADOR DE FECHA  -->

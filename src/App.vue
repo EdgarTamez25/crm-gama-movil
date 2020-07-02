@@ -7,7 +7,7 @@
       <v-list dense nav class="py-0 white--text" >
         <v-list-item two-line>
           <v-list-item-avatar >
-            <img src="person.png" >
+            <img src="http://producciongama.com:8080/CRM-GAMA-MOVIL/img/person.png" >
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -41,7 +41,7 @@
       
     <!-- NAVBAR -->
     <v-app-bar app color="rosa" dark  v-if ="Logeado">
-      <img src="logo.png" height="30" @click.stop="drawer = !drawer">
+      <img src="http://producciongama.com:8080/CRM-GAMA-MOVIL/img/logo.png" height="30" @click.stop="drawer = !drawer">
       <v-spacer></v-spacer>
       <v-btn icon @click="salir" >
         <v-icon>exit_to_app</v-icon>
@@ -64,7 +64,7 @@
 
                 <v-col cols="12">
                   <v-col cols="12" class="text-center my-5"> <!-- LOGO DE LA VISTA -->
-                    <img src="logo2.png" width="120" height="100%"  > <br>
+                    <img src="http://producciongama.com:8080/CRM-GAMA-MOVIL/img/logo2.png" width="120" height="100%"  > <br>
                   </v-col>
 
                   <v-form v-model="valid" :lazy-validation="lazy">
@@ -161,7 +161,10 @@
       
       iniciarSesion(){
         var md5 = require('md5');
-        var usuario = { correo: this.correo, contrasenia: md5(this.contrasenia) }
+        var usuario = { correo: this.correo, 
+                        usuario : this.correo.toUpperCase(),
+                        contrasenia: md5(this.contrasenia) 
+                      }
       
         this.Login(usuario).then((response)=>{
           if(response){
