@@ -32,6 +32,43 @@ export default {
 				console.log('error', error)
 			})
 		},
+
+		consultar_Categorias(){ // CATEGORIAS
+			this.$http.get('categorias').then((response)=>{
+				this.categorias = response.body  // LLENO ARREGLO CON RESPUESTA COMPLETA
+			}).catch(error =>{
+				console.log('error', error)
+			})
+		},
+
+		consultaDeptos(){
+			this.deptos = [	{ id:1, nombre:'FLEXOGRAFÍA'},
+											{ id:2, nombre:'BORDADOS'},
+											{ id:3, nombre:'DIGITAL'},
+											{ id:4, nombre:'OFFSET'},
+											{ id:5, nombre:'SERIGRAFÍA'},
+											{ id:6, nombre:'EMPAQUE'},
+											{ id:7, nombre:'SUBLIMACIÓN'},
+											{ id:8, nombre:'TAMPOGRAFÍA'},
+											{ id:9, nombre:'UV'}
+										]
+		},
+
+		consultaMateriales(depto_id){
+			this.$http.get('materiales/'+ depto_id).then((response)=>{
+				this.materiales = response.body  // LLENO ARREGLO CON RESPUESTA COMPLETA
+			}).catch(error =>{
+				console.log('error materiales', error)
+			})
+		},
+
+		consultaAcabados(depto_id){
+			this.$http.get('acabados/'+ depto_id).then((response)=>{
+				this.acabados = response.body  
+			}).catch(error =>{
+				console.log('error acabados', error)
+			})
+		},
 		
   }
 }

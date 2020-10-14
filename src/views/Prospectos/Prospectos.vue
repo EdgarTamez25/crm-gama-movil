@@ -76,6 +76,7 @@
 			},
 
 			created(){
+				if(!this.getUsuarios.id){ this.Salir() }
 				this.consultaProspectos(this.getUsuarios.id) // CONSULTAR CLIENTES A VUEX
 			},
 
@@ -91,6 +92,7 @@
 
 			methods:{
 				...mapActions('Prospectos'  ,['consultaProspectos']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
+     		...mapGetters('Usuarios',['Salir']),
 
 				abrirModal(action, items){
 					this.param = action;

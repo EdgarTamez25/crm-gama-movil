@@ -44,7 +44,7 @@ export default{
 			commit('LOADING',true); commit('PROYECTOS', []) // Limpio Arreglo y Genero Consulta
 
 			Vue.http.post('proyectos.cotizados', payload).then(response=>{
-				console.log('proyecto cotizado', response.body)
+				// console.log('proyecto cotizado', response.body)
 				commit('PROYECTOS', response.body)
 			}).catch((error)=>{
 				console.log('error',error)
@@ -87,7 +87,7 @@ export default{
 												 show          : false
 												})
 				}
-				console.log('resumen', resumen)
+				// console.log('resumen', resumen)
 				
 				commit('SEGUIMIENTO', resumen)
 			}).catch(err =>{

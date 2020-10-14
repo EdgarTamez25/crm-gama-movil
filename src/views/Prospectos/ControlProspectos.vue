@@ -103,6 +103,7 @@
               </v-card-text>
             </v-card>
           </v-dialog>
+					
 					<v-dialog v-model="Correcto" hide-overlay persistent width="350">
             <v-card color="success"  dark class="pa-3">
 							<h3><strong>{{ textCorrecto }} </strong></h3>

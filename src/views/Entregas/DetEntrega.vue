@@ -37,7 +37,7 @@
 		<v-row>
 			<v-col cols="12" align="center" class="mt-5"> <!-- BOTON PARA TERMINAR COMPROMISO -->
 				<v-btn color="green darken-4" rounded block dark large @click="EntregarProducto(true)">
-					SE ACEPO
+					SE ACEPTO
 				</v-btn>
 			</v-col>
 			<v-col cols="12" align="center" > <!-- BOTON PARA TERMINAR COMPROMISO -->
@@ -109,7 +109,6 @@
 				text		: '',
 				color		: 'success',
 				aceptacion: null,
-
 				dialog : false,
 				textDialog : "Guardando Información",
 
@@ -123,6 +122,7 @@
 		},
 
 		created(){
+			if(!this.$route.params.detalle){  window.history.go(-1); }
 			this.detalle = this.$route.params.detalle  /// PARAMETROS QUE RECIBO DE LA VISTA 
 		},
 

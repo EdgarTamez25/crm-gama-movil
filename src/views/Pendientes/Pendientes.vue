@@ -116,6 +116,8 @@
 		}),
 
 		created(){ 
+			if(!this.getUsuarios.id){ this.Salir() }
+
 			const n =  new Date(); var y = n.getFullYear(); var m = n.getMonth() + 1; var d = n.getDate(); // ASIGNAR FECHA
 			this.fechaActual = y + "-" + m +"-" + d;
 			moment.locale('es') /// inciar Moment 
@@ -167,7 +169,9 @@
     mounted () { this.$refs.calendar.checkChange() 	},// GENERA EL CAMBIO EN EL CALENDARIO
 	
     methods: {
-			...mapActions('Compromisos'  ,['consultaCompromisos']), 
+			...mapActions('Compromisos'  ,['consultaCompromisos']),
+      ...mapGetters('Usuarios',['Salir']),
+
 
       verDiaActual ({ date }) {  this.focus = date; this.type = 'day'}, // COLOCO LA VISTA DEL CALENDARIO EN MODO "DIA ACTUAL"
 			prev () { this.$refs.calendar.prev()  },  // FUNCION PARA RETROCEDER FECHA

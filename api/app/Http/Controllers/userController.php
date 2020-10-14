@@ -20,6 +20,5 @@ class userController extends Controller
 		else:
 			return 	$Usuarios;
 		endif;
-
 	}
 }

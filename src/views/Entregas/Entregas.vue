@@ -145,6 +145,7 @@
 
 		created(){
 			// LLENAR COMPROMISOS
+			if(!this.$route.params.detalle){   }
 			this.consultar();
 		},
 		

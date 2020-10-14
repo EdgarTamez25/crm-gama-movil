@@ -12,15 +12,27 @@
 					<v-spacer></v-spacer>
 					<v-btn color="error" small @click="$emit('modal',false)" text><v-icon>clear</v-icon></v-btn>
 				</v-card-actions>
-
-				<v-divider class="ma-2"></v-divider>
-
+				
 				<v-row>
 					<v-col cols="12" sm="6" > <!-- CLIENTE -->
 						<v-autocomplete
 							:items="clientes" v-model="cliente" item-text="nombre" item-value="id" label="Clientes" 
 							dense filled hide-details color="celeste" append-icon="people" return-object
 						></v-autocomplete>
+					</v-col>
+
+					<v-col cols="12" sm="6" > 
+						<v-select
+							 v-model="tipo" :items="tipos" item-text="nombre" item-value="id" filled color="celeste"
+							dense hide-details  label="Tipo de compromiso" return-object placeholder ="Tipo de compromiso"
+						></v-select>
+					</v-col> 
+
+					<v-col cols="12" sm="6" > 
+						<v-select
+							v-model="categoria" :items="categorias" item-text="nombre" item-value="id" label="Categoria"  
+							 placeholder ="Categorias" filled dense hide-details append-icon="ballot" return-object
+						></v-select>
 					</v-col>
 
 					<v-col cols="12" sm="6"> <!-- FECHA DE INICIO -->
@@ -55,17 +67,24 @@
 						</v-dialog>
 					</v-col>
 
+					<v-col cols="12"  > <!-- COMENARIO -->
+						<v-textarea
+							v-model ="obs" outlined label="Comentario" placeholder="Agregar un comentario ..."
+							rows="2" hide-details dense color="celeste"
+						></v-textarea>
+					</v-col>
+
 				</v-row>
 
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
 				<v-card-actions>
 					<v-spacer></v-spacer>
-					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-if="param === 1">
-             Confirmar  
+					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center  color="success" @click="validaInfo" >
+            Guardar Información
           </v-btn>
-					<v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-else>
+					<!-- <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-else>
              Actualizar  
-          </v-btn>
+          </v-btn> -->
 
           <v-dialog v-model="dialog" hide-overlay persistent width="300">
             <v-card color="blue darken-4" dark >
@@ -127,6 +146,11 @@
 				// AUTOCOMPLETE
 				cliente: { id:null, nombre:''},
 				clientes: [],
+				tipo: {id:null, nombre:''},
+				tipos:[{id:1, nombre:'Cliente'},{id:2, nombre:'Prospectos'}],
+				categoria    : { id:null, nombre:''},
+				categorias   : [],
+				obs:'',
 				// ALERTAS
 				snackbar: false,
 				text		: '',
@@ -143,6 +167,7 @@
 			this.fecha =this.traerFechaActual();
 			this.hora = this.traerHoraActual();
 			this.consultar_Clientes()
+			this.consultar_Categorias()
 			this.validarModoVista() 	  // VALIDO EL MODO DE LA VISTA
 		},
 			
@@ -172,9 +197,13 @@
 
 			validaInfo(){
 				var fc = this.fecha + " " + this.hora; var fa = this.traerFechaActual() + " " + this.traerHoraActual();
-				if(!this.cliente.id)		  { this.snackbar = true; this.text="No puedes omitir el CLIENTE"   		; return }
-				if(!this.fecha)						{ this.snackbar = true; this.text="No puedes omitir la FECHA"   			; return }
-				if(!this.hora)						{ this.snackbar = true; this.text="No puedes omitir la HORA"   				; return }
+				if(!this.cliente.id)	{ this.snackbar = true; this.text="No puedes omitir el CLIENTE"    ; return }
+				if(!this.tipo.id)		  { this.snackbar = true; this.text="No puedes omitir el TIPO"   		 ; return }
+				if(!this.categoria.id){ this.snackbar = true; this.text="No puedes omitir La categoría"  ; return }
+				if(!this.fecha)				{ this.snackbar = true; this.text="No puedes omitir la FECHA"   	 ; return }
+				if(!this.hora)				{ this.snackbar = true; this.text="No puedes omitir la HORA"   		 ; return }
+				if(!this.obs)					{ this.snackbar = true; this.text="Debes agregar un comentario."   		 ; return }
+
 				if(fc < fa){ this.snackbar=true; this.text="La FECHA y HORA no puede ser menor a la actual." ; return}
 				this.confirmaProceso = true
 				// this.PrepararPeticion()
@@ -183,18 +212,13 @@
 			PrepararPeticion(){
 				// FORMAR ARRAY A MANDAR
 				const payload = { id_vendedor 		: this.getUsuarios.id,
-													tipo_compromiso	: 2,
-													id_categoria		: 3,
-													id_cliente 		  : this.cliente.id,
+													tipo						: this.tipo.id,
+													id_categoria		: this.categoria.id,
 													fecha						: this.fecha,
 													hora	  				: this.hora,
-													fecha_fin				: this.fecha,
-													hora_fin	  		: parseInt(this.hora.substr(0, 2)) + 1 + ":" + parseInt(this.hora.substr(3,2)),
-													id_usuario      : this.getUsuarios.id, // USUARIO QUE CREA EL REGISTRO
-													fase_venta      : 1,
-													estatus     		: 1,
-													fechaActual     : this.traerFechaActual(),
-													horaActual      : this.traerHoraActual(),
+													id_cliente 		  : this.cliente.id,
+													obs							: this.obs,
+													fuente      		: this.getUsuarios.id, // USUARIO QUE CREA EL REGISTRO
 												}
 													
 				console.log('payload', payload)
@@ -204,11 +228,14 @@
 			},
 
 			Crear(payload){
-				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ; setTimeout(() => (this.dialog = false), 2000)
+				this.dialog = true ; 
+				// setTimeout(() => (this.dialog = false), 2000)
 				this.$http.post('addcompromiso', payload).then((response)=>{
-					this.TerminarProceso(response.body);					
-				}).catch(err =>{ console.log('err', err)})
+					this.TerminarProceso(response.bodyText);					
+				}).catch(err =>{ 
+					this.snackbar=true; this.text=response.bodyText;
+					console.log('err', err)
+				}).finally(() => this.dialog = false)
 			},
 
 			Actualizar(payload){

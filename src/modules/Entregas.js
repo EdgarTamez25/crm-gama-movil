@@ -24,12 +24,18 @@ export default{
 
 			Vue.http.post('entregas',payload).then(response=>{
 				var entregas = []
+				console.log('entregas', response.body)
 				for(let i =0; i <response.body.length; i++){
+					var ciudad = response.body[i].ciudad ? response.body[i].ciudad + ',' : '' ;
+					var estado = response.body[i].estado ? response.body[i].estado + ',' : '' ;
+					var pais   = response.body[i].pais   ? response.body[i].pais   + ',' : '' ;
+					var cp     = response.body[i].cp     ? response.body[i].cp     + ',' : '' ;
+				
 					entregas.push({ id: response.body[i].id, 
 													id_compromiso: response.body[i].id_compromiso,
 													fecha_entrega : moment(response.body[i].fecha_entrega).format('LL'),
 													hora_entrega  : response.body[i].hora_entrega,
-													direccion: response.body[i].direccion,
+													direccion: response.body[i].direccion + '' + ciudad + '' +  estado + '' + pais + ''  + cp,
 													nomcli: response.body[i].nomcli,
 													numfac: response.body[i].numfac,
 													tel1: response.body[i].tel1,

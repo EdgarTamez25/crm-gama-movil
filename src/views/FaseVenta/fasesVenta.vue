@@ -171,6 +171,7 @@
 		},
 
 		created(){
+			if(!this.getUsuarios.id){ this.Salir() }
 			// LLENAR COMPROMISOS
 			this.consultar();
 		},
@@ -182,6 +183,7 @@
 
 		methods:{
 			...mapActions('Compromisos'  ,['proyectosCotizados']), // IMPORTANDO USO DE VUEX
+      ...mapGetters('Usuarios',['Salir']),
 
 			consultar(){ // CONSULTAR COMPROMISOS
 				const payload = { id_vendedor: this.getUsuarios.id , fase_venta:3 } // FORMO ARRAY CON id DEL VENDEDOR LOGEADO Y FECHA ACTUAL
@@ -235,8 +237,6 @@
 													aceptado: 0,
 													obscierre: this.obscierre? this.obscierre: ''
 												}
-
-				console.log('payload', payload);
 
 				this.confirmaModal = false;
 				this.dialog = true ; setTimeout(() => (this.dialog = false), 2000)

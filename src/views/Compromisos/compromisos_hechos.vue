@@ -177,6 +177,7 @@
 		},
 
 		created(){
+			if(!this.getUsuarios.id){ this.Salir() }
 			// ASIGNAR FECHA
 			this.fecha1 = this.traerMesActual().fechaInicial;
 			this.fecha2 = this.traerMesActual().fechaFinal;
@@ -187,7 +188,6 @@
 
 		watch:{
 			fecha: function(){
-				
 				const payload = { id_vendedor: this.getUsuarios.id, fecha1: this.fecha1, fecha2:this.fecha2}
 				this.busxFecha(payload)
 			}
@@ -211,9 +211,9 @@
     	}
   	},
 
-
 		methods:{
 			...mapActions('Compromisos'  ,['consultaCompromisoshechos']), // IMPORTANDO USO DE VUEX
+      ...mapGetters('Usuarios',['Salir']),
 
 			consultar(){ // CONSULTAR COMPROMISOS
 				var me = this; var id = this.getUsuarios.id

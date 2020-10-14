@@ -8,13 +8,17 @@ use Illuminate\Support\Facades\DB; //USAR ESCRITURA SQL
 class entregasController extends Controller
 {
     public function Entregas(Request $req){
-        $entregas = DB::select('SELECT e.id, e.id_compromiso, cli.nombre as nomcli, cli.direccion, cli.tel1, 
-                                       cli.tel2, e.fecha_entrega, e.hora_entrega, e.numfac, e.nummovim
-                                    FROM entregas e LEFT JOIN compromisos c ON e.id_compromiso = c.id
-                                                    LEFT JOIN clientes cli  ON c.id_cliente = cli.id
+        $entregas = DB::select('SELECT e.id, e.id_compromiso, cli.nombre as nomcli, cli.tel1, cli.tel2, 
+																			 e.fecha_entrega, e.hora_entrega, e.numfac, e.nummovim,
+																			 cli.direccion, cty.nombre as ciudad, cli.cp, eds.nombre as estado, p.nombre as pais
+																	FROM entregas e LEFT JOIN compromisos c ON e.id_compromiso = c.id
+																									LEFT JOIN clientes cli  ON c.id_cliente  = cli.id
+																									LEFT JOIN ciudades cty  ON cli.id_ciudad = cty.id
+																									LEFT JOIN estados  eds  ON cty.id_estado = eds .id
+																									LEFT JOIN paises  p     ON eds.id_pais   = p.id
 																WHERE e.id_chofer=? AND e.estatus = 0 ',[ $req -> id_chofer]);
 				return $entregas;
-    }
+		}
 
     public function NumeroMovim(Request $req){
         $numMovim = DB::update('UPDATE entregas SET nummovim=:nummovim 

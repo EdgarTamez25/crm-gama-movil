@@ -38,13 +38,14 @@
 			</v-container>	
 
 			<v-col cols="12" v-if="getCompromisos.length"> <!-- TABLA DE COMPROMISOS -->
-				<v-card flat>
+				<v-card outlined >
 					<v-data-table 
 					:headers="headers"
 					:items="getCompromisos"
-					height="500px"
+					:height="tamanioPantalla"
 					hide-default-footer
 					hide-default-header
+					disable-pagination
 					:loading ="Loading"
 					loading-text="Cargando... Por favor espere."
 				>
@@ -131,6 +132,8 @@
 
 		created(){
 			// ASIGNAR FECHA
+			if(!this.getUsuarios.id){ this.Salir() }
+			
 			this.fecha = this.traerFechaActual();
 			this.fechacomp = this.traerFechaActual();
 			// LLENAR COMPROMISOS
@@ -148,11 +151,31 @@
 
 		computed:{
 			...mapGetters('Compromisos'  ,['Loading','getCompromisos']), // IMPORTANDO USO DE VUEX 
-      ...mapGetters('Usuarios',['getUsuarios']),
+			...mapGetters('Usuarios',['getUsuarios']),
+			tamanioPantalla () {
+				switch (this.$vuetify.breakpoint.name) {
+					case 'xs':
+						return this.$vuetify.breakpoint.height -200
+					break;
+					case 'sm': 
+						return this.$vuetify.breakpoint.height -200
+					break;
+					case 'md':
+						return this.$vuetify.breakpoint.height -200
+					break;
+					case 'lg':
+						return this.$vuetify.breakpoint.height -200
+					break;
+					case 'xl':
+						return this.$vuetify.breakpoint.height -200
+					break;
+				}
+			},
 		},
 
 		methods:{
 			...mapActions('Compromisos'  ,['consultaCompromisos']), // IMPORTANDO USO DE VUEX
+      ...mapGetters('Usuarios',['Salir']),
 
 			consultar(){ // CONSULTAR COMPROMISOS
 				var me = this;
@@ -165,7 +188,6 @@
 				this.edit = items;
 				this.compromisoModal = true;
 			},
-		
 
 			editar(item){  // VER DETALLE DEL COMPROMISO
 				this.$router.push({name: 'det_compromiso', params:{ detalle:item }})

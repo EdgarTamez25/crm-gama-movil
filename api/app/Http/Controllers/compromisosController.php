@@ -11,48 +11,46 @@ class compromisosController extends Controller
 {
 
 	public function addcompromiso(Request $req){
-
+																				
 		$id = DB::table('compromisos')->insertGetId(
-			['id_vendedor'  => $req -> id_vendedor,  'tipo_compromiso' => $req -> tipo_compromiso,
-			 'id_categoria' => $req -> id_categoria, 'fecha' 					 => $req -> fecha,
-			 'hora' 			  => $req -> hora, 				 'fecha_fin'			 => $req -> fecha_fin,
-			 'hora_fin' 		=> $req -> hora_fin,		 'id_cliente' 		 => $req -> id_cliente,
-			 'fase_venta' 	=> $req -> fase_venta,   'id_usuario'      => $req -> id_vendedor ,  
-			 ]
+			[ 'id_vendedor'  => $req -> id_vendedor , 'tipo' 			 => $req -> tipo ,
+				'id_categoria' => $req -> id_categoria, 'id_cliente' => $req -> id_cliente, 
+				'fecha' 			 => $req -> fecha			  , 'hora' 		 	 => $req -> hora,		   
+				'obs'  			   => $req -> obs				  , 'fuente'     => $req -> fuente
+			]
 		);
 
-		$fecha 				 = $req -> fechaActual; 
-		$hora 				 = $req -> horaActual; 
-		$fase_venta 	 = $req -> fase_venta;
-		$numorden      = "";
-		$aceptado      = 0;
-		$obscierre     = "";
-		
-		$hisorial = $this->Historial($id, $fecha, $hora, $fase_venta, $numorden, $aceptado,$obscierre);
-		return "El compromiso se ha creado correctamente";
-		
-}
+		if($id):
+			return response("El compromiso se creo correctamente",200);
+		else:
+			return response("Ocurrio un problema. Intentelo nuevamente.",500);
+		endif;
+	}
 
 	public function CompromisosxVend(Request $request){
-		$compromisos = DB::select('SELECT c.id, c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
-																			c.fecha, c.hora, c.fecha_fin, c.hora_fin, c.id_cliente,cli.nombre as nomcli, cli.tel1, cli.tel2, c.comentarios, c.fase_venta, 
-																			c.id_usuario, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus, c.confirma_cita
+		$compromisos = DB::select('SELECT c.id, c.id_vendedor, v.nombre as nomvend, c.tipo, c.id_categoria, ca.nombre as nomcatego,
+																			c.fecha, c.hora, c.id_cliente,cli.nombre as nomcli, cli.tel1, cli.tel2, c.obs, 
+																			c.fuente, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus, c.confirma_cita
 																FROM compromisos c LEFT JOIN users v   	   ON v.id   = c.id_vendedor
 																									 LEFT JOIN categorias ca ON ca.id  = c.id_categoria
 																									 LEFT JOIN clientes  cli ON cli.id = c.id_cliente
-																									 LEFT JOIN users u       ON u.id   = c.id_usuario
-															WHERE c.id_vendedor =  ? AND c.fecha = ? AND c.cumplimiento =0', [$request -> id_vendedor, $request -> fecha]);
-
+																									 LEFT JOIN users u       ON u.id   = c.fuente
+															WHERE c.id_vendedor =  ? AND c.fecha = ? AND c.cumplimiento=0', [$request -> id_vendedor, $request -> fecha]);
 		return $compromisos;
 
 	}
 
 	public function Reagendar(Request $req){
-		$reagendacion = DB::update('UPDATE compromisos SET fecha=:fecha, hora=:hora, fecha_fin=:fecha_fin, 
-																											 hora_fin=:hora_fin, confirma_cita=:confirma_cita 
-																WHERE id=:id', ['fecha' 			  => $req -> fecha, 		'hora' 		 => $req -> hora, 
-																								'fecha_fin' 	  => $req -> fecha_fin, 'hora_fin' => $req -> hora_fin,
-																								'confirma_cita' => 0,  								'id' 			 => $req -> id]);
+		$reagendacion = DB::update('UPDATE compromisos SET fecha=:fecha, hora=:hora, obs=:obs, confirma_cita=:confirma_cita 
+																WHERE id=:id', ['fecha' => $req -> fecha,  'hora' 		     => $req -> hora, 
+																								'obs' 	=> $req -> obs   , 'confirma_cita' => 0,  								
+																								'id' 	  => $req -> id]);
+		if($reagendacion):
+			return response("El compromiso se reagendo correctamente",200);
+		else:
+			return response("Ocurrio un problema. Intentelo nuevamente.",500);
+		endif;
+
 		return "Reagendado correctamente.";
 	}
 
@@ -63,12 +61,6 @@ class compromisosController extends Controller
 		return "Cita confirmada correctamente.";
 	}
 
-	// public function EnRuta(Request $req){
-	// 	$enRuta = DB::update('UPDATE compromisos SET enruta=:enruta WHERE id=:id',
-	// 													['enruta' => $req -> enruta, 'id' => $req -> id ]);
-	// 	return "Compromiso en Ruta";
-	// }
-
 	public function CompromisosHechos(Request $req){
 		$compromisosH = DB::select('SELECT c.id, c.fecha, c.hora, c.id_cliente, cli.nombre as nomcli 
 																	FROM compromisos c LEFT JOIN clientes  cli ON cli.id = c.id_cliente
@@ -78,25 +70,21 @@ class compromisosController extends Controller
 	}
 
 	public function TerminarCompromiso(Request $req){
-		//DECLARAR VARIABLES A MANDAR
-		$id_compromiso = $req -> id; 
-		$fecha       = $req -> fecha_cierre; 
-		$hora        = $req -> hora_cierre; 
-		$fase_venta  = $req -> fase_venta;
-		$obscierre   = $req -> obscierre;
 
-		// if($fase_venta === 2): $obscierre = '';	else: $obs_usuario = ''; endif; // EVALUO EN QUE FASE LLEGA
+		$terminar = DB::update('UPDATE compromisos SET  fecha_cierre=:fecha_cierre,hora_cierre=:hora_cierre, 
+																									cumplimiento=:cumplimiento, obs_usuario=:obs_usuario
+																WHERE id=:id', [ 	
+																								'fecha_cierre' 	=> $req -> fecha_cierre, 
+																								'hora_cierre' 	=> $req -> hora_cierre,
+																								'cumplimiento'  => $req -> cumplimiento, 
+																								'obs_usuario'   => $req -> obs_usuario,						
+																								'id' 			 			=> $req -> id
+																								]);
 
-		if($hisorial1 = $this->HistorialCompromiso($id_compromiso, $fecha, $hora, $fase_venta, $obscierre )):
-			$terminar = DB::update('UPDATE compromisos SET fase_venta=:fase_venta, fecha_cierre=:fecha_cierre,hora_cierre=:hora_cierre, 
-																										cumplimiento=:cumplimiento, obs_usuario=:obs_usuario
-																	WHERE id=:id', ['fase_venta' 		=> $req -> fase_venta, 	
-																									'fecha_cierre' 	=> $req -> fecha_cierre, 
-																									'hora_cierre' 	=> $req -> hora_cierre,
-																									'cumplimiento'  => $req -> cumplimiento, 
-																									'obs_usuario'   => $req -> obs_usuario,						
-																									'id' 			 			=> $req -> id]);
-			return "Compromiso finalizado correctamente."; 
+		if($terminar):
+			return response("El compromiso se finalizo correctamente",200);
+		else:
+			return response("Ocurrio un problema. Intentelo nuevamente.",500);
 		endif;
 
 	}
@@ -131,16 +119,16 @@ class compromisosController extends Controller
 	}
 
 	//================================ FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================
-	public function HistorialCompromiso($id_compromiso, $fecha, $hora, $fase_venta, $obscierre){ // SOLO FUNCIONA PARA EL PROCESO DE TERMINAR COMPROMISO
-		$historial1 = DB::insert('INSERT INTO historial(id_compromiso,fecha,hora,fase_venta, obscierre)
-																VALUES(?,?,?,?,?)',[$id_compromiso, $fecha, $hora, $fase_venta, $obscierre]);
-		return $historial1;
-	}
+		public function HistorialCompromiso($id_compromiso, $fecha, $hora, $fase_venta, $obscierre){ // SOLO FUNCIONA PARA EL PROCESO DE TERMINAR COMPROMISO
+			$historial1 = DB::insert('INSERT INTO historial(id_compromiso,fecha,hora,fase_venta, obscierre)
+																	VALUES(?,?,?,?,?)',[$id_compromiso, $fecha, $hora, $fase_venta, $obscierre]);
+			return $historial1;
+		}
 
 	//================================ FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================
-	public function Historial($id_compromiso, $fecha, $hora, $fase_venta, $numorden, $aceptado, $obscierre){ // FUNCION GLOBAL FASE > 1
-		$historial = DB::insert('INSERT INTO historial(id_compromiso,fecha,hora,fase_venta,numorden,aceptado, obscierre)
-																VALUES(?,?,?,?,?,?,?)',[$id_compromiso, $fecha, $hora, $fase_venta,$numorden,$aceptado, $obscierre]);
-		return $historial;
-	}
+		public function Historial($id_compromiso, $fecha, $hora, $fase_venta, $numorden, $aceptado, $obscierre){ // FUNCION GLOBAL FASE > 1
+			$historial = DB::insert('INSERT INTO historial(id_compromiso,fecha,hora,fase_venta,numorden,aceptado, obscierre)
+																	VALUES(?,?,?,?,?,?,?)',[$id_compromiso, $fecha, $hora, $fase_venta,$numorden,$aceptado, $obscierre]);
+			return $historial;
+		}
 }

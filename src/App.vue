@@ -37,6 +37,19 @@
           </v-list-item>
         </template>
       </v-list>
+      <v-footer absolute color="celeste" v-if="descargar">
+        <span> {{ version_apk }}</span> <v-spacer></v-spacer>
+        <v-btn text small @click="descargar = false"> Actualizar </v-btn>
+      </v-footer>
+
+      <v-footer absolute color="rosa" v-else>
+        <span style="font-size:13px"> ¿Esta seguro de descargar la actualización?</span>
+        <v-btn color="gris"  small @click="descargar = true"><v-icon>clear</v-icon></v-btn>
+        <v-spacer></v-spacer>
+        <v-btn color="celeste" small > 
+          <a :href="apk_movil" style="text-decoration: none; color:white">Actualizar</a>
+        </v-btn>
+      </v-footer>
     </v-navigation-drawer>
       
     <!-- NAVBAR -->
@@ -84,12 +97,24 @@
                       dense
                       color="rosa"
                       :rules="contraRules"
+                      @keyup.enter="iniciarSesion"
                     ></v-text-field> <!-- CONTRASEÑA -->
                   </v-form>
+
                   <v-card-actions> <!-- INICIAR SESION -->
                     <v-spacer></v-spacer>
-                    <v-btn small color="celeste white--text"  :disabled="!valid" @click="iniciarSesion">Iniciar Sesión</v-btn> 
+
+                    <v-btn block 
+                           color="celeste white--text"  
+                           :disabled="!valid || iniciar" 
+                           @click="iniciarSesion"
+                           :loading="iniciar"
+                    >
+                      Iniciar Sesión
+                    </v-btn>
+
                   </v-card-actions>
+
                 </v-col>
               </v-row>
             </v-col>
@@ -111,6 +136,10 @@
     components:{
     },
     data: () => ({
+      apk_movil:'http://producciongama.com:8080/CRM-GAMA-MOVIL/crm-gama-movil.apk',
+      version_apk: 'v-1.0',
+      descargar: true,
+      iniciar: false,
       valid:true,
       lazy:false,
       correo: '',
@@ -131,7 +160,7 @@
             { text: 'Inicio'                ,path: '/'                , icon: 'home'                ,nivel:{vend:3, chofer:false}},
             { text: 'Compromisos'           ,path: 'compromisos'      , icon: 'chrome_reader_mode'  ,nivel:{vend:3, chofer:false}},
             { text: 'Proyectos Cotizados'   ,path: 'fases.venta'      , icon: 'business_center'     ,nivel:{vend:3, chofer:false}},
-            { text: 'Pendientes'            ,path: 'pendientes'       , icon: 'calendar_today'      ,nivel:{vend:3, chofer:false}},
+            // { text: 'Pendientes'            ,path: 'pendientes'       , icon: 'calendar_today'      ,nivel:{vend:3, chofer:false}},
             { text: 'Compromisos Realizados',path:'compromisos.hechos', icon:'assignment_turned_in' ,nivel:{vend:3, chofer:false} },
             { text: 'Entregas'              ,path:'entregas'          , icon:'airport_shuttle'      ,nivel:{vend:false, chofer:true}  },
             { text: 'Prospectos'            ,path: 'prospectos'       , icon: 'person'  ,nivel:{vend:3, chofer:false}},
@@ -142,6 +171,7 @@
     }),
 
     created(){
+      if(this.Logeado){ window.history.go(1)}
       const n =  new Date(); var y = n.getFullYear(); var m = n.getMonth() + 1; var d = n.getDate();
       var hora = n.getHours(); var minutos = n.getMinutes();
       if(hora<10){ hora = '0'+ hora }
@@ -160,6 +190,7 @@
       ...mapActions('Usuarios' ,['Login','Salir','Logear']),
       
       iniciarSesion(){
+        this.iniciar = true;
         var md5 = require('md5');
         var usuario = { correo: this.correo, 
                         usuario : this.correo.toUpperCase(),
@@ -185,7 +216,8 @@
           }
         }).catch(err =>{
           console.log('err', err)
-        })
+          this.snackbar=true; this.text ="Ocurrio un error.Verifica tus datos."
+        }).finally(() => this.iniciar = false) 
       },
 
       salir(){
