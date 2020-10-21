@@ -44,16 +44,45 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 //==================================== ACABADOS   ==================================================
     Route::get('acabados/{dx}'           ,'acabadosController@Acabados')           -> name('Acabados');
 //==================================== SOLICITUDES   ==================================================
-    Route::get('solicitudes'             ,'solicitudesController@Solicitudes')     -> name('Solicitudes');         //* PROBADA
+    Route::get('solicitudes'             ,'solicitudesController@solicitudes')     -> name('solicitudes');         //* PROBADA
     Route::post('add.Solicitud'          ,'solicitudesController@addSolicitud')    -> name('addSolicitud');        //* PROBADA
-    Route::put('update.Solicitud/{id}'   ,'solicitudesController@UpdateSolicitud') -> name('UpdateSolicitud');     //* PROBADA
-
+    Route::put('update.Solicitud/{id}'   ,'solicitudesController@UpdateSolicitud') -> name('UpdateSolicitud');     //! PROBADA
 //==================================== DETALLE DE SOLICITUD  ==================================================
     Route::get('detSolicitud'            ,'detSolicitudController@detSolicitud')   -> name('detSolicitud');             //* PROBADA
     Route::post('add.DetSolicitud'       ,'detSolicitudController@addDetSolicitud')-> name('addDetSolicitud');          //* PROBADA
     Route::put('Update.DetSolicitud/{id}','detSolicitudController@UpdateDetSolicitud') -> name('UpdateDetSolicitud');   //! PROBADA
-
-
+//==================================== DETALLE DE FLEXOGRAFÍA   ==================================================
+    Route::get('detFlexografia'         ,'detFlexografiaController@detFlexografia') -> name('detFlexografia');     //! PROBADA
+    Route::post('add.DetFlexo'          ,'detFlexografiaController@addDetFlexo')    -> name('addDetFlexo');        //! PROBADA
+    Route::put('update.DetFlexo/{id}'   ,'detFlexografiaController@UpdateDetFlexo') -> name('UpdateDetFlexo');     //! PROBADA
+//==================================== DETALLE DE DIGITAL   ==================================================
+    Route::get('detDigital'              ,'detDigitalController@detDigital')       -> name('detDigital');          //! PROBADA
+    Route::post('add.DetDigital'         ,'detDigitalController@addDetDigital')    -> name('addDetDigital');       //! PROBADA
+    Route::put('update.DetDigital/{id}'  ,'detDigitalController@UpdateDetDigital') -> name('UpdateDetDigital');    //! PROBADA
+//==================================== DETALLE DE BORDADOS   ==================================================
+    Route::get('detBordados'             ,'detBordadosController@detBordados')     -> name('detBordados');         //! PROBADA
+    Route::post('add.DetBordados'        ,'detBordadosController@addSolicitud')    -> name('addSolicitud');        //! PROBADA
+    Route::put('update.DetBordados/{id}' ,'detBordadosController@UpdateSolicitud') -> name('UpdateSolicitud');     //! PROBADA
+//==================================== DETALLE DE OFFSET   ==================================================
+    Route::get('det.detOffset'           ,'detOffsetController@detOffset')       -> name('detOffset');           //! PROBADA
+    Route::post('add.DetOffset'          ,'detOffsetController@addDetOffset')    -> name('addDetOffset');        //! PROBADA
+    Route::put('update.DetOffset/{id}'   ,'detOffsetController@UpdateDetOffset') -> name('UpdateDetOffset');     //! PROBADA
+//==================================== DETALLE DE SERIGRAFIA   ==================================================
+    Route::get('detSerigrafia'           ,'detSerigrafiaController@detSerigrafia')       -> name('detSerigrafia');           //! PROBADA
+    Route::post('add.DetSerigrafia'      ,'detSerigrafiaController@addDetSerigrafia')    -> name('addDetSerigrafia');        //! PROBADA
+    Route::put('update.Solicitud/{id}'   ,'detSerigrafiaController@UpdateDetSerigrafia') -> name('UpdateDetSerigrafia');     //! PROBADA
+//==================================== DETALLE DE SUBLIMACIÓN   =================================================
+    Route::get('detSublimacion'               ,'detSublimacionController@detSublimacion')       -> name('detSublimacion');           //! PROBADA
+    Route::post('add.DetSublimacion'          ,'detSublimacionController@addDetSublimacion')    -> name('addDetSublimacion');        //! PROBADA
+    Route::put('update.DetSublimacion/{id}'   ,'detSublimacionController@UpdateDetSublimacion') -> name('UpdateDetSublimación');     //! PROBADA
+//==================================== SUAJES   =================================================
+    Route::get('suajes'                 ,'suajesController@Suajes')       -> name('suajes');           //! PROBADA
+    Route::post('add.Suajes'            ,'suajesController@addSuajes')    -> name('addSuajes');        //! PROBADA
+    Route::put('update.Solicitud/{id}'  ,'suajesController@UpdateSuajes') -> name('UpdateSuajes');     //! PROBADA
+//==================================== PLECAS   =================================================
+    Route::get('plecas'               ,'plecasController@plecas')       -> name('plecas');           //! PROBADA
+    Route::post('add.Plecas'          ,'plecasController@addPlecas')    -> name('addPlecas');        //! PROBADA
+    Route::put('update.Plecas/{id}'   ,'plecasController@UpdatePlecas') -> name('UpdatePlecas');     //! PROBADA
 	//  Route::get('compromisos.hechos/{id}'  ,'compromisosController@CompromisosHechos')   -> name('CompromisosHechos');
 // 	Route::post('en.ruta'          ,'compromisosController@EnRuta')             -> name('EnRuta');
 
