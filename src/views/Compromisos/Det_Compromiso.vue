@@ -1,39 +1,43 @@
 <template>
 	<v-content class="pa-0">
 		<v-row >
-			<v-snackbar v-model="snackbar" :timeout="1000" top :color="color"> {{text}} 
-				<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
+			<v-snackbar v-model="snackbar" multi-line :timeout="2000" top :color="color"> {{text}}
+				<template v-slot:action="{ attrs }">
+					<v-btn color="white" text @click="snackbar = false" v-bind="attrs"> Cerrar </v-btn>
+				</template>
 			</v-snackbar>
-
-			<v-card-actions class="mx-3 pa-0"> <!-- TITILO DE LA VISTA -->
-				<v-btn color="gris" dark x-small icon onClick="history.go(-1); return false;">
-					<v-icon large >mdi-arrow-left-thick</v-icon>
+			<!--//! TITILO DE LA VISTA -->
+			<v-card-actions class="mx-3 pa-0"> 
+				<v-btn color="gris" dark small fab onClick="history.go(-1); return false;">
+					<v-icon  >mdi-arrow-left-thick</v-icon>
 				</v-btn>
-				<v-card-title class="font-weight-medium font-weight-black">Detalle del Compromiso</v-card-title>	
+				<v-card-title class="font-weight-medium">Detalle del Compromiso</v-card-title>	
 			</v-card-actions>
-		
-		  <v-card-text  > <!-- DETALLE DEL PROSPECTO -->
+			<!--//! DETALLE DEL PROSPECTO -->
+		  <v-card-text  class="my-0 py-0"> 
 				<v-row justify="center" >
-					<v-col cols="12" class="pa-2">
+					<v-col cols="12" class="pa-1">
 					  <v-card outlined>
 						  <v-simple-table dense >
 						    <template v-slot:default>
-						      <tbody>
-										<tr>
-                      <td style="font-weight:bold">Cliente</td>
-											<td > {{ detalle.nomcli }}</td>
+						      <tbody >
+										<tr >
+                      <td class="font-weight-black">Cliente</td>
+											<td class="overline "> {{ detalle.nomcli }}</td>
                     </tr>
                     <tr>
-                      <td style="font-weight:bold">Catégoria</td>
-						          <td >{{ detalle.nomcatego }}</td>
+                      <td class="font-weight-black">Catégoria</td>
+						          <td class="overline">{{ detalle.nomcatego }}</td>
                     </tr>
 										<tr>
-                      <td style="font-weight:bold">Hora</td>
-											<td > {{ detalle.hora }} </td>
+                      <td class="font-weight-black">Hora</td>
+											<td class="overline">
+												{{ detalle.hora >='12:00'? detalle.hora +' '+'pm': detalle.hora+ ' '+'am' }}
+											</td>
                     </tr>
 										<tr>
-                      <td style="font-weight:bold">Comentarios</td>
-											<td > {{ detalle.obs }}</td>
+                      <td class="font-weight-black">Comentarios</td>
+											<td class="overline"> {{ detalle.obs }}</td>
                     </tr>
 						      </tbody>
 						    </template>
@@ -43,33 +47,33 @@
 					</v-col>
 				</v-row>
       </v-card-text>
-		
-			<v-col cols="6" align="center"> <!-- TELEFONO 1 -->
+			<!--//! TELEFONO 1 -->
+			<v-col cols="6" align="center" v-if="!tSolicitudes "> 
 				<v-btn  color="info" outlined block :disabled="detalle.tel1 === '' "><v-icon left>phone</v-icon>
 						<a :href="`tel:${detalle.tel1}`" style="text-decoration:none;">{{ detalle.tel1? detalle.tel1: '00-00-00' }}</a>
-						<!-- <a :href="`tel:${detalle.tel1}`">{{phone}}</a>  -->
+						<!--<a :href="`tel:${detalle.tel1}`">{{phone}}</a>  -->
 					</v-btn>
 			</v-col>
-
-			<v-col cols="6" align="center" > <!-- TELEFONO 2 -->
+			 <!--//! TELEFONO 2 -->
+			<v-col cols="6" align="center" v-if="!tSolicitudes">
 				<v-btn  color="info" outlined block :disabled="detalle.tel2 === '' "><v-icon left>phone</v-icon>
 					<a :href="`tel:${detalle.tel2}`" style="text-decoration:none;">{{ detalle.tel2? detalle.tel2: '00-00-00' }}</a>
 				</v-btn>
 			</v-col>
-
-			<v-col cols="12" align="center"> <!-- CONFIRMAR CITA  -->
+			<!--//! CONFIRMAR CITA  -->
+			<v-col cols="12" align="center" v-if="!tSolicitudes"> 
 				<v-btn color="red darken-4" :disabled="dialog" persistent :loading="dialog" block 
 																		 dark  @click="confirmarModal = true" v-if="citaConfirmada === 0" >
 					CONFIRMAR CITA
 				</v-btn>
 				<v-btn color="green" block dark  v-else > CITA CONFIRMADA </v-btn>
 			</v-col>
-
-			<v-col cols="12" v-if="!activaReagendar" align="center"> <!-- REAGENDAR -->
+			<!--//! REAGENDAR -->
+			<v-col cols="12" v-if="!activaReagendar && !tSolicitudes" align="center"> 
 				<v-btn color="morado" block dense dark @click="activaReagendar= true"> Reagendar </v-btn>
 			</v-col>
-
-			<v-col cols="6" v-if="activaReagendar"> <!-- FECHA DE COMPROMISO -->
+			<!--//! FECHA DE COMPROMISO -->
+			<v-col cols="6" v-if="activaReagendar"> 
 				<v-dialog ref="fecha_compromiso" v-model="fechamodal" :return-value.sync="fecha" persistent width="290px">
 					<template v-slot:activator="{ on }">
 						<v-text-field
@@ -84,8 +88,8 @@
 					</v-date-picker>
 				</v-dialog>
 			</v-col>
-
-			<v-col cols="6" v-if="activaReagendar"> <!-- HORA DEL COMPROMISO -->
+			<!--//! HORA DEL COMPROMISO -->
+			<v-col cols="6" v-if="activaReagendar"> 
 				<v-dialog ref="hora_compromiso" v-model="horamodal" :return-value.sync="hora" persistent width="290px" >
 
 					<template v-slot:activator="{ on }">
@@ -102,14 +106,15 @@
 					</v-time-picker>
 				</v-dialog>
 			</v-col>
-			<v-col cols="12" v-if="activaReagendar"> <!-- COMENARIO -->
+			<!--//! COMENARIO -->
+			<v-col cols="12" v-if="activaReagendar"> 
 				<v-textarea
 					v-model ="obs" outlined label="Comentario" placeholder="Agregar un comentario ..."
 					rows="2" hide-details dense color="celeste"
 				></v-textarea>
 			</v-col>
-
-			<v-col cols="12" v-if="activaReagendar"> <!-- CANCELAR REAGENDADO * AGENDADO  -->
+			<!-- //! CANCELAR REAGENDADO * AGENDADO  -->
+			<v-col cols="12" v-if="activaReagendar"> 
 				<v-card-actions>
 					<v-btn small dark color="gris" @click="activaReagendar=false"> Cancelar </v-btn>
 					<v-spacer></v-spacer>
@@ -117,22 +122,22 @@
 				</v-card-actions>
 			</v-col>
 		</v-row>
-		<!-- OPCIONES DE ACCION **FINALIZAR**SOLICITAR-PEDIDO*** -->
-		<v-row justify="center" v-if="citaConfirmada===1 && !Terminar" >
+		<!-- //! OPCIONES DE ACCION **FINALIZAR**SOLICITAR-PEDIDO*** -->
+		<v-row justify="center" v-if="citaConfirmada===1 && !Terminar && !tSolicitudes"  >
 			<v-col cols="6" class="text-center" >
 				<v-btn color="rosa" large dark outlined style="height:100px; width:150px" @click="Terminar=true" href="#fase"> 
 					Finalizar <br> compromiso
 				</v-btn>
 			</v-col>
 			<v-col cols="6" class="text-center" >
-				<v-btn color="celeste" large dark outlined style="height:100px; width:150px" @click="solicitarModal=true"> 
+				<v-btn color="celeste" large dark outlined style="height:100px; width:150px" @click="tSolicitudes = true" href="#fase"> 
 					Solicitar <br> pedido 
 				</v-btn>
 			</v-col>
 		</v-row>
 			
-<!-- CAPTURA DE RESULTADOS -->
-		<v-row v-if="Terminar"> 
+		<!-- //!CAPTURA DE RESULTADOS -->
+		<v-row v-if="Terminar && !tSolicitudes"> 
 			<v-col cols="12" align="center" class="font-weight-black "> RESULTADO DEL COMPROMISO </v-col>
 			<v-col cols="12" md="6"> <!-- OBSERVACIONES -->
 				<v-textarea
@@ -149,34 +154,130 @@
 			</v-col>
 		</v-row>
 
+		<!-- //!TABLA DE SOLICITUDES -->
+		<v-row v-if="!Terminar && tSolicitudes">
+			<v-col cols="12">
+				<v-card-text class="font-weight-black my-0 py-0 subtitle-1" align="center">SOLICITUD DE PEDIDO</v-card-text>
+				<v-btn color="orange" block dark @click="verDetalle(1)"> AGREGAR PRODUCTO </v-btn>
+			</v-col>
+			<v-col cols="12">
+				<v-card outlined>
+					<v-card-text v-if="!getSolicitudes.length"> No se a registrado ningun producto </v-card-text>
+					<v-simple-table v-else>
+						<template v-slot:default>
+							<thead>
+								<tr>
+									<th class="text-left"> Referencia </th>
+									<th class="text-left"></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(item,i) in getSolicitudes" :key="i" >
+									<td class="font-weight-black">{{ item.referencia }}</td>
+									<td align="right">
+										<v-btn small color="success" class="mx-1"  @click="verDetalle(2,item)"> <v-icon>mdi-pencil</v-icon> </v-btn>
+										<v-btn small color="error" class="mx-1" @click="EliminarProducto(item.id)"> <v-icon>mdi-delete</v-icon> </v-btn>
+									</td>
+								</tr>
+							</tbody>
+						</template>
+					</v-simple-table>
+				</v-card>
+			</v-col>
+			<!-- //!BOTON PARA GUARDAR INFORMACION -->
+			<v-col cols="12" align="right" class="mt-0" > 
+				<v-card-actions>
+					<v-btn color="gris" dark  small @click="tSolicitudes = false">Cancelar</v-btn> <v-spacer></v-spacer> 
+					<v-btn color="celeste" dark  small @click="">Guardar Información</v-btn> 
+				</v-card-actions>
+			</v-col>
+		</v-row>
+
+		<!-- // !ESTE ES EL BUENO ECHALE GANAS PARA ENTENDERLE TE QUIERO MUCHO -->
 		<v-dialog v-model="solicitarModal" persistent max-width="400">
 			<v-card class="pa-4 ">
         <v-card-text class="font-weight-black my-1 " align="center">SOLICITUD DE PEDIDO</v-card-text>
+				<!-- //! SELECCION DEL DEPARTAMENTO  -->
 				<v-select
-						v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste"
+						v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" v-if="modoVista === 1"
 						dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"
 				></v-select> 
-				<v-text-field 
-					v-model="referencia" 
-					hide-details dense 
-					label="PRODUCTO" 
-					filled color="celeste" 
-					class="mt-1 font-weight-black"
+					<v-select
+						v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" v-else 
+						dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled 
+				></v-select> 
+				
+				<!-- //! FORMULARIOS  -->
+				
+				<flexografia 
+					:depto_id="depto.id" 
+					:modoVista="modoVista"
+					:parametros="parametros"
+					@modal="solicitarModal = $event" 
+					v-if="activaFormulario===1"
 				/>
-
-				<flexografia :depto_id="depto.id" @modal="solicitarModal = $event" v-if="activaFormulario===1"/>
-				<bordados    :depto_id="depto.id" @modal="solicitarModal = $event" v-if="activaFormulario===2"/>
-				<digital     :depto_id="depto.id" @modal="solicitarModal = $event" v-if="activaFormulario===3"/>
-				<offset 		 :depto_id="depto.id" @modal="solicitarModal = $event" v-if="activaFormulario===4"/>
-				<serigrafia  :depto_id="depto.id" @modal="solicitarModal = $event" v-if="activaFormulario===5"/>
-				<empaque 		 :depto_id="depto.id" @modal="solicitarModal = $event" v-if="activaFormulario===6"/>
-				<sublimacion :depto_id="depto.id" @modal="solicitarModal = $event" v-if="activaFormulario===7"/>
-				<tampografia :depto_id="depto.id" @modal="solicitarModal = $event" v-if="activaFormulario===8"/>
-				<uv 				 :depto_id="depto.id" @modal="solicitarModal = $event" v-if="activaFormulario===9"/>
+				<bordados    
+					:depto_id="depto.id" 
+					:modoVista="modoVista"
+					:parametros="parametros"
+					@modal="solicitarModal = $event" 
+					v-if="activaFormulario===2"
+				/>
+				<digital     
+					:depto_id="depto.id" 
+					:modoVista="modoVista"
+					:parametros="parametros"
+					@modal="solicitarModal = $event" 
+					v-if="activaFormulario===3"
+				/>
+				<!-- //TODO -- OFSET FALTANTE -->
+				<offset 		 
+					:depto_id="depto.id" 
+					:modoVista="modoVista"
+					:parametros="parametros"
+					@modal="solicitarModal = $event" 
+					v-if="activaFormulario===4"
+				/>
+				<serigrafia  
+					:depto_id="depto.id" 
+					:modoVista="modoVista"
+					:parametros="parametros"
+					@modal="solicitarModal = $event" 
+					v-if="activaFormulario===5"
+				/>
+				<!-- //TODO -- EMPAQUE FALTANTE -->
+				<empaque 		 
+					:depto_id="depto.id" 
+					:modoVista="modoVista"
+					:parametros="parametros"
+					@modal="solicitarModal = $event" 
+					v-if="activaFormulario===6"
+				/>
+				<sublimacion 
+					:depto_id="depto.id" 
+					:modoVista="modoVista"
+					:parametros="parametros"
+					@modal="solicitarModal = $event" 
+					v-if="activaFormulario===7"
+				/>
+				<!-- <tampografia 
+					:depto_id="depto.id" 
+					:modoVista="modoVista"
+					:parametros="parametros"
+					@modal="solicitarModal = $event" 
+					v-if="activaFormulario===8"
+				/> -->
+				<uv 				 
+					:depto_id="depto.id" 
+					:modoVista="modoVista"
+					:parametros="parametros"
+					@modal="solicitarModal = $event" 
+					v-if="activaFormulario===9"
+				/>
 			</v-card>
 		</v-dialog>
 
-		<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
+		<!-- //!DIALOG PARA GUARDAR LA INFORMACION -->
 		<v-card-actions>
 			<v-dialog v-model="dialog" hide-overlay persistent width="300">
 				<v-card color="blue darken-4" dark >
@@ -192,8 +293,8 @@
 				</v-card>
 			</v-dialog>
 		</v-card-actions>
-<!--  -->
-		<v-dialog v-model="confirmarModal" persistent max-width="400" > <!-- PROCESO PARA CONFIRMACION  -->
+		<!-- //!PROCESO PARA CONFIRMACION  -->
+		<v-dialog v-model="confirmarModal" persistent max-width="400" > 
 			<v-card>
 				<v-col cols="12"  class="pa-4">
 					<strong >LA CITA SE CONFIRMARA, ¿ESTA SEGURO DE SEGUIR ?</strong>
@@ -204,9 +305,10 @@
 					<v-btn color="rosa" dark small @click="confirmarCita">Seguir </v-btn>
 				</v-card-actions>
 			</v-card>
-		</v-dialog> <!-- FIN DEL PROCESO PARA CONFIRMAR  -->
+		</v-dialog> 
 
-		<v-dialog v-model="terminarCompromiso" persistent max-width="400" > <!-- PROCESO PARA TERMINAR COMPROMISO  -->
+		<!--//!PROCESO PARA TERMINAR COMPROMISO  -->
+		<v-dialog v-model="terminarCompromiso" persistent max-width="400" > 
 			<v-card>
 				<v-col cols="12" class="pa-4">
 					<strong >EL COMPROMISO SE FINALIZARA </strong> <br> ¿Esta seguro de continuar?
@@ -217,7 +319,7 @@
 					<v-btn color="rosa" dark small @click="GuardarInfo">Continuar</v-btn>
 				</v-card-actions>
 			</v-card>
-		</v-dialog> <!-- FIN DEL PROCESO PARA TERMINAR  -->
+		</v-dialog> 
 		<div id="fase"></div>
 	</v-content>
 </template>
@@ -233,7 +335,7 @@
 	import serigrafia  from '@/views/Formularios/serigrafia.vue'
 	import empaque	 	 from '@/views/Formularios/empaque.vue'
 	import sublimacion from '@/views/Formularios/sublimacion.vue'
-	import tampografia from '@/views/Formularios/tampografia.vue'
+	// import tampografia from '@/views/Formularios/tampografia.vue'
 	import uv 				 from '@/views/Formularios/uv.vue'
 	
 	export default {
@@ -246,12 +348,11 @@
 			serigrafia,
 			empaque,
 			sublimacion,
-			tampografia,
+			// tampografia,
 			uv
 		},
 		data(){
 			return{
-				referencia  			: '',
 				fase_venta  			: '',
 				obs_usuario 			: '',
 				obs         			: '',
@@ -268,16 +369,17 @@
 				activaReagendar   : false,
 				confirmarModal    : false,
 				// FORMLARIOS
-				solicitarModal    : false,
+				tSolicitudes      : false,
+				solicitarModal    : false, // !ABRE EL MODAL PARA FORMULARIOS
 				activaFormulario  : 1,
 				parametros        : '',
-				modoVista         : 0,
+				modoVista         : 1,
 				depto             : { id:1, nombre:'FLEXOGRAFÍA'},
 				deptos            : [],
 				// ALERTAS
 				snackbar          : false,
 				text		          : '',
-				color		          : 'green',
+				color		          : 'error',
 				dialog            : false,
 				textDialog        : "Guardando Información",
 				Correcto          : false,
@@ -301,11 +403,24 @@
 			}
 		},
 		computed:{ 
-			// ...mapGetters('Compromisos'  ,['Loading','getCompromisos']),  
+			...mapGetters('Solicitudes'  ,['getSolicitudes']),  
 		},
 
 		methods:{
 			...mapActions('Compromisos'  ,['consultaCompromisos']),// IMPORTANDO USO DE VUEX
+		  ...mapActions('Solicitudes'  ,['eliminaProducto']),
+			verDetalle(modo,item){
+				if(modo === 2){  this.depto = { id: item.dx , nombre: this.deptos[item.dx].nombre} };
+				this.solicitarModal = true;
+				this.parametros 		= item;
+				this.modoVista      = modo; 
+			},
+
+			EliminarProducto(id){
+        this.eliminaProducto(id).then( res =>{
+          if(res){ this.snackbar = true; this.text ="El producto se elimino correctamente." }
+        })
+      },
 
 			confirmarCita(){
 				this.confirmarModal = false; 	this.dialog = true ; 					// ACTIVAR DIALOGOS DE GUARDAR
@@ -319,9 +434,9 @@
 
 			validaFechas(){
 				var fi = this.fecha + " " + this.hora; 	var ff = this.traerFechaActual() + " " + this.traerHoraActual();
-				if(!this.fecha)			{ this.snackbar=true;this.color="error";this.text="No puedes omitir la FECHA INICIAL"	; return}
-				if(!this.hora)			{ this.snackbar=true;this.color="error";this.text="No puedes omitir la HORA INICIAL"	; return}
-				if(ff > fi){ this.snackbar=true; this.color="error"; this.text="La FECHA Y HORA del compromiso no puede ser antes de la actual."; return};
+				if(!this.fecha)			{ this.snackbar=true;this.text="No puedes omitir la FECHA INICIAL"	; return}
+				if(!this.hora)			{ this.snackbar=true;this.text="No puedes omitir la HORA INICIAL"	; return}
+				if(ff > fi){ this.snackbar=true;; this.text="La FECHA Y HORA del compromiso no puede ser antes de la actual."; return};
 				this.reagendar()
 			},
 
@@ -347,7 +462,7 @@
 			},
 	
 			validaInfo(){
-				if(!this.obs_usuario){ this.snackbar=true; this.color="error"; 
+				if(!this.obs_usuario){ this.snackbar=true;; 
 															 this.text="Debes agregar alguna OBSERVACIÓN DEL COMPROMISO."; return}
 				this.terminarCompromiso = true;
 			},
