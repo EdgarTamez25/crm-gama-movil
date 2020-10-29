@@ -1,14 +1,17 @@
 <template>
 	<v-content class="pa-0">
 		<v-row >
+			<!-- //! SNACK BAR  -->
 			<v-snackbar v-model="snackbar" multi-line :timeout="2000" top :color="color"> {{text}}
 				<template v-slot:action="{ attrs }">
 					<v-btn color="white" text @click="snackbar = false" v-bind="attrs"> Cerrar </v-btn>
 				</template>
 			</v-snackbar>
+			
 			<!--//! TITILO DE LA VISTA -->
 			<v-card-actions class="mx-3 pa-0"> 
-				<v-btn color="gris" dark small fab onClick="history.go(-1); return false;">
+				<v-btn color="gris" dark small fab @click="evualuaRetorno()">
+					<!-- onClick="history.go(-1); return false;" -->
 					<v-icon  >mdi-arrow-left-thick</v-icon>
 				</v-btn>
 				<v-card-title class="font-weight-medium">Detalle del Compromiso</v-card-title>	
@@ -184,11 +187,18 @@
 					</v-simple-table>
 				</v-card>
 			</v-col>
+
+			<v-col cols="12" class="py-1 my-0 pb-0">
+				<v-textarea
+					v-model="nota" outlined rows="2" label="Comentario" placeholder="Agrega un comentario..."
+        ></v-textarea>
+			</v-col>
+
 			<!-- //!BOTON PARA GUARDAR INFORMACION -->
-			<v-col cols="12" align="right" class="mt-0" > 
+			<v-col cols="12" align="right" class="py-0 my-0" > 
 				<v-card-actions>
 					<v-btn color="gris" dark  small @click="tSolicitudes = false">Cancelar</v-btn> <v-spacer></v-spacer> 
-					<v-btn color="celeste" dark  small @click="">Guardar Información</v-btn> 
+					<v-btn color="celeste" dark  small @click="validaInfo">Guardar Información</v-btn> 
 				</v-card-actions>
 			</v-col>
 		</v-row>
@@ -208,7 +218,6 @@
 				></v-select> 
 				
 				<!-- //! FORMULARIOS  -->
-				
 				<flexografia 
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
@@ -216,13 +225,13 @@
 					@modal="solicitarModal = $event" 
 					v-if="activaFormulario===1"
 				/>
-				<bordados    
+				<!-- <bordados    
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
 					:parametros="parametros"
 					@modal="solicitarModal = $event" 
 					v-if="activaFormulario===2"
-				/>
+				/> -->
 				<digital     
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
@@ -231,22 +240,22 @@
 					v-if="activaFormulario===3"
 				/>
 				<!-- //TODO -- OFSET FALTANTE -->
-				<offset 		 
+				<!-- <offset 		 
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
 					:parametros="parametros"
 					@modal="solicitarModal = $event" 
 					v-if="activaFormulario===4"
-				/>
-				<serigrafia  
+				/> -->
+				<!-- <serigrafia  
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
 					:parametros="parametros"
 					@modal="solicitarModal = $event" 
 					v-if="activaFormulario===5"
-				/>
+				/> -->
 				<!-- //TODO -- EMPAQUE FALTANTE -->
-				<empaque 		 
+				<!-- <empaque 		 
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
 					:parametros="parametros"
@@ -259,7 +268,7 @@
 					:parametros="parametros"
 					@modal="solicitarModal = $event" 
 					v-if="activaFormulario===7"
-				/>
+				/> -->
 				<!-- <tampografia 
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
@@ -267,17 +276,17 @@
 					@modal="solicitarModal = $event" 
 					v-if="activaFormulario===8"
 				/> -->
-				<uv 				 
+				<!-- <uv 				 
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
 					:parametros="parametros"
 					@modal="solicitarModal = $event" 
 					v-if="activaFormulario===9"
-				/>
+				/> -->
 			</v-card>
 		</v-dialog>
 
-		<!-- //!DIALOG PARA GUARDAR LA INFORMACION -->
+		<!-- //!MODAL PARA GUARDAR LA INFORMACION -->
 		<v-card-actions>
 			<v-dialog v-model="dialog" hide-overlay persistent width="300">
 				<v-card color="blue darken-4" dark >
@@ -316,40 +325,57 @@
 				<v-card-actions>
 					<v-spacer></v-spacer>
 					<v-btn color="gris" text small @click="terminarCompromiso = false">Cancelar</v-btn>
-					<v-btn color="rosa" dark small @click="GuardarInfo">Continuar</v-btn>
+					<v-btn color="rosa" dark small @click="EnviarSolicitud()" v-if="tSolicitudes">Continuar</v-btn>
+					<v-btn color="rosa" dark small @click="EnviarResultado()" v-else>Continuar</v-btn>
 				</v-card-actions>
 			</v-card>
 		</v-dialog> 
+
+		<!-- //!ALERTA DE CONTENIDO -->
+		<v-dialog v-model="alertaDeContenido" persistent max-width="500">
+			<v-card class="pa-1" >
+				<v-card-title class="subtitle-1 font-weight-black"> HAY UNA SOLICITUD PENDIENTE  </v-card-title>
+				<v-card-subtitle class="subtitle-2 font-weight-black">¿ESTA SEGURO DE QUERER REGRESAR?</v-card-subtitle>
+				<v-divider class="my-0 py-3 " ></v-divider>
+				<v-card-subtitle align="center" class="red--text font-weight-bold "> SE PERDERA TODA LA INFORMACIÓN </v-card-subtitle>
+				<v-divider class="my-0 py-2 "></v-divider>
+				<v-card-actions>
+					<v-spacer/>
+					<v-btn dark outlined color="gris" @click="alertaDeContenido = false">Cancelar</v-btn>
+					<v-btn dark color="rosa" @click="volverAtras()" >Confirmar</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
 		<div id="fase"></div>
 	</v-content>
 </template>
 
 <script>
-	import {mapGetters, mapActions} from 'vuex'
 	var moment = require('moment'); 
+	import {mapGetters, mapActions} from 'vuex'
 	import metodos     from '@/mixins/metodos.js'
 	import flexografia from '@/views/Formularios/flexografia.vue'
-	import bordados    from '@/views/Formularios/bordados.vue'
+	// import bordados    from '@/views/Formularios/bordados.vue'
 	import digital     from '@/views/Formularios/digital.vue'
-	import offset      from '@/views/Formularios/offset.vue'
-	import serigrafia  from '@/views/Formularios/serigrafia.vue'
-	import empaque	 	 from '@/views/Formularios/empaque.vue'
-	import sublimacion from '@/views/Formularios/sublimacion.vue'
+	// import offset      from '@/views/Formularios/offset.vue'
+	// import serigrafia  from '@/views/Formularios/serigrafia.vue'
+	// import empaque	 	 from '@/views/Formularios/empaque.vue'
+	// import sublimacion from '@/views/Formularios/sublimacion.vue'
 	// import tampografia from '@/views/Formularios/tampografia.vue'
-	import uv 				 from '@/views/Formularios/uv.vue'
+	// import uv 				 from '@/views/Formularios/uv.vue'
 	
 	export default {
 		mixins:[metodos],
 		components: {
 			flexografia,
-			bordados,
+			// bordados,
 			digital,
-			offset,
-			serigrafia,
-			empaque,
-			sublimacion,
+			// offset,
+			// serigrafia,
+			// empaque,
+			// sublimacion,
 			// tampografia,
-			uv
+			// uv
 		},
 		data(){
 			return{
@@ -359,6 +385,7 @@
 				Terminar    			: false,
 				citaConfirmada    : null,
 				terminarCompromiso: false,
+				nota 						  : '',
 				// MANEJO DE FECHAS
 				fecha						  : new Date().toISOString().substr(0, 10),
 				fechamodal 			  : false,
@@ -366,8 +393,9 @@
 				hora 					    : null,
         horamodal			    : false,
 				hora_compromiso   : false,
-				activaReagendar   : false,
-				confirmarModal    : false,
+				activaReagendar   : false, // MODAL DE REAGENDACION
+				confirmarModal    : false, // MODAL DE CONFIRMACION
+				alertaDeContenido : false, // MODAL DE ALERTA DE CONTENIDO 
 				// FORMLARIOS
 				tSolicitudes      : false,
 				solicitarModal    : false, // !ABRE EL MODAL PARA FORMULARIOS
@@ -389,6 +417,7 @@
 
 		created(){
 			if(!this.$route.params.detalle){  window.history.go(-1); } // SI NO OBTENGO LA INFORMACION RETORNO VISTA.
+			this.vaciaSolicitudes()
 			moment.locale('es') 														           // INICIAR MOMENT 
 			this.fecha          = this.traerFechaActual();             // ASIGNAR FECHA ACTUAL
 			this.hora           = this.traerHoraActual(); 	           // ASIGNAR HORA ACTUAL
@@ -408,9 +437,10 @@
 
 		methods:{
 			...mapActions('Compromisos'  ,['consultaCompromisos']),// IMPORTANDO USO DE VUEX
-		  ...mapActions('Solicitudes'  ,['eliminaProducto']),
+		  ...mapActions('Solicitudes'  ,['eliminaProducto','vaciaSolicitudes']),
 			verDetalle(modo,item){
-				if(modo === 2){  this.depto = { id: item.dx , nombre: this.deptos[item.dx].nombre} };
+				// console.log('verdetalle otro', this.deptos[item.dx].nombre)
+				if(modo === 2){  this.depto = { id: item.dx } };
 				this.solicitarModal = true;
 				this.parametros 		= item;
 				this.modoVista      = modo; 
@@ -462,35 +492,88 @@
 			},
 	
 			validaInfo(){
-				if(!this.obs_usuario){ this.snackbar=true;; 
-															 this.text="Debes agregar alguna OBSERVACIÓN DEL COMPROMISO."; return}
+				if(this.tSolicitudes){
+					if(!this.getSolicitudes.length){
+						this.snackbar=true;	this.text="Debes agregar al menos 1 producto"; return;
+					}
+				}else{
+					if(!this.obs_usuario){ 
+						this.snackbar=true;	this.text="Debes agregar alguna OBSERVACIÓN DEL COMPROMISO."; return;
+					}
+				}
+			
 				this.terminarCompromiso = true;
 			},
 
-			GuardarInfo(){
-				const payload = { id: this.detalle.id,
-													obs_usuario: this.obs_usuario,
+			EnviarResultado(){
+				const payload = {
+													fecha: this.traerFechaActual(),
+													hora : this.traerHoraActual(),
+													obs_usuario  : this.obs_usuario,
 													cumplimiento: 1,
-													fecha_cierre: this.traerFechaActual(),
-													hora_cierre: this.traerHoraActual()
-												}
-												
-				this.terminarCompromiso = false; 
-				this.dialog = true ; // ACTIVAR DIALOGOS DE GUARDAR
-
-				this.$http.post('terminar.compromiso', payload).then(response =>{
-					var me = this;this.dialog = false;this.Correcto = true ; this.textCorrecto = response.bodyText;
+											 }
+				console.log('payload por resultado', payload)
+				this.terminarCompromiso = false; this.dialog = true;
+					// this.$http.post('add.solicitudes', payload).then(response =>{
+				// 	var me = this;this.dialog = false;this.Correcto = true ; this.textCorrecto = response.bodyText;
 					setTimeout(function(){ me.$router.push({name: 'compromisos' })}, 1000);
-					this.consultaCompromisos() 
-				}).catch(error =>{
-					this.mostrarError(error.bodyText)
-					console.log('error', error)
-				}).finally(()=> this.dialog = false)
+				// 	this.consultaCompromisos() 
+				// }).catch(error =>{
+				// 	this.mostrarError(error.bodyText)
+				// 	console.log('error', error)
+				// }).finally(()=> this.dialog = false)
+			},
+
+			EnviarSolicitud(){
+				let detalle = this.validaProductos();
+				const payload = { 
+													fecha     : this.traerFechaActual(),
+													hora      : this.traerHoraActual(),
+													urgencia  : 1,
+													id_usuario: this.detalle.id_vendedor,
+													id_cliente: this.detalle.id_cliente,
+													nota	    : this.nota,
+													detalle   : detalle,
+												}
+				console.log('payload por solicitud', payload)
+												
+				this.terminarCompromiso = false; this.dialog = true ; // ACTIVAR DIALOGOS DE GUARDAR
+
+				// this.$http.post('add.solicitudes', payload).then(response =>{
+					var me = this;
+					// this.dialog = false;this.Correcto = true ; this.textCorrecto = response.bodyText;
+					setTimeout(function(){ me.$router.push({name: 'compromisos' })}, 1000);
+				// 	this.consultaCompromisos() 
+				// }).catch(error =>{
+				// 	this.mostrarError(error.bodyText)
+				// 	console.log('error', error)
+				// }).finally(()=> this.dialog = false)
+			},
+
+			validaProductos(){
+				let Temporal = [];
+				for(let i=0;i<this.getSolicitudes.length;i++){
+					if(this.getSolicitudes[i].tproducto === 2){
+						console.log('xmodificar', this.getSolicitudes[i].xmodificar )
+						Temporal.push(this.getSolicitudes[i].xmodificar) 
+					} else{
+						Temporal.push(this.getSolicitudes[i])
+					}
+				}
+				console.log('Temportal',Temporal)
+				return Temporal;
 			},
 
 			mostrarError(mensaje){
 				this.snackbar=true; this.text=mensaje;
+			},
+
+			volverAtras(){
+				this.alertaDeContenido = false;
+				this.vaciaSolicitudes()
+				window.history.go(-2);
 			}
+		
 			
 		}
 	}

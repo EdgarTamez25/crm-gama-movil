@@ -10,17 +10,24 @@
 
         <v-form ref="form" v-model="valid" > 
           <v-row >
+            <v-col cols="12" class="my-0 py-0">
+              <v-select
+                v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
+                dense hide-details label="Tipo de producto" return-object  
+              ></v-select>
+            </v-col>
+
             <v-card-text class="font-weight-black pa-1 body-1">{{ titulo }}</v-card-text>
              
              <!-- //! REFERENCIA DEL PRODUCTO  -->
             <v-col cols="12">
               <v-text-field 
-                v-model="referencia" hide-details dense label="PRODUCTO" 
+                v-model="referencia" hide-details dense label="FICHA TECNICA" 
                 filled color="celeste" class="mt-1 font-weight-black" :rules="referRules"
               />
             </v-col>
              <!-- // !SELETOR DE MATERIALES  -->
-            <v-col cols="12" >
+            <v-col cols="12" v-if="ACTIVACAMPO">
               <v-select
                 v-model="material" :items="materiales" item-text="nombre" item-value="id" outlined color="celeste"
                 dense hide-details label="Materiales" return-object placeholder="Materiales" :rules="materialRules"
@@ -28,18 +35,18 @@
             </v-col>
 
              <!-- // !INPUT PARA PANTONE  -->
-            <v-col cols="9"  align="center" class="my-0 py-0">
+            <v-col cols="9"  align="center" class="my-0 py-0" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="pantone" label="Pantone " placeholder="Pantone" 
                 outlined dense hide-details  
               ></v-text-field>
             </v-col>
              <!-- // !BOTON DE AGREGAR PANTONE  -->
-            <v-col cols="3" class="text-right my-0 py-0">
+            <v-col cols="3" class="text-right my-0 py-0" v-if="ACTIVACAMPO">
               <v-btn color="celeste" dark @click="agregarPantone()" > <v-icon>add</v-icon> </v-btn>
             </v-col>
              <!-- // !CHIPS DE PANTONES   -->
-            <v-col cols="12" class="my-0 py-0 text-left">
+            <v-col cols="12" class="my-0 py-0 text-left" v-if="ACTIVACAMPO">
               <v-chip v-for="(item, i) in pantones" :key="i"
                 class="ma-2" close :color="item" dark  @click:close="eliminaPanton(i)">
                 {{ item }}
@@ -49,10 +56,10 @@
           </v-row>
         </v-form>
       </v-col>
-            <v-card-text class="font-weight-black pa-1" align="center">EJEMPLOS ÁREA DEL DISEÑO</v-card-text>
+            <v-card-text class="font-weight-black pa-1" align="center" v-if="ACTIVACAMPO">EJEMPLOS ÁREA DEL DISEÑO</v-card-text>
 
       <!-- // !CICLO PARA MOSTRAR IMAGENES DE ORIENTACION     -->
-      <v-col cols="4" sm="3" lg="1" v-for="(item,i) in orientacion" :key="i" class=" my-0 py-1">
+      <v-col cols="4" sm="3" lg="1" v-for="(item,i) in orientacion" :key="i" class=" my-0 py-1" v-if="ACTIVACAMPO">
         <v-card   outlined @click="evaluaCheck(item.id)">
           <v-img height="100px" contain :src="item.img" ></v-img>
           <v-checkbox 
@@ -108,7 +115,10 @@
       valid          : true,
       referRules     : [v => !!v || 'Es requerido'],
       materialRules  : [v => !!v || 'Es requerido'],
-
+      tproducto    : { id:null, nombre: ''},
+      tproductos   : [{ id:1, nombre:'Producto Existente'}, 
+                      { id:2, nombre:'Modificación de producto'},
+                      { id:3, nombre:'Nuevo Producto'}],
       material     : { id:null, nombre:''},
       materiales   : [],
 			referencia   : '',
@@ -139,7 +149,12 @@
     created(){ 
       this.validarModoVista() ;
     },
-    computed:{ ...mapGetters('Solicitudes',['consecutivo']),  },
+    computed:{ 
+      ...mapGetters('Solicitudes',['consecutivo']),  
+      ACTIVACAMPO(){
+        return this.tproducto.id === 1 ?  false: true ;
+      }
+    },
     watch:{ 
       depto_id(){  this.validarModoVista(); } ,
       parametros(){ this.validarModoVista(); } ,
@@ -171,7 +186,7 @@
 
 				if(this.modoVista === 2 ){
           // ASIGNAR VALORES AL FORMULARIO
-        
+          this.tproducto    = { id: this.parametros.tproducto, nombre:''};
           this.referencia   = this.parametros.referencia;
           this.material     = { id: this.parametros.id_material, nombre:''};
           this.pantones     = this.parametros.pantones;
@@ -194,6 +209,8 @@
                           id_material    : this.material.id,
                           pantones       : this.pantones,
                           id_orientacion : this.checkActivo,
+                          tproducto      : this.tproducto.id
+
                         }
         // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
@@ -227,6 +244,7 @@
       limpiarCampos(){
         this.referencia     = '';
           this.material     = { id:null, nombre:''};
+          this.tproducto    = { id:1, nombre: 'Producto Existente'};
           this.pantone      = '';
           this.pantones     = []
           this.acabado      = [];

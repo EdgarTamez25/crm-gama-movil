@@ -9,6 +9,13 @@
 
       <v-form ref="form" v-model="valid" > 
         <v-row >
+          <v-col cols="12" class="my-0 py-0">
+            <v-select
+              v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
+              dense hide-details label="Tipo de producto" return-object  
+            ></v-select>
+          </v-col>
+
           <v-card-text class="font-weight-black pa-1 body-1">{{ titulo }}</v-card-text>
             
             <!-- //! REFERENCIA DEL PRODUCTO  -->
@@ -79,6 +86,10 @@
       referRules     : [v => !!v || 'Es requerido'],
       materialRules  : [v => !!v || 'Es requerido'],
       tamanioRules   : [v => !!v || 'Es requerido'],
+      tproducto    : { id:null, nombre: ''},
+      tproductos   : [{ id:1, nombre:'Producto Existente'}, 
+                      { id:2, nombre:'Modificación de producto'},
+                      { id:3, nombre:'Nuevo Producto'}],
       material     : { id:null, nombre:''},
       materiales   : [],
 			referencia   : '',
@@ -114,6 +125,8 @@
           this.referencia   = this.parametros.referencia;
           this.material     = { id: this.parametros.id_material, nombre:''};
           this.tamanio      = { id: this.parametros.tamanio    , nombre:''};
+          this.tproducto    = { id: this.parametros.tproducto  , nombre:''};
+
 
 				}else{
 				  this.limpiarCampos()
@@ -122,13 +135,14 @@
 
       PrepararPeticion(){
       
-        if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"; return };
+        // if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"; return };
 
         const payload = { id             : this.modoVista === 1? this.consecutivo: this.parametros.id,
                           dx             : 7,
                           referencia     : this.referencia,
                           id_material    : this.material.id,
-                          tamanio        : this.tamanio.id
+                          tamanio        : this.tamanio.id,
+                          tproducto      : this.tproducto.id
                         }
         // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
@@ -163,6 +177,8 @@
         this.referencia   = '';
         this.material     = { id:null, nombre:''};
         this.tamanio      = { id:null, nombre:''};
+        this.tproducto    = { id:null, nombre:''};
+
       }
     }
   }

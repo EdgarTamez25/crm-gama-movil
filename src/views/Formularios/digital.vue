@@ -7,51 +7,58 @@
           </template>
         </v-snackbar>
 
-        <v-form ref="form" v-model="valid" > 
+        <v-form ref="form"  > 
           <v-row >
+            <v-col cols="12" class="my-0 py-0" >
+              <v-select
+                v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
+                dense hide-details label="Tipo de producto" return-object  :disabled="modoVista===2?true:false"
+              ></v-select>
+            </v-col>
+
             <v-card-text class="font-weight-black pa-1 body-1">{{ titulo }}</v-card-text>
              
              <!-- //! REFERENCIA DEL PRODUCTO  -->
             <v-col cols="12">
               <v-text-field 
-                v-model="referencia" hide-details dense label="PRODUCTO" 
-                filled color="celeste" class="mt-1 font-weight-black" :rules="referRules"
+                v-model="referencia" hide-details dense label="REFERENCIA" 
+                filled color="celeste" class="mt-1 font-weight-black" 
               />
             </v-col>
              <!-- // ! SELETOR  MATERIALES  -->
-            <v-col cols="12" class="my-0 py-0" >
+            <v-col cols="12" class="my-0 py-0" v-if="ACTIVACAMPO">
               <v-select
                 v-model="material" :items="materiales" item-text="nombre" item-value="id" outlined color="celeste"
-                dense hide-details label="Materiales" return-object placeholder="Materiales" :rules="materialRules"
+                dense hide-details label="Materiales" return-object placeholder="Materiales"
               ></v-select> 
             </v-col>
              <!-- // ! SELETOR SOBRE QUE MATERIALES  -->
-             <v-col cols="12"  >
+             <v-col cols="12"  v-if="ACTIVACAMPO">
               <v-select
                 v-model="material2" :items="materiales2" item-text="nombre" item-value="id" outlined color="celeste"
-                dense hide-details label="Material Secundario" return-object placeholder="Material Secundario" :rules="material2Rules"
+                dense hide-details label="Material Secundario" return-object placeholder="Material Secundario" 
               ></v-select> 
             </v-col>
              <!-- // !INPUT PARA PANTONE  -->
-            <v-col cols="9"  align="center" class="my-0 py-0">
+            <v-col cols="9"  align="center" class="my-0 py-0" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="pantone" label="Pantone " placeholder="Pantone" 
                 outlined dense hide-details  
               ></v-text-field>
             </v-col>
              <!-- // !BOTON DE AGREGAR PANTONE  -->
-            <v-col cols="3" class="text-right my-0 py-0">
+            <v-col cols="3" class="text-right my-0 py-0" v-if="ACTIVACAMPO">
               <v-btn color="celeste" dark @click="agregarPantone()" > <v-icon>add</v-icon> </v-btn>
             </v-col>
              <!-- // !CHIPS DE PANTONES   -->
-            <v-col cols="12" class="my-0 py-0 text-left">
+            <v-col cols="12" class="my-0 py-0 text-left" v-if="ACTIVACAMPO">
               <v-chip v-for="(item, i) in pantones" :key="i"
                 class="ma-2" dark close :color="item" @click:close="eliminaPanton(i)">
                 {{ item }}
               </v-chip>
             </v-col>
              <!-- // !SELECTOR DE ACABADOS    -->
-            <v-col cols="12" >
+            <v-col cols="12" v-if="ACTIVACAMPO">
               <v-select
                 v-model="acabado" :items="acabados" item-text="nombre" item-value="id" outlined color="celeste" 
                 dense hide-details label="Acabados" return-object multiple :menu-props="{ maxHeight: '400' }"
@@ -59,28 +66,28 @@
             </v-col>
 
              <!-- // ! ANCHO DE ETIQUETA   -->
-            <v-col cols="6" class="my-0 py-0">
+            <v-col cols="6" class="my-0 py-0" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="ancho" hide-details dense label="Ancho" 
-                outlined color="celeste" :rules="anchoRules"
+                outlined color="celeste" 
               />
             </v-col>
              <!-- // ! LARGO DE ETIQUETA   -->
-            <v-col cols="6" class="my-0 py-0">
+            <v-col cols="6" class="my-0 py-0" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="largo" hide-details dense label="Largo" 
-                outlined color="celeste" :rules="largoRules"
+                outlined color="celeste" 
               />
             </v-col>
              <!-- // ! ESTRUCTURA   -->
-            <v-col cols="12" >
+            <v-col cols="12" v-if="ACTIVACAMPO" >
               <v-select
                 v-model="estructura" :items="estructuras" item-text="nombre" item-value="id" outlined clearable
                 dense hide-details label="Estructuras" return-object  color="celeste" 
               ></v-select>
             </v-col>
             <!-- // ! GROSOR   -->
-            <v-col cols="12" class="my-0 py-1">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="grosor" hide-details dense label="Grosor" 
                 outlined color="celeste" 
@@ -97,7 +104,7 @@
       <v-footer  absolute>
         <v-spacer></v-spacer>
         <v-btn color="error" outlined small  @click="$emit('modal',false)"  class="ma-1">Cancelar </v-btn>
-        <v-btn color="success" small :disabled="!valid" @click="PrepararPeticion()">Guardar </v-btn>
+        <v-btn color="success" small  @click="validaInformacion()">Guardar </v-btn>
       </v-footer>
 
       <v-dialog v-model="dialog" hide-overlay persistent width="300">
@@ -120,6 +127,7 @@
 <script>
 	import  metodos from '@/mixins/metodos.js';
 	import {mapGetters, mapActions} from 'vuex';
+import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
   
   export default {
     mixins:[metodos],
@@ -130,15 +138,11 @@
 	  ],
     data: () => ({
       titulo         : 'IMPRESIÓN DIGITAL',
-      valid          : true,
-      referRules     : [v => !!v || 'Es requerido'],
-      materialRules  : [v => !!v || 'Es requerido'],
-      material2Rules : [v => !!v || 'Es requerido'],
-      pantonRules    : [v => !!v || 'Es requerido'],
-      anchoRules     : [v => !!v || 'Es requerido'],
-      largoRules     : [v => !!v || 'Es requerido'],
 
-
+      tproducto    : { id:1, nombre: 'Producto Existente'},
+      tproductos   : [{ id:1, nombre:'Producto Existente'}, 
+                      { id:2, nombre:'Modificación de producto'},
+                      { id:3, nombre:'Nuevo Producto'}],
       material     : { id:null, nombre:''},
       materiales   : [],
       material2    : { id:null, nombre:''},
@@ -167,7 +171,12 @@
     created(){ 
       this.validarModoVista() ;
     },
-    computed:{ ...mapGetters('Solicitudes',['consecutivo']),  },
+    computed:{ 
+      ...mapGetters('Solicitudes',['consecutivo']),  
+      ACTIVACAMPO(){
+        return this.tproducto.id === 1 ?  false: true ;
+      }
+    },
     watch:{ 
       depto_id(){  this.validarModoVista(); } ,
       parametros(){ this.validarModoVista(); } ,
@@ -195,6 +204,7 @@
 
 				if(this.modoVista === 2 ){
           // ASIGNAR VALORES AL FORMULARIO
+          this.tproducto    = { id: this.parametros.tproducto },
           this.referencia   = this.parametros.referencia;
           this.material     = { id: this.parametros.id_material, nombre:''};
           this.material2    = { id: this.parametros.id_material2, nombre:''};
@@ -202,29 +212,56 @@
           this.acabado      = this.parametros.acabados;
           this.ancho        = this.parametros.ancho;
           this.largo        = this.parametros.largo;
-          this.estructura   = { id: this.parametros.estructura, nombre:''};
+          this.estructura   = { id: this.parametros.estructura};
           this.grosor       = this.parametros.grosor;
+          this.tproducto    = { id: this.parametros.tproducto};
+
 				}else{
 				  this.limpiarCampos()
 				}
       },
 
-      PrepararPeticion(){
-      
-        if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"; return };
+      validaInformacion(){
+        if(this.tproducto.id === 3) {
+          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
+          if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
+          if(!this.material2.id)   { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL SECUNDARIO" ; return };
+          if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"      ; return };
+          if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"      ; return };
+          if(!this.ancho)          { this.snackbar=true; this.text ="DEBES AGREGAR EL ANCHO"                 ; return };
+          if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
+        }else if(this.tproducto.id === 1 || this.tproducto.id === 2){
+          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
+        }
+        this.PrepararPeticion();
+      },
 
-        const payload = { id             : this.modoVista === 1? this.consecutivo: this.parametros.id,
-                          dx             : 3,
-                          referencia     : this.referencia,
-                          id_material    : this.material.id,
-                          id_material2   : this.material2.id,
-                          pantones       : this.pantones,
-                          acabados       : this.acabado,
-                          grosor         : this.grosor,
-                          ancho          : this.ancho,
-                          largo          : this.largo,
-                          estructura     : this.estructura.id
-                        }
+      PrepararPeticion(){
+        let payload = {};
+        if(this.tproducto.id === 1){ //! FORMO ARRAY SI ES PRODUCTO EXISTENTE
+          payload = { id        : this.modoVista ===1 ? this.consecutivo: this.parametros.id,
+                      dx        : 3,
+                      referencia: this.referencia,
+                      tproducto : this.tproducto.id
+                    }
+        }else if(this.tproducto.id === 2 || this.tproducto.id === 3){ //! FORMO ARRAY SI ES UNA MODIFICACION DE PRODUCTO
+          payload ={  id             : this.modoVista === 1? this.consecutivo: this.parametros.id,
+                      dx             : 3,
+                      referencia     : this.referencia,
+                      id_material    : this.material.id,
+                      id_material2   : this.material2.id,
+                      pantones       : this.pantones,
+                      acabados       : this.acabado,
+                      grosor         : this.grosor,
+                      ancho          : this.ancho,
+                      largo          : this.largo,
+                      estructura     : this.estructura.id,
+                      tproducto      : this.tproducto.id,
+                      xmodificar     : this.tproducto.id === 2? this.objetoxModificar(): ''
+
+                    }
+        }
+        
         // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
       },
@@ -259,13 +296,33 @@
         this.material     = { id:null, nombre:''};
         this.material2    = { id:null, nombre:''};
         this.estructura   = { id:null, nombre:''};
+        this.tproducto    = { id:1};
         this.pantone      = '';
         this.pantones     = []
         this.acabado      = [];
         this.ancho        = '';
         this.largo        = '';
         this.grosor       = ''
+      },
+
+      objetoxModificar(){
+        let payload = {  id: this.modoVista ===1 ? this.consecutivo: this.parametros.id,
+                        dx: 3,
+                        referencia     : this.referencia,
+                        estructura     : this.estructura.id,
+                        id_material    : { concepto:'id_material'   , valor: this.material.id   ? this.material.id   : '' }, 
+                        id_material2   : { concepto:'id_material2'  , valor: this.material2.id  ? this.material2.id  : '' },
+                        pantones       : { concepto:'pantones'      , valor: this.pantones      ? this.pantones      : '' },
+                        acabados       : { concepto:'acabados'      , valor: this.acabado       ? this.acabado       : '' },
+                        grosor         : { concepto:'grosor'        , valor: this.grosor        ? this.grosor        : '' },
+                        ancho          : { concepto:'ancho'         , valor: this.ancho         ? this.ancho         : '' },
+                        largo          : { concepto:'largo'         , valor: this.largo         ? this.largo         : '' },
+                        estructura     : { concepto:'estructura'    , valor: this.estructura.id ? this.estructura.id : '' },
+                        tproducto      : this.tproducto.id
+                      }
+        return payload;
       }
+
     }
   }
 </script>

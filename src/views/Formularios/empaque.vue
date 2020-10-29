@@ -10,6 +10,13 @@
 
         <v-form ref="form" v-model="valid" > 
           <v-row >
+            <v-col cols="12" class="my-0 py-0">
+              <v-select
+                v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
+                dense hide-details label="Tipo de producto" return-object  
+              ></v-select>
+            </v-col>
+            
             <v-card-text class="font-weight-black pa-1 body-1">{{ titulo }}</v-card-text>
              
              <!-- //! REFERENCIA DEL PRODUCTO  -->
@@ -108,6 +115,9 @@
       calibreRules : [v => !!v || 'Es requerido'],
       grosorRules  : [v => !!v || 'Es requerido'],
       
+      tproductos   : [{ id:1, nombre:'Producto Existente'}, 
+                      { id:2, nombre:'Modificación de producto'},
+                      { id:3, nombre:'Nuevo Producto'}],
       acabado      : [],
       acabados     : [], 
       material     : { id:null, nombre:''},
@@ -152,6 +162,8 @@
           this.calibre     = { id: this.parametros.calibre     , nombre:''};
           this.acabado     = this.parametros.acabados;
           this.grosor      = this.parametros.grosor;
+          this.tproducto    = { id: this.parametros.tproducto, nombre:''};
+
 				}else{
 				  this.limpiarCampos()
 				}
@@ -168,7 +180,8 @@
                           resistencia    : this.resistencia.id,
                           calibre        : this.calibre.id,
                           acabados       : this.acabado,
-                          grosor         : this.grosor                          
+                          grosor         : this.grosor,
+                          tproducto      : this.tproducto.id
                         }
         // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
@@ -204,6 +217,7 @@
         this.material     = { id:null, nombre:''};
         this.resistencia  = { id:null, nombre:''};
         this.calibre      = { id:null, nombre:''};
+        this.tproducto    = { id:null, nombre:''};
         this.acabado     = [];
         this.grosor       = '';
       }
