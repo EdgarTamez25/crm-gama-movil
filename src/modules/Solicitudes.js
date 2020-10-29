@@ -30,6 +30,10 @@ export default{
 					state.solicitudes.splice(i,1);
 				}
 			}
+		},
+		VACIAR_SOLICITUD(state){
+			state.solicitudes = [];
+			state.consecutivo = 1; 
 		}
 
 	},
@@ -53,7 +57,11 @@ export default{
         commit('DELETE_SOLICITUD', id);
         resolve(true)
 			})
-		}
+		},
+		vaciaSolicitudes({commit}){
+			commit('VACIAR_SOLICITUD');
+		},
+		
   },
 
 	getters:{

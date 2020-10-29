@@ -8,33 +8,40 @@
           </template>
         </v-snackbar>
 
-        <v-form ref="form" v-model="valid" > 
+        <v-form ref="form" > 
           <v-row >
+            <v-col cols="12" class="my-0 py-0" >
+              <v-select
+                v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
+                dense hide-details label="Tipo de producto" return-object :disabled="modoVista===2?true:false"
+              ></v-select>
+            </v-col>
+            <!-- //! TITULO - CARACTERISTICAS -->
             <v-card-text class="font-weight-black pa-1 body-1">{{ titulo }}</v-card-text>
              
              <!-- //! REFERENCIA DEL PRODUCTO  -->
             <v-col cols="12">
               <v-text-field 
-                v-model="referencia" hide-details dense label="PRODUCTO" 
-                filled color="celeste" class="mt-1 font-weight-black" :rules="referRules"
+                v-model="referencia" hide-details dense label="REFERENCIA" 
+                filled color="celeste" class="mt-1 font-weight-black" 
               />
             </v-col>
              <!-- // !SELETOR DE MATERIALES  -->
-            <v-col cols="12" >
+            <v-col cols="12" v-if="ACTIVACAMPO">
               <v-select
                 v-model="material" :items="materiales" item-text="nombre" item-value="id" outlined color="celeste"
-                dense hide-details label="Materiales" return-object placeholder="Materiales" :rules="materialRules"
+                dense hide-details label="Materiales" return-object placeholder="Materiales" 
               ></v-select> 
             </v-col>
              <!-- // !INPUT PARA PANTONE  -->
-            <v-col cols="9"  align="center" class="my-0 py-0">
+            <v-col cols="8"  align="center" class="my-0 py-0" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="pantone" label="Pantone " placeholder="Pantone" 
                 outlined dense hide-details  
               ></v-text-field>
             </v-col>
              <!-- // !BOTON DE AGREGAR PANTONE  -->
-            <v-col cols="3" class="text-right my-0 py-0">
+            <v-col cols="3" class="text-right my-0 py-0" v-if="ACTIVACAMPO">
               <v-btn color="celeste" dark @click="agregarPantone()" > <v-icon>add</v-icon> </v-btn>
             </v-col>
              <!-- // !CHIPS DE PANTONES   -->
@@ -45,68 +52,68 @@
               </v-chip>
             </v-col>
              <!-- // !SELECTOR DE ACABADOS    -->
-            <v-col cols="12" >
+            <v-col cols="12" v-if="ACTIVACAMPO">
               <v-select
                 v-model="acabado" :items="acabados" item-text="nombre" item-value="id" outlined color="celeste" 
-                dense hide-details label="Acabados" return-object multiple :rules="acabadoRules" :menu-props="{ maxHeight: '400' }"
+                dense hide-details label="Acabados" return-object multiple :menu-props="{ maxHeight: '400' }"
               ></v-select>
             </v-col>
-            <v-card-text class="font-weight-black pa-1">PRESENTACIÓN</v-card-text>
+            <v-card-text class="font-weight-black pa-1" v-if="ACTIVACAMPO">PRESENTACIÓN</v-card-text>
 
              <!-- // !ETIQUETA POR ROLLO    -->
-            <v-col cols="12" class="my-0 py-1">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
-                v-model="etqxrollo" hide-details dense label="Etq por rollo" 
-                outlined color="celeste" :rules="etqxrolloRules"
+                v-model="etqxrollo" hide-details dense label="Etiqueta por rollo" 
+                outlined color="celeste" 
               />
             </v-col>
              <!-- // !MEDIDA DE NUCLEO   -->
-            <v-col cols="12" class="my-0 py-1">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
-                v-model="med_nucleo" hide-details dense label="Med del Nucleo" 
-                outlined color="celeste" :rules="medNucleoRules"
+                v-model="med_nucleo" hide-details dense label="Medida del Nucleo" 
+                outlined color="celeste" 
               />
             </v-col>
              <!-- // !ETIQUETA POR PASO   -->
-            <v-col cols="12" class="my-0 py-1">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
-                v-model="etqxpaso" hide-details dense label="Etq por paso" 
-                outlined color="celeste" :rules="etqxpasoRules"
+                v-model="etqxpaso" hide-details dense label="Etiqueta al paso" 
+                outlined color="celeste" 
               />
             </v-col>
              <!-- // !MEDIDA DE DESARROLLO   -->
-            <v-col cols="12" class="my-0 py-1">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
-                v-model="med_desarrollo" hide-details dense label="Med de desarrollo" 
-                outlined color="celeste" :rules="medDlloRules"
+                v-model="med_desarrollo" hide-details dense label="Medida de desarrollo" 
+                outlined color="celeste" 
               />
             </v-col>
              <!-- // !MEDIDA DE EJE   -->
-            <v-col cols="12" class="my-0 py-1">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
-                v-model="med_eje" hide-details dense label="Med de eje" 
-                outlined color="celeste" :rules="medEjeRules"
+                v-model="med_eje" hide-details dense label="Medida de eje" 
+                outlined color="celeste" 
               />
             </v-col>
              <!-- // ! ANCHO DE ETIQUETA   -->
-            <v-col cols="6" class="my-0 py-1">
+            <v-col cols="6" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="ancho" hide-details dense label="Ancho" 
-                outlined color="celeste" :rules="anchoRules"
+                outlined color="celeste" 
               />
             </v-col>
              <!-- // ! LARGO DE ETIQUETA   -->
-            <v-col cols="6" class="my-0 py-1">
+            <v-col cols="6" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="largo" hide-details dense label="Largo" 
-                outlined color="celeste" :rules="largoRules"
+                outlined color="celeste" 
               />
             </v-col>
           </v-row>
         </v-form>
       </v-col>
       <!-- // !CICLO PARA MOSTRAR IMAGENES DE ORIENTACION     -->
-      <v-col cols="4" sm="3" lg="1" v-for="(item,i) in orientacion" :key="i" class=" my-0 py-1">
+      <v-col cols="4" sm="3" lg="1" v-for="(item,i) in orientacion" :key="i" class=" my-0 py-1" v-if="ACTIVACAMPO">
         <v-card   outlined @click="evaluaCheck(item.id)">
           <v-img height="100px" contain :src="item.img" ></v-img>
           <v-checkbox 
@@ -124,7 +131,7 @@
       <v-footer  absolute>
         <v-spacer></v-spacer>
         <v-btn color="error" outlined small  @click="$emit('modal',false)"  class="ma-1">Cancelar </v-btn>
-        <v-btn color="success" small :disabled="!valid" @click="PrepararPeticion()">Guardar </v-btn>
+        <v-btn color="success" small  @click="validaInformacion()">Guardar </v-btn>
       </v-footer>
 
       <v-dialog v-model="dialog" hide-overlay persistent width="300">
@@ -158,18 +165,11 @@
     data: () => ({
       titulo         : 'CARACTERÍSTICAS',
       valid          : true,
-      referRules     : [v => !!v || 'Es requerido'],
-      materialRules  : [v => !!v || 'Es requerido'],
-      pantonRules    : [v => !!v || 'Es requerido'],
-      acabadoRules   : [v => !!v || 'Es requerido'],
-      etqxrolloRules : [v => !!v || 'Es requerido'],
-      medNucleoRules : [v => !!v || 'Es requerido'],
-      etqxpasoRules  : [v => !!v || 'Es requerido'],
-      medDlloRules   : [v => !!v || 'Es requerido'],
-      medEjeRules    : [v => !!v || 'Es requerido'],
-      anchoRules     : [v => !!v || 'Es requerido'],
-      largoRules     : [v => !!v || 'Es requerido'],
-
+      tproducto    : { id:1, nombre: 'Producto Existente'},
+      tproductos   : [{ id:1, nombre:'Producto Existente'}, 
+                      { id:2, nombre:'Modificación de producto'},
+                      { id:3, nombre:'Nuevo Producto'}
+                     ],
       material     : { id:null, nombre:''},
       materiales   : [],
 			referencia   : '',
@@ -207,22 +207,27 @@
     created(){ 
       this.validarModoVista() ;
     },
-    computed:{ ...mapGetters('Solicitudes',['consecutivo']),  },
+    computed:{ 
+      ...mapGetters('Solicitudes',['consecutivo']),  
+      ACTIVACAMPO(){ //! ESTA FUNCION SIRVE PARA VISUALIZAR EL FORMULARIO 
+        return this.tproducto.id === 1 ?  false: true ;
+      }
+    },
     watch:{ 
-      depto_id(){  this.validarModoVista(); } ,
-      parametros(){ this.validarModoVista(); } ,
+      depto_id(){  this.validarModoVista(); } , // !SE ESCUCHAN LOS CAMBIOS DE DEPARTAMENTO
+      parametros(){ this.validarModoVista(); } , //! SE ESCUCHAN LOS CMABIOS DEL PROP PARAMETROS
     }, 
 
     methods:{
       ...mapActions('Solicitudes'  ,['agregaProducto','actualizaProducto']), // IMPORTANDO USO DE VUEX (ACCIONES)
-      evaluaCheck(id){
-        for(let i=0; i< this.orientacion.length;i++){
+      evaluaCheck(id){ //! BUSCO LA ORIENTACION SELECCIONADA
+        for(let i=0; i< this.orientacion.length;i++){ // !SI NO ES EL CHECK QUE SELECCIONO LO DEVUELVO A FALSO. 
           id != this.orientacion[i].id? this.orientacion[i].activo=false: this.orientacion[i].activo=true;
         }
-        this.checkActivo = id;
+        this.checkActivo = id; //! GUARDO EL CHECK-ACTIVO 
       },
 
-      agregarPantone(){
+      agregarPantone(){ 
         var esHexadecimal = false;
         if( esHexadecimal = this.esHexadecimal(this.pantone) ){
           this.pantones.push(this.pantone);
@@ -240,8 +245,10 @@
 
 				if(this.modoVista === 2 ){
           // ASIGNAR VALORES AL FORMULARIO
+          this.tproducto    = { id: this.parametros.tproductos }
           this.referencia   = this.parametros.referencia;
-          this.material     = { id: this.parametros.id_material, nombre:''};
+          this.material     = { id: this.parametros.id_material};
+          this.tproducto    = { id: this.parametros.tproducto};
           this.pantones     = this.parametros.pantones;
           this.acabado      = this.parametros.acabados ;
           this.checkActivo  = this.id_orientacion
@@ -258,26 +265,54 @@
 				}
       },
 
-      PrepararPeticion(){
-      
-        if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"; return };
-        if(!this.checkActivo){ this.snackbar=true; this.text ="DEBES SELECCIONAR UNA ORIENTACIÓN"    ; return };
+      validaInformacion(){
+        if(this.tproducto.id === 3) {
+          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
+          if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
+          if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"      ; return };
+          if(!this.etqxrollo)      { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR ROLLO"    ; return };
+          if(!this.med_nucleo)     { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DE NUCLEO"      ; return };
+          if(!this.etqxpaso)       { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR PASO"     ; return };
+          if(!this.med_desarrollo) { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DEL DESARROLLO" ; return };
+          if(!this.med_eje)        { this.snackbar=true; this.text ="DEBES AGREGAR LA MEDIDA DEL EJE"        ; return };
+          if(!this.ancho)          { this.snackbar=true; this.text ="DEBES AGREGAR EL ANCHO"                 ; return };
+          if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
+          if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"      ; return };
+          if(!this.checkActivo)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UNA ORIENTACIÓN"      ; return };
+        }else if(this.tproducto.id === 1 || this.tproducto.id === 2 ){
+          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
+        }
+        this.PrepararPeticion();
+      },
 
-        const payload = { id             : this.modoVista === 1? this.consecutivo: this.parametros.id,
-                          dx             : 1,
-                          referencia     : this.referencia,
-                          id_material    : this.material.id,
-                          pantones       : this.pantones,
-                          acabados       : this.acabado,
-                          id_orientacion : this.checkActivo,
-                          etqxrollo      : this.etqxrollo,
-                          med_nucleo     : this.med_nucleo,
-                          etqxpaso       : this.etqxpaso,
-                          med_desarrollo : this.med_desarrollo,
-                          med_eje        : this.med_eje,
-                          ancho          : this.ancho,
-                          largo          : this.largo
-                        }
+      PrepararPeticion(){
+        let payload = {};
+        if(this.tproducto.id === 1){ //! FORMO ARRAY SI ES PRODUCTO EXISTENTE
+          payload = { id        : this.modoVista ===1 ? this.consecutivo: this.parametros.id,
+                      dx        : 1,
+                      referencia: this.referencia,
+                      tproducto : this.tproducto.id 
+                    }
+        }else if(this.tproducto.id === 2 || this.tproducto.id === 3){ //! FORMO ARRAY SI ES UNA MODIFICACION DE PRODUCTO
+          payload ={  id             : this.modoVista === 1? this.consecutivo: this.parametros.id,
+                      dx             : 1,
+                      referencia     : this.referencia,
+                      id_material    : this.material.id,
+                      pantones       : this.pantones,
+                      acabados       : this.acabado,
+                      id_orientacion : this.checkActivo,
+                      etqxrollo      : this.etqxrollo,
+                      med_nucleo     : this.med_nucleo,
+                      etqxpaso       : this.etqxpaso,
+                      med_desarrollo : this.med_desarrollo,
+                      med_eje        : this.med_eje,
+                      ancho          : this.ancho,
+                      largo          : this.largo,
+                      tproducto      : this.tproducto.id,
+                      xmodificar     : this.tproducto.id === 2? this.objetoxModificar(): ''
+                    }
+        }
+       
         // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
       },
@@ -310,6 +345,7 @@
       limpiarCampos(){
         this.referencia     = '';
         this.material     = { id:null, nombre:''};
+        this.tproducto    = { id:1 };
         this.pantone      = '';
         this.pantones     = []
         this.acabado      = [];
@@ -323,7 +359,29 @@
         this.ancho          = '';
         this.largo          = '';
 
+      },
+
+      objetoxModificar(){
+        let payload = {  id: this.modoVista ===1 ? this.consecutivo: this.parametros.id,
+                        dx: 1,
+                        referencia     : this.referencia,
+                        id_material    : { concepto:'id_material'   , valor: this.material.id ? this.material.id: '' }, 
+                        pantones       : { concepto:'pantones'      , valor: this.pantones    ? this.pantones   : '' },
+                        acabados       : { concepto:'acabados'      , valor: this.acabado     ? this.acabado    : '' },
+                        id_orientacion : { concepto:'id_orientacion', valor: this.checkActivo ? this.checkActivo: '' },
+                        etqxrollo      : { concepto:'etqxrollo'     , valor: this.etqxrollo   ? this.etqxrollo  : '' },
+                        med_nucleo     : { concepto:'med_nucleo'    , valor: this.med_nucleo  ? this.med_nucleo : '' },
+                        etqxpaso       : { concepto:'etqxpaso'      , valor: this.etqxpaso    ? this.etqxpaso   : '' },
+                        med_desarrollo : { concepto:'med_desarrollo', valor: this.med_desarrollo ? this.med_desarrollo: '' },
+                        med_eje        : { concepto:'med_eje'       , valor: this.med_eje     ? this.med_eje    : '' },
+                        ancho          : { concepto:'ancho'         , valor: this.ancho       ? this.ancho      : '' },
+                        largo          : { concepto:'largo'         , valor: this.largo       ? this.largo      : '' },
+                        tproducto      : this.tproducto.id
+                      }
+        return payload;
       }
     }
   }
 </script>
+
+

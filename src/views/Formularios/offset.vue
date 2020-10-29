@@ -10,50 +10,56 @@
 
         <v-form ref="form" v-model="valid" > 
           <v-row >
+            <v-col cols="12" class="my-0 py-0">
+              <v-select
+                v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
+                dense hide-details label="Tipo de producto" return-object  
+              ></v-select>
+            </v-col>
             <v-card-text class="font-weight-black pa-1 body-1">{{ titulo }}</v-card-text>
              
              <!-- //! REFERENCIA DEL PRODUCTO  -->
             <v-col cols="12" >
               <v-text-field 
-                v-model="referencia" hide-details dense label="PRODUCTO" 
+                v-model="referencia" hide-details dense label="FICHA TECNICA" 
                 filled color="celeste" class="mt-1 font-weight-black" :rules="referRules"
               />
             </v-col>
             
             <!-- // !SELETOR DE MATERIALES  -->
-            <v-col cols="12" class="my-0 py-1">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-select
                 v-model="material" :items="materiales" item-text="nombre" item-value="id" outlined color="celeste"
                 dense hide-details label="Materiales" return-object placeholder="Materiales" :rules="materialRules"
               ></v-select> 
             </v-col>
              <!-- // !SELETOR DE SUAJES  -->
-            <v-col cols="12" class="my-0 py-1">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-select
                 v-model="suaje" :items="suajes" item-text="nombre" item-value="id" outlined color="celeste"
                 dense hide-details label="Suajes" return-object placeholder="Suajes" :rules="suajeRules"
               ></v-select> 
             </v-col>
              <!-- // !SELETOR DE PLECAS  -->
-            <v-col cols="12" class="my-0 py-1">
+            <v-col cols="12" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-select
                 v-model="pleca" :items="plecas" item-text="nombre" item-value="id" outlined color="celeste"
                 dense hide-details label="Plecas" return-object placeholder="Plecas" :rules="plecaRules"
               ></v-select> 
             </v-col>
              <!-- // !INPUT PARA PANTONE  -->
-            <v-col cols="9"  align="center" class="my-0 py-1">
+            <v-col cols="9"  align="center" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="pantone" label="Pantone " placeholder="Pantone" 
                 outlined dense hide-details  
               ></v-text-field>
             </v-col>
              <!-- // !BOTON DE AGREGAR PANTONE  -->
-            <v-col cols="3" class="text-right my-0 py-1">
+            <v-col cols="3" class="text-right my-0 py-1" v-if="ACTIVACAMPO">
               <v-btn color="celeste" dark @click="agregarPantone()" > <v-icon>add</v-icon> </v-btn>
             </v-col>
              <!-- // !CHIPS DE PANTONES   -->
-            <v-col cols="12" class="my-0 py-0 text-left">
+            <v-col cols="12" class="my-0 py-0 text-left" v-if="ACTIVACAMPO">
               <v-chip v-for="(item, i) in pantones" :key="i"
                 class="ma-2" close :color="item" dark  @click:close="eliminaPanton(i)">
                 {{ item }}
@@ -61,21 +67,21 @@
             </v-col>
 
              <!-- // ! ANCHO DE ETIQUETA   -->
-            <v-col cols="6" class="my-0 py-1">
+            <v-col cols="6" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="ancho" hide-details dense label="Ancho" 
                 outlined color="celeste" :rules="anchoRules"
               />
             </v-col>
              <!-- // ! LARGO DE ETIQUETA   -->
-            <v-col cols="6" class="my-0 py-1">
+            <v-col cols="6" class="my-0 py-1" v-if="ACTIVACAMPO">
               <v-text-field 
                 v-model="largo" hide-details dense label="Largo" 
                 outlined color="celeste" :rules="largoRules"
               />
             </v-col>
             <!-- //! BOTON FOLIOS -->
-            <v-col cols="12" class="py-1 " >
+            <v-col cols="12" class="py-1 " v-if="ACTIVACAMPO">
               <v-btn dark :color="!statusFolio? 'rosa':'gris'" block @click="statusFolio=!statusFolio">
                 {{ !statusFolio ? 'LLEVA FOLIOS': 'CANCELAR'}}
               </v-btn>
@@ -97,7 +103,7 @@
           </v-row>
         </v-form>
       </v-col>
-
+    
       <v-col cols="12" class="my-3"/>
 
       <!-- //!CONTENEDOR DE CIERRE Y PROCESOS -->
@@ -147,7 +153,10 @@
       largoRules     : [v => !!v || 'Es requerido'],
       folio1Rules    : [v => !!v || 'Es requerido'],
       folio2Rules    : [v => !!v || 'Es requerido'],
-
+      tproducto    : { id:null, nombre: ''},
+      tproductos   : [{ id:1, nombre:'Producto Existente'}, 
+                      { id:2, nombre:'Modificación de producto'},
+                      { id:3, nombre:'Nuevo Producto'}],
       folio1       :'',
       folio2       :'',
       material     : { id:null, nombre:''},
@@ -176,7 +185,13 @@
     created(){ 
       this.validarModoVista() ;
     },
-    computed:{ ...mapGetters('Solicitudes',['consecutivo']),  },
+    computed:{ 
+      ...mapGetters('Solicitudes',['consecutivo']), 
+
+      ACTIVACAMPO(){
+        return this.tproducto.id === 1 ?  false: true ;
+      }
+    },
     watch:{ 
       depto_id(){  this.validarModoVista(); } ,
       parametros(){ this.validarModoVista(); } ,
@@ -214,6 +229,8 @@
           this.folio1     = this.parametros.folio1;
           this.folio2     = this.parametros.folio2
           this.folio1 ? this.statusFolio = true: this.statusFolio= false; 
+          this.tproducto    = { id: this.parametros.tproducto, nombre:''};
+
 
 				}else{
 				  this.limpiarCampos()
@@ -239,6 +256,8 @@
                           largo          : this.largo,
                           folio1         : this.statusFolio? this.folio1: '',
                           folio2         : this.statusFolio? this.folio2: '',
+                          tproducto      : this.tproducto.id
+
                         }
         // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
@@ -274,6 +293,8 @@
         this.material     = { id:null, nombre:''};
         this.suaje        = { id:null, nombre:''};
         this.pleca        = { id:null, nombre:''};
+        this.tproducto    = { id:null, nombre:''};
+
         this.pantone      = '';
         this.pantones     = []
         this.ancho        = '';

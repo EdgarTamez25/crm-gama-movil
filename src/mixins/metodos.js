@@ -43,14 +43,14 @@ export default {
 
 		consultaDeptos(){
 			this.deptos = [	{ id:1, nombre:'FLEXOGRAFÍA'},
-											{ id:2, nombre:'BORDADOS'},
+											// { id:2, nombre:'BORDADOS'},
 											{ id:3, nombre:'DIGITAL'},
-											{ id:4, nombre:'OFFSET'},
-											{ id:5, nombre:'SERIGRAFÍA'},
-											{ id:6, nombre:'EMPAQUE'},
-											{ id:7, nombre:'SUBLIMACIÓN'},
+											// { id:4, nombre:'OFFSET'},
+											// { id:5, nombre:'SERIGRAFÍA'},
+											// { id:6, nombre:'EMPAQUE'},
+											// { id:7, nombre:'SUBLIMACIÓN'},
 											// { id:8, nombre:'TAMPOGRAFÍA'},
-											{ id:9, nombre:'UV'}
+											// { id:9, nombre:'UV'}
 										]
 		},
 
@@ -85,5 +85,14 @@ export default {
 			})
 		},
 		
+		evualuaRetorno(){
+			if(this.getSolicitudes.length){
+				this.alertaDeContenido = true;
+			}else{
+				window.history.go(-1); return false;
+			}
+		},
+
+
   }
 }
