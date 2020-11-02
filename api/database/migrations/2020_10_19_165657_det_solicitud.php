@@ -19,6 +19,7 @@ class DetSolicitud extends Migration
             $table->integer('dx');
             $table->integer('id_dx');
             $table->longText('referencia');
+            $table->integer('cantidad');
             $table->integer('tipo');
         });
     }

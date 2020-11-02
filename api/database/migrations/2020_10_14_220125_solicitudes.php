@@ -19,8 +19,9 @@ class Solicitudes extends Migration
             $table->integer('id_usuario');
             $table->date('fecha');
             $table->time('hora');
-            $table->integer('urgencia');
+            $table->integer('id_depto');
             $table->longText('nota');
+            $table->integer('estatus') -> default(1);
         });
     }
 
