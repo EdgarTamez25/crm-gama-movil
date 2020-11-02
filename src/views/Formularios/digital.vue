@@ -22,7 +22,14 @@
             <v-col cols="12">
               <v-text-field 
                 v-model="referencia" hide-details dense label="REFERENCIA" 
-                filled color="celeste" class="mt-1 font-weight-black" 
+                filled color="celeste" class=" font-weight-black" 
+              />
+            </v-col>
+            <!-- //! CANTIDAD  -->
+            <v-col cols="12" class="" v-if="tproducto.id != 2">
+              <v-text-field 
+                v-model="cantidad" hide-details dense label="Cantidad" 
+                outlined color="celeste" placeholder="Cantidad de material"
               />
             </v-col>
              <!-- // ! SELETOR  MATERIALES  -->
@@ -143,6 +150,7 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
       tproductos   : [{ id:1, nombre:'Producto Existente'}, 
                       { id:2, nombre:'Modificación de producto'},
                       { id:3, nombre:'Nuevo Producto'}],
+      cantidad     : '',
       material     : { id:null, nombre:''},
       materiales   : [],
       material2    : { id:null, nombre:''},
@@ -205,6 +213,7 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
 				if(this.modoVista === 2 ){
           // ASIGNAR VALORES AL FORMULARIO
           this.tproducto    = { id: this.parametros.tproducto },
+          this.cantidad     = this.parametros.cantidad
           this.referencia   = this.parametros.referencia;
           this.material     = { id: this.parametros.id_material, nombre:''};
           this.material2    = { id: this.parametros.id_material2, nombre:''};
@@ -224,6 +233,7 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
       validaInformacion(){
         if(this.tproducto.id === 3) {
           if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
+          if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
           if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
           if(!this.material2.id)   { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL SECUNDARIO" ; return };
           if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"      ; return };
@@ -231,6 +241,9 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
           if(!this.ancho)          { this.snackbar=true; this.text ="DEBES AGREGAR EL ANCHO"                 ; return };
           if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
         }else if(this.tproducto.id === 1 || this.tproducto.id === 2){
+          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
+          if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
+        }else if(this.tproducto.id === 2){
           if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
         }
         this.PrepararPeticion();
@@ -242,7 +255,8 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
           payload = { id        : this.modoVista ===1 ? this.consecutivo: this.parametros.id,
                       dx        : 3,
                       referencia: this.referencia,
-                      tproducto : this.tproducto.id
+                      tproducto : this.tproducto.id,
+                      cantidad  : this.cantidad
                     }
         }else if(this.tproducto.id === 2 || this.tproducto.id === 3){ //! FORMO ARRAY SI ES UNA MODIFICACION DE PRODUCTO
           payload ={  id             : this.modoVista === 1? this.consecutivo: this.parametros.id,
@@ -257,6 +271,7 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
                       largo          : this.largo,
                       estructura     : this.estructura.id,
                       tproducto      : this.tproducto.id,
+                      cantidad       : this.cantidad,
                       xmodificar     : this.tproducto.id === 2? this.objetoxModificar(): ''
 
                     }
@@ -297,6 +312,7 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
         this.material2    = { id:null, nombre:''};
         this.estructura   = { id:null, nombre:''};
         this.tproducto    = { id:1};
+        this.cantidad     = '';
         this.pantone      = '';
         this.pantones     = []
         this.acabado      = [];
