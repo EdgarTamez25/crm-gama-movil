@@ -19,11 +19,18 @@
             <!-- //! TITULO - CARACTERISTICAS -->
             <v-card-text class="font-weight-black pa-1 body-1">{{ titulo }}</v-card-text>
              
-             <!-- //! REFERENCIA DEL PRODUCTO  -->
+            <!-- //! REFERENCIA DEL PRODUCTO  -->
             <v-col cols="12">
               <v-text-field 
                 v-model="referencia" hide-details dense label="REFERENCIA" 
-                filled color="celeste" class="mt-1 font-weight-black" 
+                filled color="celeste" class=" font-weight-black" 
+              />
+            </v-col>
+            <!-- //! CANTIDAD  -->
+            <v-col cols="12" class="py-0 my-0" v-if="tproducto.id != 2">
+              <v-text-field 
+                v-model="cantidad" hide-details dense label="Cantidad" 
+                outlined color="celeste" placeholder="Cantidad de material"
               />
             </v-col>
              <!-- // !SELETOR DE MATERIALES  -->
@@ -170,6 +177,7 @@
                       { id:2, nombre:'Modificación de producto'},
                       { id:3, nombre:'Nuevo Producto'}
                      ],
+      cantidad     : '',
       material     : { id:null, nombre:''},
       materiales   : [],
 			referencia   : '',
@@ -245,7 +253,8 @@
 
 				if(this.modoVista === 2 ){
           // ASIGNAR VALORES AL FORMULARIO
-          this.tproducto    = { id: this.parametros.tproductos }
+          this.tproducto    = { id: this.parametros.tproductos };
+          this.cantidad     = this.parametros.cantidad
           this.referencia   = this.parametros.referencia;
           this.material     = { id: this.parametros.id_material};
           this.tproducto    = { id: this.parametros.tproducto};
@@ -268,6 +277,7 @@
       validaInformacion(){
         if(this.tproducto.id === 3) {
           if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
+          if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
           if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
           if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"      ; return };
           if(!this.etqxrollo)      { this.snackbar=true; this.text ="DEBES AGREGAR LA ETIQUETA POR ROLLO"    ; return };
@@ -279,7 +289,10 @@
           if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
           if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"      ; return };
           if(!this.checkActivo)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UNA ORIENTACIÓN"      ; return };
-        }else if(this.tproducto.id === 1 || this.tproducto.id === 2 ){
+        }else if(this.tproducto.id === 1  ){
+          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
+          if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
+        }else if(this.tproducto.id === 2){
           if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
         }
         this.PrepararPeticion();
@@ -291,7 +304,8 @@
           payload = { id        : this.modoVista ===1 ? this.consecutivo: this.parametros.id,
                       dx        : 1,
                       referencia: this.referencia,
-                      tproducto : this.tproducto.id 
+                      tproducto : this.tproducto.id,
+                      cantidad  : this.cantidad
                     }
         }else if(this.tproducto.id === 2 || this.tproducto.id === 3){ //! FORMO ARRAY SI ES UNA MODIFICACION DE PRODUCTO
           payload ={  id             : this.modoVista === 1? this.consecutivo: this.parametros.id,
@@ -309,6 +323,7 @@
                       ancho          : this.ancho,
                       largo          : this.largo,
                       tproducto      : this.tproducto.id,
+                      cantidad       : this.cantidad,
                       xmodificar     : this.tproducto.id === 2? this.objetoxModificar(): ''
                     }
         }
@@ -344,16 +359,17 @@
 
       limpiarCampos(){
         this.referencia     = '';
-        this.material     = { id:null, nombre:''};
-        this.tproducto    = { id:1 };
-        this.pantone      = '';
-        this.pantones     = []
-        this.acabado      = [];
-        this.checkActivo  = 0;
+        this.material       = { id:null, nombre:''};
+        this.cantidad       = '';
+        this.tproducto      = { id:1 };
+        this.pantone        = '';
+        this.pantones       = []
+        this.acabado        = [];
+        this.checkActivo    = 0;
         this.evaluaCheck(0);
-        this.etqxrollo    = '';
-        this.med_nucleo  = '';
-        this.etqxpaso     = '';
+        this.etqxrollo      = '';
+        this.med_nucleo     = '';
+        this.etqxpaso       = '';
         this.med_desarrollo = '';
         this.med_eje        = '';
         this.ancho          = '';
@@ -376,7 +392,7 @@
                         med_eje        : { concepto:'med_eje'       , valor: this.med_eje     ? this.med_eje    : '' },
                         ancho          : { concepto:'ancho'         , valor: this.ancho       ? this.ancho      : '' },
                         largo          : { concepto:'largo'         , valor: this.largo       ? this.largo      : '' },
-                        tproducto      : this.tproducto.id
+                        tproducto      : this.tproducto.id,
                       }
         return payload;
       }
