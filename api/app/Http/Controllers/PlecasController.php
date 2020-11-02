@@ -3,47 +3,46 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB; //USAR ESCRITURA SQL
 class PlecasController extends Controller
 {
     //
-    public function Plecas(Request $req){
-        $Plecas = DB::select('SELECT        pls.id, ds.dientes, pls.cav_eje,
-                                            pls.cav_des, pls.estatus,
-                                    FROM    plecas as pls
-                                    WHERE id = ?',[$req -> id]);
+    public function plecas(Request $req){
+        $Plecas = DB::select('SELECT        pls.id, pls.dientes, pls.cav_eje,
+                                            pls.cav_des, pls.estatus
+                            FROM    plecas as pls
+                            WHERE id = ?',[$req -> id]);
         return $Plecas;
     }
 
-    public function addDetSolicitud(Request $req){
-		$id = DB::table('det_solicitud')->insertGetId(
+    public function addPlecas(Request $req){
+		$id = DB::table('plecas')->insertGetId(
                             [
                                 'dientes' => $req -> dientes,
-                                'cav_eje'           => $req -> cav_eje,
-                                'cav_des'        => $req -> cav_des,
-                                'estatus'   => $req -> estatus,
+                                'cav_eje' => $req -> cav_eje,
+                                'cav_des' => $req -> cav_des,
+                                'estatus' => $req -> estatus
                             ]
                         );
         if($id):
-			return response("Se creó correctamente el detalle de la solicitud",200);
+			return response("Se creó correctamente el registro de Pleca",200);
 		else:
 			return response("Ocurrio un problema. Intentelo nuevamente.",500);
 		endif;
     }
 
-	public function UpdateDetSolicitud($id, Request $req){
-        $update = DB::update('UPDATE    det_solicitud SET id_solicitud=:id_solicitud, dx=:dx,
-                                        id_dx=:id_dx, referencia=:referencia, tipo=:tipo,
+	public function Updateplecas($id, Request $req){
+        $update = DB::update('UPDATE    plecas SET dientes=:dientes, cav_eje=:cav_eje,
+                                        cav_des=:cav_des, estatus=:estatus
                             WHERE id =:id',
                             [
-                                'id_solicitud'	 => $req -> id_solicitud,
-                                'dx'	         => $req -> dx,
-                                'id_dx'		     => $req -> id_dx,
-                                'referencia'     => $req -> referencia,
-                                'tipo'           => $req -> tipo,
+                                'dientes' => $req -> dientes,
+                                'cav_eje' => $req -> cav_eje,
+                                'cav_des' => $req -> cav_des,
+                                'estatus' => $req -> estatus
                             ]);
 		if($update):
-			return response("El detalle de la solicitud se editó correctamente",200);
+			return response("El registro de la Pleca se editó correctamente",200);
 		else:
 			return response("Ocurrio un problema. Intentelo nuevamente.",500);
 		endif;

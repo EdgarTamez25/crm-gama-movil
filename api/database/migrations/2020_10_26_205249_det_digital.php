@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class DetFlexo extends Migration
+class DetDigital extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,15 @@ class DetFlexo extends Migration
      */
     public function up()
     {
-        Schema::create('det_flexo', function (Blueprint $table) {
+        //
+        Schema::create('det_digital', function (Blueprint $table) {
             $table->id();
             $table->integer('id_material');
-            $table->integer('id_detacabados');
-            $table->integer('id_detpantone');
-            $table->integer('etqxrollo');
-            $table->integer('etqxpaso');
-            $table->string('med_nucleo');
-            $table->string('med_desarrollo');
-            $table->string('med_eje');
-            $table->integer('id_orientacion');
+            $table->integer('det_sobre');
+            $table->integer('det_pantone');
+            $table->integer('det_acabados');
+            $table->integer('estructura');
+            $table->string('grosor');
             $table->string('ancho');
             $table->string('largo');
         });

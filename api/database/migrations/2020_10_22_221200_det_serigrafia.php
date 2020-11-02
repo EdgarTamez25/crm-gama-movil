@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Plecas extends Migration
+class DetSerigrafia extends Migration
 {
     /**
      * Run the migrations.
@@ -14,13 +14,13 @@ class Plecas extends Migration
     public function up()
     {
         //
-        Schema::create('plecas', function (Blueprint $table){
+            Schema::create('det_serigrafia', function (Blueprint $table){
             $table->id();
-            $table->integer('dientes');
-            $table->integer('cav_eje');
-            $table->integer('cav_des');
-            $table->integer('estatus');
-            $table->timestamps();
+            $table->integer('id_material');
+            $table->string('det_pantone');
+            $table->string('ancho');
+            $table->string('largo');
+            $table->integer('id_orientacion');
             });
     }
 

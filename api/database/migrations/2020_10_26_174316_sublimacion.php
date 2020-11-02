@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class Plecas extends Migration
+class Sublimacion extends Migration
 {
     /**
      * Run the migrations.
@@ -14,14 +14,11 @@ class Plecas extends Migration
     public function up()
     {
         //
-        Schema::create('plecas', function (Blueprint $table){
+        Schema::create('sublimacion', function (Blueprint $table) {
             $table->id();
-            $table->integer('dientes');
-            $table->integer('cav_eje');
-            $table->integer('cav_des');
-            $table->integer('estatus');
-            $table->timestamps();
-            });
+            $table->integer('id_material');
+            $table->integer('tamanio');
+        });
     }
 
     /**
