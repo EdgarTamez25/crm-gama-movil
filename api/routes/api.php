@@ -87,7 +87,22 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
     Route::get('plecas'                      ,'plecasController@plecas')       -> name('plecas');           //* PROBADA
     Route::post('add.Plecas'                 ,'plecasController@addPlecas')    -> name('addPlecas');        //* PROBADA
     Route::put('update.Plecas/{id}'          ,'plecasController@UpdatePlecas') -> name('UpdatePlecas');     //! PROBADA
-	//  Route::get('compromisos.hechos/{id}'  ,'compromisosController@CompromisosHechos')   -> name('CompromisosHechos');
+//==================================== PRODUCTO EXISTENTE   =================================================
+    Route::get('prodExist'                      ,'prodExistController@prodExist')       -> name('prodExist');           //* PROBADA
+    Route::post('add.ProdExist'                 ,'prodExistController@addProdExist')    -> name('addProdExist');        //* PROBADA
+    Route::put('Update.ProdExist/{id}'          ,'prodExistController@UpdateProdExist') -> name('UpdateProdExist');     //! PROBADA
+//==================================== PRODUCTO NUEVO   =================================================
+    Route::get('prodNuevo'                      ,'prodNuevoController@plecas')       -> name('prodNuevo');           //* PROBADA
+    Route::post('add.ProdNuevo'                 ,'prodNuevoController@addProdNuevo')    -> name('addProdNuevo');        //* PROBADA
+    Route::put('Update.ProdNuevo/{id}'          ,'prodNuevoController@UpdateProdNuevo') -> name('UpdateProdNuevo');     //! PROBADA
+//==================================== PRODUCTO MODIFICACION   =================================================
+    Route::get('prodModif'                      ,'prodModifController@plecas')       -> name('prodModif');           //* PROBADA
+    Route::post('add.ProdModif'                 ,'prodModifController@addProdModif')    -> name('addProdModif');        //* PROBADA
+    Route::put('Update.ProdModif/{id}'          ,'prodModifController@UpdateProdModif') -> name('UpdateProdModif');     //! PROBADA
+
+
+    //  Route::get('compromisos.hechos/{id}'  ,'compromisosController@CompromisosHechos')   -> name('CompromisosHechos');
 // 	Route::post('en.ruta'          ,'compromisosController@EnRuta')             -> name('EnRuta');
+
 
 
