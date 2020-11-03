@@ -10,7 +10,7 @@ class prodModifController extends Controller
 
     public function prodModif(Request $req){
         $Plecas = DB::select('SELECT        pm.id, pm.id_solicitud, pm.dx,
-                                            pm.ft, pm.tipo_prod
+                                            pm.ft, pm.cantidad, pm.tipo_prod
                             FROM    prod_modif as pm
                             WHERE id = ?',[$req -> id]);
         return $Plecas;
@@ -22,6 +22,7 @@ class prodModifController extends Controller
                                 'id_solicitud' => $req -> id_solicitud,
                                 'dx' => $req -> dx,
                                 'ft' => $req -> ft,
+                                'cantidad' => $req -> cantidad,
                                 'tipo_prod' => $req -> tipo_prod
                             ]
                         );
@@ -33,13 +34,14 @@ class prodModifController extends Controller
     }
 
 	public function UpdateProdModif($id, Request $req){
-        $update = DB::update('UPDATE    prod_modif SET  id_solicitud=:id_solicitud,
-                                                        dx=:dx, ft=:ft, tipo_prod=:tipo_prod
+        $update = DB::update('UPDATE    prod_modif SET  id_solicitud=:id_solicitud, dx=:dx,
+                                        ft=:ft, cantidad=:cantidad,tipo_prod=:tipo_prod
                             WHERE id =:id',
                             [
                                 'id_solicitud' => $req -> id_solicitud,
                                 'dx' => $req -> dx,
                                 'ft' => $req -> ft,
+                                'cantidad' => $req -> cantidad,
                                 'tipo_prod' => $req -> tipo_prod
                             ]);
 		if($update):

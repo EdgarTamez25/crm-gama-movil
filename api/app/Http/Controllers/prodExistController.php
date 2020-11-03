@@ -9,7 +9,7 @@ class prodExistController extends Controller
     //
     public function prodExist(Request $req){
         $Plecas = DB::select('SELECT        pe.id, pe.id_solicitud, pe.dx,
-                                            pe.ft, pe.tipo_prod
+                                            pe.ft, pe.cantidad, pe.tipo_prod
                             FROM    prod_exist as pe
                             WHERE id = ?',[$req -> id]);
         return $Plecas;
@@ -21,6 +21,7 @@ class prodExistController extends Controller
                                 'id_solicitud' => $req -> id_solicitud,
                                 'dx' => $req -> dx,
                                 'ft' => $req -> ft,
+                                'cantidad' => $req -> cantidad,
                                 'tipo_prod' => $req -> tipo_prod
                             ]
                         );
@@ -39,6 +40,7 @@ class prodExistController extends Controller
                                 'id_solicitud' => $req -> id_solicitud,
                                 'dx' => $req -> dx,
                                 'ft' => $req -> ft,
+                                'cantidad' => $req -> cantidad,
                                 'tipo_prod' => $req -> tipo_prod
                             ]);
 		if($update):
