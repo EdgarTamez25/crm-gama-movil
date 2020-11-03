@@ -15,7 +15,7 @@ class det_SolController extends Controller
         return $Plecas;
     }
 
-    public function adddetsol(Request $req){
+    public function addDetSol(Request $req){
 		$id = DB::table('det_sol')->insertGetId(
                             [
                                 'id_solicitud' => $req -> id_solicitud,
@@ -30,7 +30,7 @@ class det_SolController extends Controller
 		endif;
     }
 
-	public function UpdatedetSol($id, Request $req){
+	public function UpdateDetSol($id, Request $req){
         $update = DB::update('UPDATE    det_sol SET     id_solicitud=:id_solicitud,
                                                         px=:px, id_px=:id_px
                             WHERE id =:id',

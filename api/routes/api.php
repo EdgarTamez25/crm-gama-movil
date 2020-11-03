@@ -92,14 +92,21 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
     Route::post('add.ProdExist'                 ,'prodExistController@addProdExist')    -> name('addProdExist');        //* PROBADA
     Route::put('Update.ProdExist/{id}'          ,'prodExistController@UpdateProdExist') -> name('UpdateProdExist');     //! PROBADA
 //==================================== PRODUCTO NUEVO   =================================================
-    Route::get('prodNuevo'                      ,'prodNuevoController@plecas')       -> name('prodNuevo');           //* PROBADA
+    Route::get('prodNuevo'                      ,'prodNuevoController@prodNuevo')       -> name('prodNuevo');           //* PROBADA
     Route::post('add.ProdNuevo'                 ,'prodNuevoController@addProdNuevo')    -> name('addProdNuevo');        //* PROBADA
     Route::put('Update.ProdNuevo/{id}'          ,'prodNuevoController@UpdateProdNuevo') -> name('UpdateProdNuevo');     //! PROBADA
 //==================================== PRODUCTO MODIFICACION   =================================================
-    Route::get('prodModif'                      ,'prodModifController@plecas')       -> name('prodModif');           //* PROBADA
+    Route::get('prodModif'                      ,'prodModifController@prodModif')       -> name('prodModif');           //* PROBADA
     Route::post('add.ProdModif'                 ,'prodModifController@addProdModif')    -> name('addProdModif');        //* PROBADA
     Route::put('Update.ProdModif/{id}'          ,'prodModifController@UpdateProdModif') -> name('UpdateProdModif');     //! PROBADA
-
+//==================================== DETALLE DE SOLICITUD   =================================================
+    Route::get('detSol'                         ,'det_SolController@detSol')       -> name('detSol');           //* PROBADA
+    Route::post('add.DetSol'                    ,'det_SolController@addDetSol')    -> name('addDetSol');        //* PROBADA
+    Route::put('Update.DetSol/{id}'             ,'det_SolController@UpdateDetSol') -> name('UpdateDetSol');     //! PROBADA
+//==================================== DX MODIF   =================================================
+    Route::get('dxModif'                        ,'dxModifController@dxModif')       -> name('dxModif');           //* PROBADA
+    Route::post('add.DxModif'                   ,'dxModifController@addDxModif')    -> name('addDxModif');        //* PROBADA
+    Route::put('Update.DxModif/{id}'            ,'dxModifController@UpdateDxModif') -> name('UpdateDxModif');     //! PROBADA
 
     //  Route::get('compromisos.hechos/{id}'  ,'compromisosController@CompromisosHechos')   -> name('CompromisosHechos');
 // 	Route::post('en.ruta'          ,'compromisosController@EnRuta')             -> name('EnRuta');
