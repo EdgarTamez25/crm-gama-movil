@@ -26,7 +26,7 @@
               />
             </v-col>
             <!-- //! CANTIDAD  -->
-            <v-col cols="12" class="" v-if="tproducto.id != 2">
+            <v-col cols="12" class="" >
               <v-text-field 
                 v-model="cantidad" hide-details dense label="Cantidad" 
                 outlined color="celeste" placeholder="Cantidad de material"
@@ -232,19 +232,17 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
 
       validaInformacion(){
         if(this.tproducto.id === 3) {
-          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
-          if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
-          if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
+          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"               ; return };
+          if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"       ; return };
+          if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"            ; return };
           if(!this.material2.id)   { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL SECUNDARIO" ; return };
-          if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"      ; return };
-          if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"      ; return };
-          if(!this.ancho)          { this.snackbar=true; this.text ="DEBES AGREGAR EL ANCHO"                 ; return };
-          if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
-        }else if(this.tproducto.id === 1 || this.tproducto.id === 2){
-          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
-          if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
-        }else if(this.tproducto.id === 2){
-          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
+          if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"        ; return };
+          if(!this.acabado.length) { this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN ACABADO"        ; return };
+          if(!this.ancho)          { this.snackbar=true; this.text ="DEBES AGREGAR EL ANCHO"                   ; return };
+          if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                   ; return };
+        }else if(this.tproducto.id === 1 || this.tproducto === 2){
+          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"               ; return };
+          if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"       ; return };
         }
         this.PrepararPeticion();
       },
@@ -273,7 +271,6 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
                       tproducto      : this.tproducto.id,
                       cantidad       : this.cantidad,
                       xmodificar     : this.tproducto.id === 2? this.objetoxModificar(): ''
-
                     }
         }
         
@@ -325,18 +322,25 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
         let payload = {  id: this.modoVista ===1 ? this.consecutivo: this.parametros.id,
                         dx: 3,
                         referencia     : this.referencia,
-                        estructura     : this.estructura.id,
-                        id_material    : { concepto:'id_material'   , valor: this.material.id   ? this.material.id   : '' }, 
-                        id_material2   : { concepto:'id_material2'  , valor: this.material2.id  ? this.material2.id  : '' },
-                        pantones       : { concepto:'pantones'      , valor: this.pantones      ? this.pantones      : '' },
-                        acabados       : { concepto:'acabados'      , valor: this.acabado       ? this.acabado       : '' },
-                        grosor         : { concepto:'grosor'        , valor: this.grosor        ? this.grosor        : '' },
-                        ancho          : { concepto:'ancho'         , valor: this.ancho         ? this.ancho         : '' },
-                        largo          : { concepto:'largo'         , valor: this.largo         ? this.largo         : '' },
-                        estructura     : { concepto:'estructura'    , valor: this.estructura.id ? this.estructura.id : '' },
-                        tproducto      : this.tproducto.id
+                        tproducto      : this.tproducto.id,
+                        xmodificar     : this.agregaConceptos(),
                       }
         return payload;
+      },
+
+      agregaConceptos(){
+        let arrayTemp = [];
+
+        this.material.id     ? arrayTemp.push( { tipo:1 ,concepto:'id_material'   , valor: this.material.id    }): '';  
+        this.material2.id    ? arrayTemp.push( { tipo:1 ,concepto:'id_material2'  , valor: this.material2.id   }): ''; 
+        this.pantones.length ? arrayTemp.push( { tipo:2 ,concepto:'pantones'      , valor: this.pantones       }): ''; 
+        this.acabado.length  ? arrayTemp.push( { tipo:2 ,concepto:'acabados'      , valor: this.acabado        }): '';
+        this.grosor          ? arrayTemp.push( { tipo:1 ,concepto:'grosor'        , valor: this.grosor         }): ''; 
+        this.ancho           ? arrayTemp.push( { tipo:1 ,concepto:'ancho'         , valor: this.ancho          }): ''; 
+        this.largo           ? arrayTemp.push( { tipo:1 ,concepto:'largo'         , valor: this.largo          }): ''; 
+        this.estructura.id   ? arrayTemp.push( { tipo:1 ,concepto:'estructura'    , valor: this.estructura.id  }): '';
+
+        return arrayTemp;
       }
 
     }

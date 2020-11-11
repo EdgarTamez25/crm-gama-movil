@@ -17,7 +17,7 @@
               ></v-select>
             </v-col>
             <!-- //! TITULO - CARACTERISTICAS -->
-            <v-card-text class="font-weight-black pa-1 body-1">{{ titulo }}</v-card-text>
+            <v-card-text class="font-weight-black pa-1 body-1">{{ titulo }} </v-card-text>
              
             <!-- //! REFERENCIA DEL PRODUCTO  -->
             <v-col cols="12">
@@ -27,7 +27,7 @@
               />
             </v-col>
             <!-- //! CANTIDAD  -->
-            <v-col cols="12" class="py-0 my-0" v-if="tproducto.id != 2">
+            <v-col cols="12" class="py-0 my-0" >
               <v-text-field 
                 v-model="cantidad" hide-details dense label="Cantidad" 
                 outlined color="celeste" placeholder="Cantidad de material"
@@ -289,11 +289,9 @@
           if(!this.largo)          { this.snackbar=true; this.text ="DEBES AGREGAR EL LARGO"                 ; return };
           if(!this.pantones.length){ this.snackbar=true; this.text ="DEBES AGREGAR AL MENOS UN PANTONE"      ; return };
           if(!this.checkActivo)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UNA ORIENTACIÓN"      ; return };
-        }else if(this.tproducto.id === 1  ){
+        }else if(this.tproducto.id === 1 || this.tproducto.id === 2 ){
           if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
           if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
-        }else if(this.tproducto.id === 2){
-          if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
         }
         this.PrepararPeticion();
       },
@@ -378,24 +376,44 @@
       },
 
       objetoxModificar(){
-        let payload = {  id: this.modoVista ===1 ? this.consecutivo: this.parametros.id,
+        let payload = { id: this.modoVista ===1 ? this.consecutivo: this.parametros.id,
                         dx: 1,
                         referencia     : this.referencia,
-                        id_material    : { concepto:'id_material'   , valor: this.material.id ? this.material.id: '' }, 
-                        pantones       : { concepto:'pantones'      , valor: this.pantones    ? this.pantones   : '' },
-                        acabados       : { concepto:'acabados'      , valor: this.acabado     ? this.acabado    : '' },
-                        id_orientacion : { concepto:'id_orientacion', valor: this.checkActivo ? this.checkActivo: '' },
-                        etqxrollo      : { concepto:'etqxrollo'     , valor: this.etqxrollo   ? this.etqxrollo  : '' },
-                        med_nucleo     : { concepto:'med_nucleo'    , valor: this.med_nucleo  ? this.med_nucleo : '' },
-                        etqxpaso       : { concepto:'etqxpaso'      , valor: this.etqxpaso    ? this.etqxpaso   : '' },
-                        med_desarrollo : { concepto:'med_desarrollo', valor: this.med_desarrollo ? this.med_desarrollo: '' },
-                        med_eje        : { concepto:'med_eje'       , valor: this.med_eje     ? this.med_eje    : '' },
-                        ancho          : { concepto:'ancho'         , valor: this.ancho       ? this.ancho      : '' },
-                        largo          : { concepto:'largo'         , valor: this.largo       ? this.largo      : '' },
                         tproducto      : this.tproducto.id,
+                        cantidad       : this.cantidad,
+                        xmodificar     : this.agregaConceptos(),
                       }
+                      // SE TIENE QUE METER A UN ARRAY EL OBJ DE CONCEPTO Y VALOR
         return payload;
+      },
+
+      agregaConceptos(){
+        let arrayTemp = [];
+        this.material.id     ? arrayTemp.push( { tipo:1 , concepto:'id_material'   ,valor: this.material.id    }): '';
+        this.pantones.length ? arrayTemp.push( { tipo:2 , concepto:'pantones'      ,valor: this.pantones       }): ''; 
+        this.acabado.length  ? arrayTemp.push( { tipo:2 , concepto:'acabados'      ,valor: this.formarObject(this.acabado) }): '';
+        this.checkActivo     ? arrayTemp.push( { tipo:1 , concepto:'id_orientacion',valor: this.checkActivo    }): '';
+        this.etqxrollo       ? arrayTemp.push( { tipo:1 , concepto:'etqxrollo'     ,valor: this.etqxrollo      }): '';
+        this.med_nucleo      ? arrayTemp.push( { tipo:1 , concepto:'med_nucleo'    ,valor: this.med_nucleo     }): '';
+        this.etqxpaso        ? arrayTemp.push( { tipo:1 , concepto:'etqxpaso'      ,valor: this.etqxpaso       }): '';
+        this.med_desarrollo  ? arrayTemp.push( { tipo:1 , concepto:'med_desarrollo',valor: this.med_desarrollo }): '';
+        this.med_eje         ? arrayTemp.push( { tipo:1 , concepto:'med_eje'       ,valor: this.med_eje        }): '';
+        this.ancho           ? arrayTemp.push( { tipo:1 , concepto:'ancho'         ,valor: this.ancho          }): '';
+        this.largo           ? arrayTemp.push( { tipo:1 , concepto:'largo'         ,valor: this.largo          }): '';
+
+        return arrayTemp;
+      },
+
+      formarObject(items){
+        let arrayTemp = [];
+        for(let i=0; i< items.length;i++){
+          arrayTemp.push(items[i].id)
+        }
+
+        return arrayTemp;
       }
+
+  
     }
   }
 </script>

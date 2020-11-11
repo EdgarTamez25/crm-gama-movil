@@ -40,7 +40,10 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 //==================================== MATERIALES ==================================================
 	Route::get('materiales/{dx}'             ,'materialesController@Materiales')       -> name('Materiales');
 //==================================== ACABADOS   ==================================================
-    Route::get('acabados/{dx}'               ,'acabadosController@Acabados')           -> name('Acabados');
+		Route::get('acabados/{dx}'               ,'acabadosController@Acabados')           -> name('Acabados');
+		
+
+		
 //==================================== SOLICITUDES   ==================================================
     Route::get('solicitudes'                 ,'solicitudesController@solicitudes')     -> name('solicitudes');         //* PROBADA
     Route::post('add.Solicitud'              ,'solicitudesController@addSolicitud')    -> name('addSolicitud');        //* PROBADA

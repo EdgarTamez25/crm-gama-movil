@@ -514,22 +514,22 @@
 											 }
 				console.log('payload por resultado', payload)
 				this.terminarCompromiso = false; this.dialog = true;
-					// this.$http.post('add.solicitudes', payload).then(response =>{
-				// 	var me = this;this.dialog = false;this.Correcto = true ; this.textCorrecto = response.bodyText;
+					this.$http.post('add.solicitudes', payload).then(response =>{
+					var me = this;this.dialog = false;this.Correcto = true ; this.textCorrecto = response.bodyText;
 					setTimeout(function(){ me.$router.push({name: 'compromisos' })}, 1000);
-				// 	this.consultaCompromisos() 
-				// }).catch(error =>{
-				// 	this.mostrarError(error.bodyText)
-				// 	console.log('error', error)
-				// }).finally(()=> this.dialog = false)
+					this.consultaCompromisos() 
+				}).catch(error =>{
+					this.mostrarError(error.bodyText)
+					console.log('error', error)
+				}).finally(()=> this.dialog = false)
 			},
 
 			EnviarSolicitud(){
 				let detalle = this.validaProductos();
 				const payload = { 
+													id_compromiso: this.detalle.id,
 													fecha     : this.traerFechaActual(),
 													hora      : this.traerHoraActual(),
-													urgencia  : 1,
 													id_usuario: this.detalle.id_vendedor,
 													id_cliente: this.detalle.id_cliente,
 													nota	    : this.nota,
@@ -539,15 +539,15 @@
 												
 				this.terminarCompromiso = false; this.dialog = true ; // ACTIVAR DIALOGOS DE GUARDAR
 
-				// this.$http.post('add.solicitudes', payload).then(response =>{
-					var me = this;
-					// this.dialog = false;this.Correcto = true ; this.textCorrecto = response.bodyText;
+				this.$http.post('add.Solicitud', payload).then(response =>{
+					var me = this; this.dialog = false;
+					this.Correcto = true ; this.textCorrecto = response.bodyText;
 					setTimeout(function(){ me.$router.push({name: 'compromisos' })}, 1000);
-				// 	this.consultaCompromisos() 
-				// }).catch(error =>{
-				// 	this.mostrarError(error.bodyText)
-				// 	console.log('error', error)
-				// }).finally(()=> this.dialog = false)
+					this.consultaCompromisos() 
+				}).catch(error =>{
+					this.mostrarError(error.bodyText)
+					console.log('error', error)
+				}).finally(()=> this.dialog = false)
 			},
 
 			validaProductos(){

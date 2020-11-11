@@ -189,7 +189,8 @@
 				this.compromisoModal = true;
 			},
 
-			editar(item){  // VER DETALLE DEL COMPROMISO
+			editar(item){  // VER DETALLE DEL COMPROMISO}
+				console.log('DETALLE',  item)
 				this.$router.push({name: 'det_compromiso', params:{ detalle:item }})
 			},
 		}
