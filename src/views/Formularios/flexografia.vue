@@ -389,17 +389,17 @@
 
       agregaConceptos(){
         let arrayTemp = [];
-        this.material.id     ? arrayTemp.push( { tipo:1 , concepto:'id_material'   ,valor: this.material.id    }): '';
-        this.pantones.length ? arrayTemp.push( { tipo:2 , concepto:'pantones'      ,valor: this.pantones       }): ''; 
-        this.acabado.length  ? arrayTemp.push( { tipo:2 , concepto:'acabados'      ,valor: this.formarObject(this.acabado) }): '';
-        this.checkActivo     ? arrayTemp.push( { tipo:1 , concepto:'id_orientacion',valor: this.checkActivo    }): '';
-        this.etqxrollo       ? arrayTemp.push( { tipo:1 , concepto:'etqxrollo'     ,valor: this.etqxrollo      }): '';
-        this.med_nucleo      ? arrayTemp.push( { tipo:1 , concepto:'med_nucleo'    ,valor: this.med_nucleo     }): '';
-        this.etqxpaso        ? arrayTemp.push( { tipo:1 , concepto:'etqxpaso'      ,valor: this.etqxpaso       }): '';
-        this.med_desarrollo  ? arrayTemp.push( { tipo:1 , concepto:'med_desarrollo',valor: this.med_desarrollo }): '';
-        this.med_eje         ? arrayTemp.push( { tipo:1 , concepto:'med_eje'       ,valor: this.med_eje        }): '';
-        this.ancho           ? arrayTemp.push( { tipo:1 , concepto:'ancho'         ,valor: this.ancho          }): '';
-        this.largo           ? arrayTemp.push( { tipo:1 , concepto:'largo'         ,valor: this.largo          }): '';
+        this.material.id     ? arrayTemp.push( { tipo:1 , concepto:'Material'   ,valor: this.material.id    }): '';
+        this.pantones.length ? arrayTemp.push( { tipo:2 , concepto:'Pantone'      ,valor: this.pantones       }): ''; 
+        this.acabado.length  ? arrayTemp.push( { tipo:2 , concepto:'Acabado'      ,valor: this.formarObject(this.acabado) }): '';
+        this.checkActivo     ? arrayTemp.push( { tipo:1 , concepto:'Orientacion',valor: this.checkActivo    }): '';
+        this.etqxrollo       ? arrayTemp.push( { tipo:1 , concepto:'Etiqueta por Rollo'     ,valor: this.etqxrollo      }): '';
+        this.med_nucleo      ? arrayTemp.push( { tipo:1 , concepto:'Medida del nucleo'    ,valor: this.med_nucleo     }): '';
+        this.etqxpaso        ? arrayTemp.push( { tipo:1 , concepto:'Etiqueta al paso'      ,valor: this.etqxpaso       }): '';
+        this.med_desarrollo  ? arrayTemp.push( { tipo:1 , concepto:'Medida de desarrollo',valor: this.med_desarrollo }): '';
+        this.med_eje         ? arrayTemp.push( { tipo:1 , concepto:'Medida del eje'       ,valor: this.med_eje        }): '';
+        this.ancho           ? arrayTemp.push( { tipo:1 , concepto:'Ancho'         ,valor: this.ancho          }): '';
+        this.largo           ? arrayTemp.push( { tipo:1 , concepto:'Largo'         ,valor: this.largo          }): '';
 
         return arrayTemp;
       },

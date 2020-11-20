@@ -554,13 +554,13 @@
 				let Temporal = [];
 				for(let i=0;i<this.getSolicitudes.length;i++){
 					if(this.getSolicitudes[i].tproducto === 2){
-						console.log('xmodificar', this.getSolicitudes[i].xmodificar )
+						// console.log('xmodificar', this.getSolicitudes[i].xmodificar )
 						Temporal.push(this.getSolicitudes[i].xmodificar) 
 					} else{
 						Temporal.push(this.getSolicitudes[i])
 					}
 				}
-				console.log('Temportal',Temporal)
+				// console.log('Temportal',Temporal)
 				return Temporal;
 			},
 

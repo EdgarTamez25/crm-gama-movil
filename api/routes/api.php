@@ -36,12 +36,7 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 //==================================== CATEGORIAS ==================================================
 	Route::get('categorias'                  ,'categoriasController@categorias')       -> name('categorias');
 //==================================== DEPARTAMENTOS ===============================================
-	Route::get('departamentos'               ,'departamentosController@Departamentos') -> name('Departamentos');
-//==================================== MATERIALES ==================================================
-	Route::get('materiales/{dx}'             ,'materialesController@Materiales')       -> name('Materiales');
-//==================================== ACABADOS   ==================================================
-		Route::get('acabados/{dx}'               ,'acabadosController@Acabados')           -> name('Acabados');
-		
+	Route::get('departamentos'               ,'departamentosController@Departamentos') -> name('Departamentos');		
 
 		
 //==================================== SOLICITUDES   ==================================================
@@ -57,7 +52,7 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 //==================================== DETALLE DE FLEXOGRAFÍA   ==================================================
     Route::get('detFlexografia'              ,'detFlexografiaController@detFlexografia') -> name('detFlexografia');     //* PROBADA
     Route::post('add.DetFlexo'               ,'detFlexografiaController@addDetFlexo')    -> name('addDetFlexo');        //* PROBADA
-    Route::put('update.DetFlexo/{id}'        ,'detFlexografiaController@UpdateDetFlexo') -> name('UpdateDetFlexo');     //! PROBADA
+    Route::put('update.DetFlexo/{id}'        ,'detFlexografiaController@UpdateDetFlexo') -> name('UpdateDetFlexo');     //! PROBADA<
 //==================================== DETALLE DE DIGITAL   ==================================================
     Route::get('detDigital'                  ,'detDigitalController@detDigital')       -> name('detDigital');          //* PROBADA
     Route::post('add.DetDigital'             ,'detDigitalController@addDetDigital')    -> name('addDetDigital');       //* PROBADA
@@ -94,3 +89,18 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 // 	Route::post('en.ruta'          ,'compromisosController@EnRuta')             -> name('EnRuta');
 
 
+//==================================== SOLICITUDES =================================================
+Route::get('solicitudes'		         ,'solicitudesController@Solicitudes')  	  -> name('Solicitudes'); 
+Route::get('detalle.solicitud/{id}'  ,'solicitudesController@DetalleSolicitud') -> name('DetalleSolicitud');
+Route::get('modificaciones/{id}'     ,'solicitudesController@Modificaciones')   -> name('Modificaciones');
+Route::post('caracteristicas'   	   ,'solicitudesController@Caracteristicas')  -> name('Caracteristicas');
+Route::get('solicitudes'                 ,'solicitudesController@solicitudes')     -> name('solicitudes');         //* PROBADA
+Route::post('add.Solicitud'              ,'solicitudesController@addSolicitud')    -> name('addSolicitud');        //* PROBADA
+
+//==================================== MATERIALES ==================================================
+Route::get('materiales/{dx}' 			 ,'materialesController@Materiales')  -> name('Materiales');
+//==================================== ACABADOS   ==================================================
+Route::get('acabados/{dx}'         ,'acabadosController@Acabados')      -> name('Acabados');
+
+
+Route::get('departamentos'               ,'departamentosController@Departamentos') -> name('Departamentos');

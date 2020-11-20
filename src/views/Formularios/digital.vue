@@ -323,6 +323,7 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
                         dx: 3,
                         referencia     : this.referencia,
                         tproducto      : this.tproducto.id,
+                        cantidad       : this.cantidad,
                         xmodificar     : this.agregaConceptos(),
                       }
         return payload;
@@ -331,14 +332,14 @@ import ControlCompromisoVue from '../Compromisos/ControlCompromiso.vue';
       agregaConceptos(){
         let arrayTemp = [];
 
-        this.material.id     ? arrayTemp.push( { tipo:1 ,concepto:'id_material'   , valor: this.material.id    }): '';  
-        this.material2.id    ? arrayTemp.push( { tipo:1 ,concepto:'id_material2'  , valor: this.material2.id   }): ''; 
-        this.pantones.length ? arrayTemp.push( { tipo:2 ,concepto:'pantones'      , valor: this.pantones       }): ''; 
-        this.acabado.length  ? arrayTemp.push( { tipo:2 ,concepto:'acabados'      , valor: this.acabado        }): '';
-        this.grosor          ? arrayTemp.push( { tipo:1 ,concepto:'grosor'        , valor: this.grosor         }): ''; 
-        this.ancho           ? arrayTemp.push( { tipo:1 ,concepto:'ancho'         , valor: this.ancho          }): ''; 
-        this.largo           ? arrayTemp.push( { tipo:1 ,concepto:'largo'         , valor: this.largo          }): ''; 
-        this.estructura.id   ? arrayTemp.push( { tipo:1 ,concepto:'estructura'    , valor: this.estructura.id  }): '';
+        this.material.id     ? arrayTemp.push( { tipo:1 ,concepto:'Material'   , valor: this.material.id    }): '';  
+        this.material2.id    ? arrayTemp.push( { tipo:1 ,concepto:'Material Secundario'  , valor: this.material2.id   }): ''; 
+        this.pantones.length ? arrayTemp.push( { tipo:2 ,concepto:'Pantone'      , valor: this.pantones       }): ''; 
+        this.acabado.length  ? arrayTemp.push( { tipo:2 ,concepto:'Acabado'      , valor: this.acabado        }): '';
+        this.grosor          ? arrayTemp.push( { tipo:1 ,concepto:'Grosor'        , valor: this.grosor         }): ''; 
+        this.ancho           ? arrayTemp.push( { tipo:1 ,concepto:'Ancho'         , valor: this.ancho          }): ''; 
+        this.largo           ? arrayTemp.push( { tipo:1 ,concepto:'Largo'         , valor: this.largo          }): ''; 
+        this.estructura.id   ? arrayTemp.push( { tipo:1 ,concepto:'Estructura'    , valor: this.estructura.id  }): '';
 
         return arrayTemp;
       }
