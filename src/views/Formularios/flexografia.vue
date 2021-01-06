@@ -13,7 +13,7 @@
             <v-col cols="12" class="my-0 py-0" >
               <v-select
                 v-model="tproducto" :items="tproductos" item-text="nombre" item-value="id" outlined color="celeste" 
-                dense hide-details label="Tipo de producto" return-object :disabled="modoVista===2?true:false"
+                dense hide-details label="Tipo de producto" return-object :disabled="modoVista===2 || modoVista=== 4?true:false"
               ></v-select>
             </v-col>
             <!-- //! TITULO - CARACTERISTICAS -->
@@ -141,13 +141,15 @@
         <v-btn color="success" small  @click="validaInformacion()">Guardar </v-btn>
       </v-footer>
 
-      <v-dialog v-model="dialog" hide-overlay persistent width="300">
+		  <overlay v-if="overlay"/>
+
+      <!-- <v-dialog v-model="dialog" hide-overlay persistent width="300">
         <v-card color="blue darken-4" dark >
           <v-card-text> <th style="font-size:17px;" align="center">{{ textDialog }}</th>
             <br><v-progress-linear indeterminate color="white" class="mb-0" persistent></v-progress-linear>
           </v-card-text>
         </v-card>
-      </v-dialog>
+      </v-dialog> -->
 
       <v-dialog v-model="Correcto" hide-overlay persistent width="350">
         <v-card color="success"  dark class="pa-3">
@@ -161,6 +163,7 @@
 <script>
 	import  metodos from '@/mixins/metodos.js';
 	import {mapGetters, mapActions} from 'vuex';
+	import overlay     from '@/components/overlay.vue'
   
   export default {
     mixins:[metodos],
@@ -168,7 +171,11 @@
 			'modoVista',
       'parametros',
       'depto_id',
-	  ],
+      'actualiza'
+    ],
+    components: {
+			overlay,
+		},
     data: () => ({
       titulo         : 'CARACTERÍSTICAS',
       valid          : true,
@@ -177,6 +184,8 @@
                       { id:2, nombre:'Modificación de producto'},
                       { id:3, nombre:'Nuevo Producto'}
                      ],
+      id_partida   : null , // identificador de partida que recibo
+      id_caracter  : null,  // identificador de caracteristicas que consulto
       cantidad     : '',
       material     : { id:null, nombre:''},
       materiales   : [],
@@ -203,13 +212,18 @@
       med_eje       : '',
       ancho         : '',
       largo         : '',
+      acabadosAEliminar:[],
+      pantonesAEliminar:[],
+      conceptosAEliminar:[],
+
       // AVISOS
       snackbar      : false,
       text          : '',
-      dialog        : false,
-      textDialog    : "Guardando Información",
+      // dialog        : false,
+      // textDialog    : "Guardando Información",
       Correcto      : false,
       textCorrecto  : '',
+      overlay       : false
     }),
 
     created(){ 
@@ -248,8 +262,10 @@
       eliminaPanton(i){ this.pantones.splice(i,1); },
 
       validarModoVista(){ 
+        this.limpiarCampos();
         this.consultaMateriales(this.depto_id);
         this.consultaAcabados(this.depto_id);
+        if(this.modoVista === 1 || this.modoVista === 3){ this.limpiarCampos() };
 
 				if(this.modoVista === 2 ){
           // ASIGNAR VALORES AL FORMULARIO
@@ -269,13 +285,65 @@
           this.med_eje       =  this.parametros.med_eje
           this.ancho         =  this.parametros.ancho
           this.largo         =  this.parametros.largo
-				}else{
-				  this.limpiarCampos()
-				}
+        } 
+        if(this.modoVista === 4){
+          this.id_partida = this.parametros.id,
+          this.tproducto  = { id: this.parametros.tipo_prod };
+          this.cantidad   = this.parametros.cantidad;
+          this.referencia = this.parametros.ft;
+          if(this.parametros.tipo_prod === 3){ this.consultaCaracteristicas(); };
+          if(this.parametros.tipo_prod === 2){ this.consultaModificaciones(); };
+        }
+      },
+
+      consultaCaracteristicas(){
+        this.$http.post('caracteristicas', this.parametros).then(response =>{
+          this.id_caracter        = response.body.id
+          this.material          = { id: response.body.id_material};
+          this.acabado           = response.body.acabados ;
+          this.checkActivo       = this.id_orientacion
+          this.evaluaCheck(response.body.id_orientacion)
+          this.etqxrollo         = response.body.etqxrollo
+          this.med_nucleo        = response.body.med_nucleo
+          this.etqxpaso          = response.body.etqxpaso
+          this.med_desarrollo    = response.body.med_desarrollo
+          this.med_eje           = response.body.med_eje
+          this.ancho             = response.body.ancho
+          this.largo             = response.body.largo
+          this.pantones          = response.body.pantones.map( item =>{ return item.pantone});
+          this.acabadosAEliminar = response.body.acabados;
+          this.pantonesAEliminar = response.body.pantones;
+        }).catch( error =>{
+          console.log('err', error)
+        } )
+      },
+
+      consultaModificaciones(){
+        this.$http.get('modificaciones/'+ this.parametros.id).then(res =>{
+          this.conceptosAEliminar  = []; let acabados = [], pantones =[]; 
+          for(let i=0; i< res.body.length; i++){
+            this.conceptosAEliminar.push(res.body[i].id);
+            res.body[i].concepto === 'Material'            ? this.material       = { id: parseInt(res.body[i].valor)}: '';
+            res.body[i].concepto === 'Etiqueta por Rollo'  ? this.etqxrollo      = res.body[i].valor: ''
+            res.body[i].concepto === 'Medida del nucleo'   ? this.med_nucleo     = res.body[i].valor: ''     
+            res.body[i].concepto === 'Etiqueta al paso'    ? this.etqxpaso       = res.body[i].valor: ''      
+            res.body[i].concepto === 'Medida de desarrollo'? this.med_desarrollo = res.body[i].valor: '' 
+            res.body[i].concepto === 'Medida del eje'      ? this.med_eje        = res.body[i].valor: '' 
+            res.body[i].concepto === 'Ancho'               ? this.ancho          = res.body[i].valor: ''
+            res.body[i].concepto === 'Largo'               ? this.largo          = res.body[i].valor: ''
+            res.body[i].concepto === 'Orientacion'         ? this.checkActivo    = parseInt(res.body[i].valor): '';
+            res.body[i].concepto === 'Orientacion'         ? this.evaluaCheck(res.body[i].valor)   : '';
+            if(res.body[i].concepto === 'Pantone' ){ pantones.push( res.body[i].valor) }
+            if(res.body[i].concepto === 'Acabado' ){ acabados.push({id: parseInt(res.body[i].valor)})}
+          }
+            this.pantones = pantones; this.acabado  = acabados;
+        }).catch(error =>{
+          console.log('error', error)
+        })
       },
 
       validaInformacion(){
-        if(this.tproducto.id === 3) {
+        if(this.tproducto.id === 3 ) {
           if(!this.referencia)     { this.snackbar=true; this.text ="OLVIDASTE LA FICHA TECNICA"             ; return };
           if(!this.cantidad)       { this.snackbar=true; this.text ="OLVIDASTE LA CANTIDAD DEL MATERIAL"     ; return };
           if(!this.material.id)    { this.snackbar=true; this.text ="DEBES SELECCIONAR UN MATERIAL"          ; return };
@@ -297,61 +365,110 @@
       },
 
       PrepararPeticion(){
-        let payload = {};
-        if(this.tproducto.id === 1){ //! FORMO ARRAY SI ES PRODUCTO EXISTENTE
-          payload = { id        : this.modoVista ===1 ? this.consecutivo: this.parametros.id,
+        let payload = {}, id = null, id_sol = null;
+       if(this.modoVista === 4){
+        if(this.parametros.estatus > 1 ){
+          this.snackbar= true; this.text="Esté producto no se puede actualizar ya que lo estan atendiendo!";
+          ; return;
+        }
+       } 
+
+       if(this.modoVista === 1 )  { id = this.consecutivo  ; id_sol = null };
+       if(this.modoVista === 2 )  { id = this.consecutivo  ; id_sol = this.parametros.id_solicitud };
+       if(this.modoVista === 3 )  { id = this.consecutivo  ; id_sol = this.parametros.id  };
+       if(this.modoVista === 4 )  { id = this.parametros.id; id_sol = this.parametros.id_solicitud };
+      
+       if(this.tproducto.id === 1){ //! FORMO ARRAY SI ES PRODUCTO EXISTENTE
+          payload = { id        : id,
+                      id_solicitud    : id_sol,
                       dx        : 1,
                       referencia: this.referencia,
                       tproducto : this.tproducto.id,
-                      cantidad  : this.cantidad
+                      cantidad  : this.cantidad,
+                      id_partida  : this.id_partida,
+                      id_caracter : this.id_caracter
                     }
-        }else if(this.tproducto.id === 2 || this.tproducto.id === 3){ //! FORMO ARRAY SI ES UNA MODIFICACION DE PRODUCTO
-          payload ={  id             : this.modoVista === 1? this.consecutivo: this.parametros.id,
-                      dx             : 1,
-                      referencia     : this.referencia,
-                      id_material    : this.material.id,
-                      pantones       : this.pantones,
-                      acabados       : this.acabado,
-                      id_orientacion : this.checkActivo,
-                      etqxrollo      : this.etqxrollo,
-                      med_nucleo     : this.med_nucleo,
-                      etqxpaso       : this.etqxpaso,
-                      med_desarrollo : this.med_desarrollo,
-                      med_eje        : this.med_eje,
-                      ancho          : this.ancho,
-                      largo          : this.largo,
-                      tproducto      : this.tproducto.id,
-                      cantidad       : this.cantidad,
-                      xmodificar     : this.tproducto.id === 2? this.objetoxModificar(): ''
-                    }
-        }
-       
-        // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
-				this.modoVista === 1 ? this.Crear(payload): this.Actualizar(payload);
+       } 
+        
+       if(this.tproducto.id === 2 || this.tproducto.id === 3){ //! FORMO ARRAY SI ES UNA MODIFICACION DE PRODUCTO
+        payload ={  id             : id,
+                    id_solicitud         : id_sol,
+                    dx             : 1,
+                    referencia     : this.referencia,
+                    id_material    : this.material.id ? this.material.id : null,
+                    pantones       : this.pantones,
+                    acabados       : this.acabado.length? this.formarObject(this.acabado) : '',
+                    id_orientacion : this.checkActivo,
+                    etqxrollo      : this.etqxrollo,
+                    med_nucleo     : this.med_nucleo,
+                    etqxpaso       : this.etqxpaso,
+                    med_desarrollo : this.med_desarrollo,
+                    med_eje        : this.med_eje,
+                    ancho          : this.ancho,
+                    largo          : this.largo,
+                    tproducto      : this.tproducto.id,
+                    cantidad       : this.cantidad,
+                    xmodificar     : this.tproducto.id === 2 ? this.objetoxModificar(): '',
+                    id_partida     : this.id_partida? this.id_partida: null,
+                    id_caracter    : this.id_caracter ? this.id_caracter : null,
+                    conceptosAEliminar: this.conceptosAEliminar,
+                    pantonesAEliminar : this.pantonesAEliminar,
+                    acabadosAEliminar : this.acabadosAEliminar
+                  }
+       }
+
+        // console.log('AGREGAR PRODUCTO', payload);
+       // VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
+       if(this.modoVista === 1){ this.Crear(payload)      }; // CREAR PRODUCTO EN VUEX
+       if(this.modoVista === 2){ this.Actualizar(payload) }; // ACTUALIZAR PRODUCTO EN VUEX
+       if(this.modoVista === 3){ this.Añadir_Producto(payload)     }; // 
+       if(this.modoVista === 4){ this.Actualizar_Producto(payload) };
+
       },
 
       Crear(payload){
-        this.dialog = true ; 
         this.agregaProducto(payload).then( res =>{
           if(res){ this.TerminarProceso("El producto se agrego a la lista"); }
         }).finally(()=>{ 
-          this.dialog = false
+          this.overlay = false
         })
       },
 
+      Añadir_Producto(payload){
+         this.overlay = true;
+         this.$http.post('anadir.producto.sol', payload).then(response =>{
+          //  console.log('respuesta s', response.body)
+           this.TerminarProceso(response.bodyText);
+         }).catch(error =>{
+           console.log('error', error)
+         }).finally(()=>{
+           this.overlay = false;
+         })
+      },
+
       Actualizar(payload){
-        this.dialog = true ;
         this.actualizaProducto(payload).then( res =>{
           if(res){ this.TerminarProceso("El producto se modifico correctamente"); }
         }).finally(()=>{ 
-          this.dialog = false
+          this.overlay = false
+        })
+      },
+
+      Actualizar_Producto(payload){
+        // console.log('actualiza', payload)
+      this.overlay = true;
+       this.$http.post('actualiza.producto',payload).then( res =>{
+          if(res){ this.TerminarProceso(res.bodyText); }
+        }).finally(()=>{ 
+          this.overlay = false
         })
       },
 
 			TerminarProceso(mensaje){
         var me = this ;
-        this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
-        setTimeout(function(){ me.$emit('modal',false)}, 2000);
+        this.Correcto = true ; this.textCorrecto = mensaje;
+        setTimeout(()=>{ me.$emit('modal',false); me.$emit('put',!this.actualiza)}, 2000);
+
         this.limpiarCampos();  //LIMPIAR FORMULARIO
       },
 
@@ -376,7 +493,14 @@
       },
 
       objetoxModificar(){
-        let payload = { id: this.modoVista ===1 ? this.consecutivo: this.parametros.id,
+        let id = null, id_sol = null;
+        if(this.modoVista === 1 )  { id = this.consecutivo  ; id_sol = null };
+        if(this.modoVista === 2 )  { id = this.consecutivo  ; id_sol = this.parametros.id_solicitud };
+        if(this.modoVista === 3 )  { id = this.consecutivo  ; id_sol = this.parametros.id  };
+        if(this.modoVista === 4 )  { id = this.parametros.id; id_sol = this.parametros.id_solicitud };
+
+        let payload = { id: id,
+                        id_solicitud: id_sol,
                         dx: 1,
                         referencia     : this.referencia,
                         tproducto      : this.tproducto.id,
@@ -389,18 +513,17 @@
 
       agregaConceptos(){
         let arrayTemp = [];
-        this.material.id     ? arrayTemp.push( { tipo:1 , concepto:'Material'   ,valor: this.material.id    }): '';
-        this.pantones.length ? arrayTemp.push( { tipo:2 , concepto:'Pantone'      ,valor: this.pantones       }): ''; 
-        this.acabado.length  ? arrayTemp.push( { tipo:2 , concepto:'Acabado'      ,valor: this.formarObject(this.acabado) }): '';
-        this.checkActivo     ? arrayTemp.push( { tipo:1 , concepto:'Orientacion',valor: this.checkActivo    }): '';
-        this.etqxrollo       ? arrayTemp.push( { tipo:1 , concepto:'Etiqueta por Rollo'     ,valor: this.etqxrollo      }): '';
-        this.med_nucleo      ? arrayTemp.push( { tipo:1 , concepto:'Medida del nucleo'    ,valor: this.med_nucleo     }): '';
-        this.etqxpaso        ? arrayTemp.push( { tipo:1 , concepto:'Etiqueta al paso'      ,valor: this.etqxpaso       }): '';
-        this.med_desarrollo  ? arrayTemp.push( { tipo:1 , concepto:'Medida de desarrollo',valor: this.med_desarrollo }): '';
-        this.med_eje         ? arrayTemp.push( { tipo:1 , concepto:'Medida del eje'       ,valor: this.med_eje        }): '';
-        this.ancho           ? arrayTemp.push( { tipo:1 , concepto:'Ancho'         ,valor: this.ancho          }): '';
-        this.largo           ? arrayTemp.push( { tipo:1 , concepto:'Largo'         ,valor: this.largo          }): '';
-
+        this.material.id     ? arrayTemp.push( { tipo:1 , concepto:'Material'             , valor: this.material.id    }): '';
+        this.pantones.length ? arrayTemp.push( { tipo:2 , concepto:'Pantone'              , valor: this.pantones       }): ''; 
+        this.acabado.length  ? arrayTemp.push( { tipo:2 , concepto:'Acabado'              , valor: this.formarObject(this.acabado) }): '';
+        this.checkActivo     ? arrayTemp.push( { tipo:1 , concepto:'Orientacion'          , valor: this.checkActivo    }): '';
+        this.etqxrollo       ? arrayTemp.push( { tipo:1 , concepto:'Etiqueta por Rollo'   , valor: this.etqxrollo      }): '';
+        this.med_nucleo      ? arrayTemp.push( { tipo:1 , concepto:'Medida del nucleo'    , valor: this.med_nucleo     }): '';
+        this.etqxpaso        ? arrayTemp.push( { tipo:1 , concepto:'Etiqueta al paso'     , valor: this.etqxpaso       }): '';
+        this.med_desarrollo  ? arrayTemp.push( { tipo:1 , concepto:'Medida de desarrollo' , valor: this.med_desarrollo }): '';
+        this.med_eje         ? arrayTemp.push( { tipo:1 , concepto:'Medida del eje'       , valor: this.med_eje        }): '';
+        this.ancho           ? arrayTemp.push( { tipo:1 , concepto:'Ancho'                , valor: this.ancho          }): '';
+        this.largo           ? arrayTemp.push( { tipo:1 , concepto:'Largo'                , valor: this.largo          }): '';
         return arrayTemp;
       },
 

@@ -56,44 +56,45 @@ export default{
 			commit('LOADING',true); commit('COMPROMISOSHECHOS', []) // Limpio Arreglo y Genero Consulta
 
 			Vue.http.post('compromisos.hechos',payload).then(response=>{
-				// console.log('compromisos hechos', response.body)
-				var copromisosHechos = []
-				for(let i =0; i <response.body.length; i++){
-					copromisosHechos.push({ id			: response.body[i].id, 
+				// let copromisosHechos = []
+			
+				// for(let i =0; i <response.body.length; i++){
+				// 	copromisosHechos.push({ id			: response.body[i].id, 
 																	
-																	id_cliente  : response.body[i].id_cliente,
-																	nomcli      : response.body[i].nomcli,
-																	fecha       : moment(response.body[i].fecha).format('LL'),
-																	hora        : response.body[i].hora,
-																})
-				}
+				// 													id_cliente  : response.body[i].id_cliente,
+				// 													nomcli      : response.body[i].nomcli,
+				// 													fecha       : moment(response.body[i].fecha).format('LL'),
+				// 													hora        : response.body[i].hora,
 
-				commit('COMPROMISOSHECHOS', copromisosHechos);
+				// 												})
+				// }
+
+				commit('COMPROMISOSHECHOS', response.body);
 			}).catch((error)=>{
 				console.log('error',error)
 			}).finally(() => commit('LOADING', false))
 		},
 		
-		consultaSeguimiento({commit}, id){
-			var resumen = [];
-			commit('LOADING',true); commit('SEGUIMIENTO', [])
+		// consultaSeguimiento({commit}, id){
+		// 	var resumen = [];
+		// 	commit('LOADING',true); commit('SEGUIMIENTO', [])
 
-			Vue.http.get('ver.resumen/'+id).then(response =>{
-				for(let i=0;i<response.body.length;i++){
-					resumen.push({ id_compromiso : response.body[i].id_compromiso,
-												 fase_venta 	 : response.body[i].fase_venta,
-												 historial     : response.body[i].historial,
-											   nomcli        : response.body[i].nomcli,
-												 show          : false
-												})
-				}
-				// console.log('resumen', resumen)
+		// 	Vue.http.get('ver.resumen/'+id).then(response =>{
+		// 		for(let i=0;i<response.body.length;i++){
+		// 			resumen.push({ id_compromiso : response.body[i].id_compromiso,
+		// 										 fase_venta 	 : response.body[i].fase_venta,
+		// 										 historial     : response.body[i].historial,
+		// 									   nomcli        : response.body[i].nomcli,
+		// 										 show          : false
+		// 										})
+		// 		}
+		// 		// console.log('resumen', resumen)
 				
-				commit('SEGUIMIENTO', resumen)
-			}).catch(err =>{
-				console.log('err', err)
-			}).finally(() => commit('LOADING', false))
-		},
+		// 		commit('SEGUIMIENTO', resumen)
+		// 	}).catch(err =>{
+		// 		console.log('err', err)
+		// 	}).finally(() => commit('LOADING', false))
+		// },
 		
   },
 

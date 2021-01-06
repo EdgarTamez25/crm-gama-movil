@@ -221,8 +221,6 @@
 													fuente      		: this.getUsuarios.id, // USUARIO QUE CREA EL REGISTRO
 												}
 													
-				console.log('payload', payload)
-
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.Crear(payload): this.Actualizar(payload);
 			},

@@ -26,16 +26,12 @@
 				<v-btn  class="rosa ma-1" icon dark @click="nuevoCompromiso(1,'')" ><v-icon>chrome_reader_mode</v-icon> </v-btn>
 			</v-col>
 			<v-col cols="2" class="mx-1" align="left">
-				<v-btn  class="gris ma-1" icon dark @click="consultar" ><v-icon>refresh</v-icon> </v-btn>
+				<v-btn  class="gris ma-1" icon dark @click="consultar()" ><v-icon>refresh</v-icon> </v-btn>
 			</v-col>
 
-			<v-container fluid v-if="Loading">
-				<v-row align="center" justify="center" style="height: 300px;">
-					<v-col cols="12" class="text-center"  >  <!-- PROGRES -->
-						<v-progress-circular :size="100" :width="7" color="celeste" indeterminate ></v-progress-circular>
-					</v-col>	
-				</v-row>
-			</v-container>	
+			<v-container style="height: 400px;" v-if="Loading">
+				<loading/>
+			</v-container>
 
 			<v-col cols="12" v-if="getCompromisos.length"> <!-- TABLA DE COMPROMISOS -->
 				<v-card outlined >
@@ -71,7 +67,8 @@
 					<v-row align="center">
 						<v-col class="grow">No hay compromisos pendientes. <br> Actualice la vista o revise sus proximos compromisos.</v-col>
 						<v-col class="shrink">
-							<v-btn fab small color="celeste" dark :to="{name:'pendientes'}"> <v-icon> calendar_today </v-icon> </v-btn>
+							<!-- <v-btn fab small color="celeste" dark :to="{name:'pendientes'}"> <v-icon> calendar_today </v-icon> </v-btn> -->
+							<v-btn fab small color="celeste" dark @click="consultar()"> <v-icon> refresh </v-icon> </v-btn>
 						</v-col>
 					</v-row>
 				</v-alert>
@@ -92,10 +89,14 @@
 	import {mapGetters, mapActions} from 'vuex';
 	import metodos from '@/mixins/metodos.js'
 	import ControlCompromiso from '@/views/Compromisos/ControlCompromiso.vue'
+  import loading from '@/components/loading.vue'
 
 	export default {
 		mixins:[metodos],
-		components: { ControlCompromiso }, //formaRuta
+		components: { 
+			ControlCompromiso,
+			loading
+		}, 
 		data(){
 			return{
 				search: '',
@@ -190,7 +191,7 @@
 			},
 
 			editar(item){  // VER DETALLE DEL COMPROMISO}
-				console.log('DETALLE',  item)
+				// console.log('DETALLE',  item)
 				this.$router.push({name: 'det_compromiso', params:{ detalle:item }})
 			},
 		}

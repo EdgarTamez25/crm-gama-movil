@@ -7,8 +7,7 @@ import Compromisos from '@/modules/Compromisos';
 import Entregas    from '@/modules/Entregas';
 import Prospectos  from '@/modules/Prospectos';
 import Solicitudes from '@/modules/Solicitudes';
-
-
+import OT          from '@/modules/OT';
 
 Vue.use(Vuex)
 
@@ -25,6 +24,7 @@ export default new Vuex.Store({
     // Rutas,
     Entregas,
     Prospectos,
-    Solicitudes
+    Solicitudes,
+    OT
   }
 })
