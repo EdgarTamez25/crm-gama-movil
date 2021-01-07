@@ -17,7 +17,6 @@ export default{
 			state.consecutivo = state.consecutivo + 1
 		},
 		PUTSOLICITUDES(state, payload){
-
 			for(let i =0; i < state.solicitudes.length;i++){
 				if(state.solicitudes[i].id === payload.id){
 					state.solicitudes[i] = payload;
@@ -91,7 +90,6 @@ export default{
         resolve(true)
 			})
 		}
-
 		
   },
 
