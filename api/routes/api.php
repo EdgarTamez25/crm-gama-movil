@@ -14,7 +14,7 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 	Route::post('reagendar'                  ,'compromisosController@Reagendar')          -> name('Reagendar');
 	Route::post('confirmarcita'              ,'compromisosController@ConfirmarCita')      -> name('ConfirmarCita');
 	Route::post('compromisos.hechos'         ,'compromisosController@CompromisosHechos')  -> name('CompromisosHechos');
-	Route::post('add.compromiso'  	         ,'compromisosController@addcompromiso')      -> name('addcompromiso');
+	Route::post('addcompromiso'  	         ,'compromisosController@addcompromiso')      -> name('addcompromiso');
 	Route::post('terminar.compromiso'        ,'compromisosController@TerminarCompromiso') -> name('TerminarCompromiso');
 	Route::post('proyectos.cotizados'        ,'compromisosController@proyectosCotizados') -> name('proyectosCotizados');
 	Route::post('fase.venta'  		         ,'compromisosController@FaseVenta') 		  -> name('FaseVenta');

@@ -184,6 +184,7 @@
                       { id:2, nombre:'Modificación de producto'},
                       { id:3, nombre:'Nuevo Producto'}
                      ],
+      id_consecutivo: null, // id de partida para modo agregar desde compromiso
       id_partida   : null , // identificador de partida que recibo
       id_caracter  : null,  // identificador de caracteristicas que consulto
       cantidad     : '',
@@ -268,7 +269,9 @@
         if(this.modoVista === 1 || this.modoVista === 3){ this.limpiarCampos() };
 
 				if(this.modoVista === 2 ){
+          console.log('parametros', this.parametros)
           // ASIGNAR VALORES AL FORMULARIO
+          this.id_consecutivo = this.parametros.id
           this.tproducto    = { id: this.parametros.tproductos };
           this.cantidad     = this.parametros.cantidad
           this.referencia   = this.parametros.referencia;
@@ -366,6 +369,7 @@
 
       PrepararPeticion(){
         let payload = {}, id = null, id_sol = null;
+
        if(this.modoVista === 4){
         if(this.parametros.estatus > 1 ){
           this.snackbar= true; this.text="Esté producto no se puede actualizar ya que lo estan atendiendo!";
@@ -374,7 +378,7 @@
        } 
 
        if(this.modoVista === 1 )  { id = this.consecutivo  ; id_sol = null };
-       if(this.modoVista === 2 )  { id = this.consecutivo  ; id_sol = this.parametros.id_solicitud };
+       if(this.modoVista === 2 )  { id = this.id_consecutivo  ; id_sol = this.parametros.id_solicitud };
        if(this.modoVista === 3 )  { id = this.consecutivo  ; id_sol = this.parametros.id  };
        if(this.modoVista === 4 )  { id = this.parametros.id; id_sol = this.parametros.id_solicitud };
       
@@ -427,6 +431,8 @@
       },
 
       Crear(payload){
+        console.log('crear producto', payload)
+
         this.agregaProducto(payload).then( res =>{
           if(res){ this.TerminarProceso("El producto se agrego a la lista"); }
         }).finally(()=>{ 
@@ -447,6 +453,7 @@
       },
 
       Actualizar(payload){
+        console.log('actualizar producto', payload)
         this.actualizaProducto(payload).then( res =>{
           if(res){ this.TerminarProceso("El producto se modifico correctamente"); }
         }).finally(()=>{ 
