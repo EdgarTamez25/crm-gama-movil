@@ -153,9 +153,22 @@ class solicitudesController extends Controller
 	}
 
 	public function obtenerAcabados($id_acabados , $dx){
-		return DB::select('SELECT d.id as id_key, d.id_dx, d.dx, CAST(d.id_acabado as INT) as id, a.nombre
+		$acabados_modificados = [];
+		$acabados = DB::select('SELECT d.id as id_key, d.id_dx, d.dx, d.id_acabado as id, a.nombre
 													FROM det_acabado d LEFT JOIN acabados a ON d.id_acabado = a.id
 												WHERE d.id_dx = ? AND d.dx = ?', [$id_acabados , $dx]);
+
+		for($i=0;$i<count($acabados);$i++ ):
+			$acabado = ["id_key" => $acabados[$i] -> id_key, 
+										"id_dx"  => $acabados[$i] -> id_dx,
+										"dx"     => $acabados[$i] -> dx, 
+										"id"     => intval($acabados[$i] -> id), 
+										"nombre" => $acabados[$i] -> nombre
+			];
+			array_push($acabados_modificados, $acabado);
+		endfor;
+
+		return $acabados_modificados;
 
 	}
 	
