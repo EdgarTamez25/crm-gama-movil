@@ -71,6 +71,11 @@ class solicitudesController extends Controller
 		$id_compromiso = $req -> id_compromiso;	// !2. RECUPERAR COMPROMISO
 		$fecha         = $req -> fecha; 				// !2. RECUPERAR FECHA CIERRE 
 		$hora  				 = $req -> hora;					// !2. RECUPERAR HORA CIERRE 
+		
+		if(!$detalle):
+			$this -> actualizaCompromisos($fecha,$hora,$id_compromiso);														// !ACTUALIZO COMPROMISO
+			return response("La solicitud se creo correctamente"  ,200);// !SI SE INSERTO CORRECTAMENTE RETORNO RESPUESTA
+		endif;
 
 		for($i=0;$i<count($detalle); $i++): 		// ! GENERAR CICLO PARA RECORRER EL DETALLE DE LA SOLICITUD
 				//TODO *** PRODUCTO EXISTENTE *******************************************************************

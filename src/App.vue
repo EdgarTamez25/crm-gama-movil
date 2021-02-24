@@ -137,7 +137,7 @@
     },
     data: () => ({
       apk_movil:'http://producciongama.com:8080/CRM-GAMA-MOVIL/crm-gama-movil.apk',
-      version_apk: 'v-2.0',
+      version_apk: 'v-2.1',
       descargar: true,
       iniciar: false,
       valid:true,

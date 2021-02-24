@@ -51,10 +51,10 @@
             <v-col cols="3" class="text-right my-0 py-0" v-if="ACTIVACAMPO">
               <v-btn color="celeste" dark @click="agregarPantone()" > <v-icon>add</v-icon> </v-btn>
             </v-col>
-             <!-- // !CHIPS DE PANTONES   -->
+            <!-- // !CHIPS DE PANTONES   -->
             <v-col cols="12" class="my-0 py-0 text-left">
               <v-chip v-for="(item, i) in pantones" :key="i"
-                class="ma-2" close :color="item" dark  @click:close="eliminaPanton(i)">
+                class="ma-2" close color="rosa" outlined dark  @click:close="eliminaPanton(i)">
                 {{ item }}
               </v-chip>
             </v-col>
@@ -251,11 +251,11 @@
       },
 
       agregarPantone(){ 
-        var esHexadecimal = false;
-        if( esHexadecimal = this.esHexadecimal(this.pantone) ){
+        // var esHexadecimal = false;
+        // if( esHexadecimal = this.esHexadecimal(this.pantone) ){
           this.pantones.push(this.pantone);
           this.pantone = '';
-        }
+        // }
       },
 
       esHexadecimal(pantone){ return /^#[0-9A-F]+$/i.test(pantone); },

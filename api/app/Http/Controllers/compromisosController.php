@@ -69,8 +69,6 @@ class compromisosController extends Controller
 																ORDER BY c.fecha DESC ',[$req -> id, $req -> fecha1 , $req -> fecha2]);
 		return $compromisosH;
 	}
-
-
 	
 	public function TerminarCompromiso(Request $req){
 		$terminar = DB::update('UPDATE compromisos SET  fecha_cierre=:fecha_cierre,hora_cierre=:hora_cierre, 

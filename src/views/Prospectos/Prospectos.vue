@@ -5,7 +5,7 @@
   		<v-col cols="12">
 				<v-card-actions class="font-weight-bold"> PROSPECTOS </v-card-actions>
 
-				<v-card class="" flat >
+				<v-card  flat >
 					<v-card-actions>
 			      <v-text-field
 			        v-model="search"
@@ -31,7 +31,10 @@
 						hide-default-header
 						:loading ="Loading"
 						loading-text="Cargando... Por favor espere."
-						flat
+						:page.sync="page"
+      			:items-per-page="itemsPerPage"
+						@page-count="pageCount = $event"
+						
 			    >
 			    	<template v-slot:item.action="{ item }" > 
 			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
@@ -39,6 +42,11 @@
 
 			    </v-data-table>
 			  </v-card>
+
+				<!-- PAGINACION -->
+				<div class="text-center pt-2">
+					<v-pagination v-model="page" :length="pageCount"></v-pagination>
+				</div>
 
 				 <v-dialog persistent v-model="dialog" width="700px" >	
 		    	<v-card class="pa-5">
@@ -60,6 +68,10 @@
 		},
 		data () {
 				return {
+					page: 1,
+					pageCount: 0,
+					itemsPerPage: 20,
+
 					search: '',
 					movie:'data',
 					dialog: false,

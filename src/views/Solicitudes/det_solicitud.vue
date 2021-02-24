@@ -307,7 +307,9 @@
       },
       
 			verDetalle(modo,item){
-				if(modo === 4){  this.depto = { id: item.dx } };
+				if(modo === 4){  
+					this.depto = { id: item.dx } 
+				};
 				this.solicitarModal = true;
 				this.parametros 		= item;
 				this.modoVista      = modo; 

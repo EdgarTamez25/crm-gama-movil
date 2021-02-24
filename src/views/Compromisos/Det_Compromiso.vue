@@ -501,9 +501,9 @@
 	
 			validaInfo(){
 				if(this.tSolicitudes){
-					if(!this.getSolicitudes.length){
-						this.snackbar=true;	this.text="DEBES AGREGAR AL MENOS 1 PRODUCTO"; return;
-					}
+					// if(!this.getSolicitudes.length){
+					// 	this.snackbar=true;	this.text="DEBES AGREGAR AL MENOS 1 PRODUCTO"; return;
+					// }
 				}else{
 					if(!this.obs_usuario){ 
 						this.snackbar=true;	this.text="DEBES AGREGAR EL RESULTADO DEL COMPROMISO."; return;
