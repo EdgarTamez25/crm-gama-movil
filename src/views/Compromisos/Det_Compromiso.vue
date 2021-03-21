@@ -350,6 +350,8 @@
 				</v-card-actions>
 			</v-card>
 		</v-dialog>
+
+		
 		<div id="fase"></div>
 	</v-content>
 </template>
