@@ -163,6 +163,7 @@
 				<v-card-text class="font-weight-black my-0 py-0 subtitle-1" align="center">SOLICITUD DE PEDIDO</v-card-text>
 				<v-btn color="orange" block dark @click="verDetalle(1)"> AGREGAR PRODUCTO </v-btn>
 			</v-col>
+			
 			<v-col cols="12">
 				<v-card outlined>
 					<v-card-text v-if="!getSolicitudes.length"> No se a registrado ningun producto </v-card-text>
@@ -302,6 +303,9 @@
 				</v-card>
 			</v-dialog>
 		</v-card-actions>
+		
+		<overlay v-if="overlay"/>
+
 		<!-- //!PROCESO PARA CONFIRMACION  -->
 		<v-dialog v-model="confirmarModal" persistent max-width="400" > 
 			<v-card>
@@ -346,6 +350,8 @@
 				</v-card-actions>
 			</v-card>
 		</v-dialog>
+
+		
 		<div id="fase"></div>
 	</v-content>
 </template>
@@ -354,6 +360,7 @@
 	var moment = require('moment'); 
 	import {mapGetters, mapActions} from 'vuex'
 	import metodos     from '@/mixins/metodos.js'
+	import overlay from '@/components/overlay.vue'
 	import flexografia from '@/views/Formularios/flexografia.vue'
 	// import bordados    from '@/views/Formularios/bordados.vue'
 	import digital     from '@/views/Formularios/digital.vue'
@@ -367,6 +374,7 @@
 	export default {
 		mixins:[metodos],
 		components: {
+			overlay,
 			flexografia,
 			// bordados,
 			digital,
@@ -412,6 +420,8 @@
 				textDialog        : "Guardando Información",
 				Correcto          : false,
 				textCorrecto      : '',
+
+				overlay           : false
 			}
 		},
 
@@ -493,12 +503,12 @@
 	
 			validaInfo(){
 				if(this.tSolicitudes){
-					if(!this.getSolicitudes.length){
-						this.snackbar=true;	this.text="Debes agregar al menos 1 producto"; return;
-					}
+					// if(!this.getSolicitudes.length){
+					// 	this.snackbar=true;	this.text="DEBES AGREGAR AL MENOS 1 PRODUCTO"; return;
+					// }
 				}else{
 					if(!this.obs_usuario){ 
-						this.snackbar=true;	this.text="Debes agregar alguna OBSERVACIÓN DEL COMPROMISO."; return;
+						this.snackbar=true;	this.text="DEBES AGREGAR EL RESULTADO DEL COMPROMISO."; return;
 					}
 				}
 			
@@ -506,61 +516,61 @@
 			},
 
 			EnviarResultado(){
-				const payload = {
-													fecha: this.traerFechaActual(),
-													hora : this.traerHoraActual(),
-													obs_usuario  : this.obs_usuario,
-													cumplimiento: 1,
-											 }
-				console.log('payload por resultado', payload)
+				this.overlay  = true;
+				const payload = new Object();
+							payload.id 					 = this.detalle.id;
+							payload.fecha_cierre = this.traerFechaActual();
+							payload.hora_cierre  = this.traerHoraActual();
+							payload.obs_usuario  = this.obs_usuario;
+							payload.cumplimiento = 1 
+				
+				// console.log('payload por resultado', payload)
 				this.terminarCompromiso = false; this.dialog = true;
-					// this.$http.post('add.solicitudes', payload).then(response =>{
-				// 	var me = this;this.dialog = false;this.Correcto = true ; this.textCorrecto = response.bodyText;
-					setTimeout(function(){ me.$router.push({name: 'compromisos' })}, 1000);
-				// 	this.consultaCompromisos() 
-				// }).catch(error =>{
-				// 	this.mostrarError(error.bodyText)
-				// 	console.log('error', error)
-				// }).finally(()=> this.dialog = false)
+					this.$http.post('terminar.compromiso', payload).then(response =>{
+					var me = this;this.Correcto = true ; this.textCorrecto = response.bodyText;
+					setTimeout(()=>{ me.$router.push({name: 'compromisos' })}, 1000);
+					this.consultaCompromisos() 
+				}).catch(error =>{
+					this.mostrarError(error.bodyText)
+					console.log('error', error)
+				}).finally(()=> this.overlay = false)
 			},
 
 			EnviarSolicitud(){
 				let detalle = this.validaProductos();
-				const payload = { 
-													fecha     : this.traerFechaActual(),
-													hora      : this.traerHoraActual(),
-													urgencia  : 1,
-													id_usuario: this.detalle.id_vendedor,
-													id_cliente: this.detalle.id_cliente,
-													nota	    : this.nota,
-													detalle   : detalle,
-												}
-				console.log('payload por solicitud', payload)
-												
-				this.terminarCompromiso = false; this.dialog = true ; // ACTIVAR DIALOGOS DE GUARDAR
+				this.overlay = true; this.terminarCompromiso = false;
 
-				// this.$http.post('add.solicitudes', payload).then(response =>{
-					var me = this;
-					// this.dialog = false;this.Correcto = true ; this.textCorrecto = response.bodyText;
-					setTimeout(function(){ me.$router.push({name: 'compromisos' })}, 1000);
-				// 	this.consultaCompromisos() 
-				// }).catch(error =>{
-				// 	this.mostrarError(error.bodyText)
-				// 	console.log('error', error)
-				// }).finally(()=> this.dialog = false)
+				const payload = new Object();
+							payload.id_compromiso = this.detalle.id,
+							payload.fecha      = this.traerFechaActual(),
+							payload.hora       = this.traerHoraActual(),
+							payload.id_usuario = this.detalle.id_vendedor,
+							payload.id_cliente = this.detalle.id_cliente,
+							payload.nota	     = this.nota,
+							payload.detalle    = detalle,
+
+				this.$http.post('add.Solicitud', payload).then(response =>{
+					var me = this; 
+					this.Correcto = true ; this.textCorrecto = response.bodyText;
+					setTimeout(()=>{ me.$router.push({name: 'compromisos' })}, 1000);
+					this.consultaCompromisos() 
+				}).catch(error =>{
+					this.mostrarError(error.bodyText)
+					console.log('error', error)
+				}).finally(()=> this.overlay = false)
 			},
 
 			validaProductos(){
 				let Temporal = [];
 				for(let i=0;i<this.getSolicitudes.length;i++){
 					if(this.getSolicitudes[i].tproducto === 2){
-						console.log('xmodificar', this.getSolicitudes[i].xmodificar )
+						// console.log('xmodificar', this.getSolicitudes[i].xmodificar )
 						Temporal.push(this.getSolicitudes[i].xmodificar) 
 					} else{
 						Temporal.push(this.getSolicitudes[i])
 					}
 				}
-				console.log('Temportal',Temporal)
+				// console.log('Temportal',Temporal)
 				return Temporal;
 			},
 

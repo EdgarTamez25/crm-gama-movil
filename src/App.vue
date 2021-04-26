@@ -137,7 +137,7 @@
     },
     data: () => ({
       apk_movil:'http://producciongama.com:8080/CRM-GAMA-MOVIL/crm-gama-movil.apk',
-      version_apk: 'v-1.0',
+      version_apk: 'v-2.1',
       descargar: true,
       iniciar: false,
       valid:true,
@@ -157,13 +157,16 @@
           text: 'Administración',
           model: false,
           children: [
-            { text: 'Inicio'                ,path: '/'                , icon: 'home'                ,nivel:{vend:3, chofer:false}},
-            { text: 'Compromisos'           ,path: 'compromisos'      , icon: 'chrome_reader_mode'  ,nivel:{vend:3, chofer:false}},
-            { text: 'Proyectos Cotizados'   ,path: 'fases.venta'      , icon: 'business_center'     ,nivel:{vend:3, chofer:false}},
+            // ballot
+            { text: 'Seguimiento Solicitudes' ,path: 'solicitudes'     , icon: 'mdi-text-box-search-outline'  , nivel:{vend:3, chofer:false}},
+            { text: 'Ordenes de Trabajo'      ,path: 'ot'              , icon: 'mdi-clipboard-search-outline' , nivel:{vend:3, chofer:false}},
+            { text: 'Compromisos Pendientes'  ,path: 'compromisos'      , icon: 'chrome_reader_mode'          , nivel:{vend:3, chofer:false}},
+            // { text: 'Proyectos Cotizados'   ,path: 'fases.venta'      , icon: 'business_center'     ,nivel:{vend:3, chofer:false}},
             // { text: 'Pendientes'            ,path: 'pendientes'       , icon: 'calendar_today'      ,nivel:{vend:3, chofer:false}},
-            { text: 'Compromisos Realizados',path:'compromisos.hechos', icon:'assignment_turned_in' ,nivel:{vend:3, chofer:false} },
-            { text: 'Entregas'              ,path:'entregas'          , icon:'airport_shuttle'      ,nivel:{vend:false, chofer:true}  },
-            { text: 'Prospectos'            ,path: 'prospectos'       , icon: 'person'  ,nivel:{vend:3, chofer:false}},
+            { text: 'Solicitudes Realizadas',path:'solicitudes.hechos' , icon:'ballot'               , nivel:{vend:3, chofer:false}   },
+            { text: 'Compromisos Realizados',path:'compromisos.hechos' , icon:'assignment_turned_in' , nivel:{vend:3, chofer:false}   },
+            { text: 'Entregas'              ,path:'entregas'           , icon:'airport_shuttle'      , nivel:{vend:false, chofer:true}},
+            { text: 'Prospectos'            ,path:'prospectos'         , icon:'person'               , nivel:{vend:3, chofer:false}   },
 
           ],
         },

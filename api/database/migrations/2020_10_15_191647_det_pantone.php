@@ -16,6 +16,7 @@ class DetPantone extends Migration
             Schema::create('det_pantone', function (Blueprint $table) {
             $table->id();
             $table->integer('id_dx');
+            $table->integer('dx');
             $table->string('pantone');
         });
     }
