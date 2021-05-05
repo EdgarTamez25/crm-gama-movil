@@ -11,12 +11,12 @@ class compromisosController extends Controller
 {
 
 	public function addcompromiso(Request $req){
-																				
+
 		$id = DB::table('compromisos')->insertGetId(
-			[ 'id_vendedor'  => $req -> id_vendedor , 'tipo' 			 => $req -> tipo ,
-				'id_categoria' => $req -> id_categoria, 'id_cliente' => $req -> id_cliente, 
-				'fecha' 			 => $req -> fecha			  , 'hora' 		 	 => $req -> hora,		   
-				'obs'  			   => $req -> obs				  , 'fuente'     => $req -> fuente
+			[ 'id_vendedor'  => $req -> id_vendedor , 'tipo' 	   => $req -> tipo ,
+			  'id_categoria' => $req -> id_categoria, 'id_cliente' => $req -> id_cliente,
+		      'fecha' 		 => $req -> fecha	    , 'hora' 	   => $req -> hora,
+			  'obs'          => $req -> obs		    , 'fuente'     => $req -> fuente
 			]
 		);
 
@@ -29,7 +29,7 @@ class compromisosController extends Controller
 
 	public function CompromisosxVend(Request $request){
 		$compromisos = DB::select('SELECT c.id, c.id_vendedor, v.nombre as nomvend, c.tipo, c.id_categoria, ca.nombre as nomcatego,
-																			c.fecha, c.hora, c.id_cliente,cli.nombre as nomcli, cli.tel1, cli.tel2, c.obs, 
+																			c.fecha, c.hora, c.id_cliente,cli.nombre as nomcli, cli.tel1, cli.tel2, c.obs,
 																			c.fuente, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.confirma_cita
 																FROM compromisos c LEFT JOIN users v   	   ON v.id   = c.id_vendedor
 																									 LEFT JOIN categorias ca ON ca.id  = c.id_categoria
@@ -41,9 +41,9 @@ class compromisosController extends Controller
 	}
 
 	public function Reagendar(Request $req){
-		$reagendacion = DB::update('UPDATE compromisos SET fecha=:fecha, hora=:hora, obs=:obs, confirma_cita=:confirma_cita 
-																WHERE id=:id', ['fecha' => $req -> fecha,  'hora' 		     => $req -> hora, 
-																								'obs' 	=> $req -> obs   , 'confirma_cita' => 0,  								
+		$reagendacion = DB::update('UPDATE compromisos SET fecha=:fecha, hora=:hora, obs=:obs, confirma_cita=:confirma_cita
+																WHERE id=:id', ['fecha' => $req -> fecha,  'hora' 		     => $req -> hora,
+																								'obs' 	=> $req -> obs   , 'confirma_cita' => 0,
 																								'id' 	  => $req -> id]);
 		if($reagendacion):
 			return response("El compromiso se reagendo correctamente",200);
@@ -69,15 +69,15 @@ class compromisosController extends Controller
 																ORDER BY c.fecha DESC ',[$req -> id, $req -> fecha1 , $req -> fecha2]);
 		return $compromisosH;
 	}
-	
+
 	public function TerminarCompromiso(Request $req){
-		$terminar = DB::update('UPDATE compromisos SET  fecha_cierre=:fecha_cierre,hora_cierre=:hora_cierre, 
+		$terminar = DB::update('UPDATE compromisos SET  fecha_cierre=:fecha_cierre,hora_cierre=:hora_cierre,
 																									cumplimiento=:cumplimiento, obs_usuario=:obs_usuario
-																WHERE id=:id', [ 	
-																								'fecha_cierre' 	=> $req -> fecha_cierre, 
+																WHERE id=:id', [
+																								'fecha_cierre' 	=> $req -> fecha_cierre,
 																								'hora_cierre' 	=> $req -> hora_cierre,
-																								'cumplimiento'  => $req -> cumplimiento, 
-																								'obs_usuario'   => $req -> obs_usuario,						
+																								'cumplimiento'  => $req -> cumplimiento,
+																								'obs_usuario'   => $req -> obs_usuario,
 																								'id' 			 			=> $req -> id
 																								]);
 
@@ -88,10 +88,10 @@ class compromisosController extends Controller
 		endif;
 
 	}
-	
+
 	public function proyectosCotizados(Request $req){
 		$compromisos = DB::select('SELECT c.id, c.id_vendedor, v.nombre as nomvend, c.tipo_compromiso, c.id_categoria, ca.nombre as nomcatego,
-																			c.fecha, c.hora, c.fecha_fin, c.hora_fin, c.id_cliente,cli.nombre as nomcli, cli.tel1, cli.tel2, c.comentarios, c.fase_venta, 
+																			c.fecha, c.hora, c.fecha_fin, c.hora_fin, c.id_cliente,cli.nombre as nomcli, cli.tel1, cli.tel2, c.comentarios, c.fase_venta,
 																			c.id_usuario, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.estatus, c.confirma_cita
 																FROM compromisos c LEFT JOIN users v   	   ON v.id   = c.id_vendedor
 																									 LEFT JOIN categorias ca ON ca.id  = c.id_categoria
@@ -102,20 +102,20 @@ class compromisosController extends Controller
 	}
 
 	public function FaseVenta(Request $req){
-		$id_compromiso = $req -> id; 
-		$fecha 				 = $req -> fecha; 
-		$hora 				 = $req -> hora; 
+		$id_compromiso = $req -> id;
+		$fecha 				 = $req -> fecha;
+		$hora 				 = $req -> hora;
 		$fase_venta 	 = $req -> fase_venta;
 		$numorden        = $req -> numorden;
 		$aceptado      = $req -> aceptado;
 		$obscierre      = $req -> obscierre;
 
-		
+
 		if($hisorial = $this->Historial($id_compromiso, $fecha, $hora, $fase_venta, $numorden, $aceptado, $obscierre)):
-			$PutCompromiso = DB::update('UPDATE compromisos SET fase_venta=:fase_venta 
+			$PutCompromiso = DB::update('UPDATE compromisos SET fase_venta=:fase_venta
 																		WHERE id=:id',[ 'fase_venta' => $fase_venta, 'id' => $id_compromiso]);
 			return "Fase de venta actualizada";
-		endif; 
+		endif;
 	}
 
 	//================================ FUNCIONES QUE SE EJECUTAN INTERNAMENTE =======================================

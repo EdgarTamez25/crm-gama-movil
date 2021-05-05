@@ -8,16 +8,17 @@ class PlecasController extends Controller
 {
     //
     public function plecas(Request $req){
-        $Plecas = DB::select('SELECT        pls.id, pls.dientes, pls.cav_eje,
+        $Plecas = DB::select('SELECT        pls.id, pls.suaje, pls.dientes, pls.cav_eje,
                                             pls.cav_des, pls.estatus
-                            FROM    plecas as pls
-                            WHERE id = ?',[$req -> id]);
+                              FROM    plecas as pls
+                              WHERE id = ?',[$req -> id]);
         return $Plecas;
     }
 
     public function addPlecas(Request $req){
 		$id = DB::table('plecas')->insertGetId(
                             [
+                                'suaje'   => $req -> suaje,
                                 'dientes' => $req -> dientes,
                                 'cav_eje' => $req -> cav_eje,
                                 'cav_des' => $req -> cav_des,
@@ -32,10 +33,12 @@ class PlecasController extends Controller
     }
 
 	public function Updateplecas($id, Request $req){
-        $update = DB::update('UPDATE    plecas SET dientes=:dientes, cav_eje=:cav_eje,
+        $update = DB::update('UPDATE    plecas SET suaje=:suaje, dientes=:dientes, cav_eje=:cav_eje,
                                         cav_des=:cav_des, estatus=:estatus
                             WHERE id =:id',
                             [
+                                'id'      => $id,
+                                'suaje'   => $req -> suaje,
                                 'dientes' => $req -> dientes,
                                 'cav_eje' => $req -> cav_eje,
                                 'cav_des' => $req -> cav_des,

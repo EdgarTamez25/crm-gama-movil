@@ -13,44 +13,68 @@ class clientesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function catClientes()
+    public function catClientes(Request $req)
     {
-        $data = DB::select('SELECT c.id , c.nombre, c.direccion, c.id_zona, z.nombre as nomzona, c.razon_social,
-																	 c.fuente, c.tipo_cliente, c.rfc,c.nivel, 
-																	 c.tel1,c.tel2,c.contacto,c.diasfact
-                            FROM clientes c LEFT JOIN zonas 		z ON c.id_zona = z.id
-                            WHERE c.estatus = 1');
-        return $data;
+        $dataClientes = DB::select('SELECT c.id , c.clave, c.nombre, c.id_zona, c.direccion, c.id_ciudad, c.cp,
+                                           z.nombre as nomzona, c.razon_social, c.id_giro, c.fuente, c.tipo_cliente,
+                                           c.rfc, c.tel1, c.ext1, c.tel2, c.ext2, c.nivel, c.contacto, c.contacto2,
+                                           c.diasfact, c.nivel, c.prospecto, c.id_cartera, c.estatus
+                                    FROM clientes c LEFT JOIN zonas z ON z.id = c.id_zona
+                                    WHERE c.id = ?',[$req -> id]);
+        return $dataClientes;
     }
 
-    public function add(Request $request){
-			$addcliente = clientes::create($request->all());
-			
-			if($addcliente):
-				return "El Cliente se ah insertado correctamente";
-			else:
-				return "Ocurrio un problema al crear el cliente, por favor intentelo mas tarde.";
-			endif;
+    public function add(Request $req){
 
+        $addcliente = DB::table('clientes')->insertGetId(
+			[
+              'clave'           => $req -> clave ,      'nombre' 	   => $req -> nombre ,
+			  'id_zona'         => $req -> id_zona,     'direccion'    => $req -> direccion,
+		      'id_ciudad' 		=> $req -> id_ciudad,   'cp' 	       => $req -> cp,
+			  'razon_social'    => $req -> razon_social,'id_giro'      => $req -> id_giro,
+              'fuente'          => $req -> fuente,      'tipo_cliente' => $req -> tipo_cliente,
+              'rfc'             => $req -> rfc,         'tel1'  	   => $req -> tel1,
+              'ext1'            => $req -> ext1,        'tel2'         => $req -> tel2,
+              'ext2'            => $req -> ext2,        'contacto'     => $req -> contacto,
+              'contacto2'       => $req -> contacto2,   'diasfact'     => $req -> diasfact,
+              'nivel'           => $req	-> nivel,       'prospecto'    => $req -> prospecto,
+              'id_cartera'      => $req -> id_cartera,  'estatus'      => $req -> estatus
+			]
+		);
+		// $addcliente = clientes::create($request->all());
+        if($addcliente):
+			return response("El Cliente se ah insertado correctamente",200);
+		else:
+			return response("Ocurrio un problema al crear el cliente, por favor intentelo mas tarde.",500);
+		endif;
     }
 
     public function update($id, Request $req){
-				$data = DB::update('UPDATE clientes SET nombre=:nombre, direccion=:direccion, id_zona=:id_zona,tipo_cliente=:tipo_cliente,
-																								rfc=:rfc, razon_social=:razon_social, nivel=:nivel,
-																								fuente=:fuente, tel1=:tel1, tel2=:tel2, contacto=:contacto,	diasfact=:diasfact 
-															WHERE id=:id'
-														,['nombre'				=> $req -> nombre,  		 'direccion'    => $req -> direccion,
-															'id_zona'       => $req -> id_zona, 		 'tipo_cliente'	=> $req	-> tipo_cliente, 
-															'rfc'						=> $req	-> rfc,     		  
-															'razon_social'	=> $req	-> razon_social, 'nivel'		   	=> $req	-> nivel, 
-															'fuente'				=> $req	-> fuente,       'tel1'					=> $req -> tel1,
-															'tel2'					=> $req -> tel2,         'contacto'			=> $req -> contacto,
-															'diasfact'			=> $req -> diasfact,     'id'						=> $id
-														]
-													);
-				
-				return 'El cliente se actualizo correctamente';
+        $addcliente = DB::update('UPDATE clientes SET clave=:clave, nombre=:nombre, id_zona=:id_zona, direccion=:direccion, id_ciudad=:id_ciudad,
+                                                      cp=:cp, razon_social=:razon_social, id_giro=:id_giro, fuente=:fuente, tipo_cliente=:tipo_cliente,
+                                                      rfc=:rfc, tel1=:tel1, ext1=:ext1, tel2=:tel2, ext2=:ext2, contacto=:contacto, contacto2=:contacto2,
+                                                      diasfact=:diasfact, nivel=:nivel, prospecto=:prospecto, id_cartera=:id_cartera, estatus=:estatus
+                                            WHERE id=:id'
+                                                    ,[
+                                                        'id'              => $id,
+                                                        'clave'           => $req -> clave ,      'nombre' 	     => $req -> nombre ,
+                                                        'id_zona'         => $req -> id_zona,     'direccion'    => $req -> direccion,
+                                                        'id_ciudad' 	  => $req -> id_ciudad,   'cp' 	         => $req -> cp,
+                                                        'razon_social'    => $req -> razon_social,'id_giro'      => $req -> id_giro,
+                                                        'fuente'          => $req -> fuente,      'tipo_cliente' => $req -> tipo_cliente,
+                                                        'rfc'             => $req -> rfc,         'tel1'  	     => $req -> tel1,
+                                                        'ext1'            => $req -> ext1,        'tel2'         => $req -> tel2,
+                                                        'ext2'            => $req -> ext2,        'contacto'     => $req -> contacto,
+                                                        'contacto2'       => $req -> contacto2,   'diasfact'     => $req -> diasfact,
+                                                        'nivel'           => $req -> nivel,       'prospecto'    => $req -> prospecto,
+                                                        'id_cartera'      => $req -> id_cartera,  'estatus'      => $req -> estatus
+                                                    ]);
+        if($addcliente):
+            return response("El cliente se actualizo correctamente",200);
+        else:
+            return response("Ocurrio un problema al actualizar el cliente, por favor intentelo mas tarde.",500);
+        endif;
     }
-    
+
 
 }

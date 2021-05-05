@@ -8,9 +8,10 @@ class suajesController extends Controller
 {
     //
     public function suajes(Request $req){
-        $suajes = DB::select('SELECT            sj.ancho, sj.largo,
+        $suajes = DB::select('SELECT            sj.suaje, sj.ancho_inch, sj.largo_inch,
                                                 sj.dientes, sj.cav_eje, sj.cav_des,
-                                                sj.especificacion, sj.id_material, sj.estatus
+                                                sj.especificaciones, sj.tipo_material,
+                                                sj.ancho_material, sj.estatus
                             FROM suajes as sj
                             WHERE id = ?',[$req -> id]);
         return $suajes;
@@ -19,13 +20,15 @@ class suajesController extends Controller
     public function addSuajes(Request $req){
 		$id = DB::table('suajes')->insertGetId(
                             [
-                                'ancho'            => $req -> ancho,
-                                'largo'            => $req -> largo,
+                                'suaje'            => $req -> suaje,
+                                'ancho_inch'       => $req -> ancho_inch,
+                                'largo_inch'       => $req -> largo_inch,
                                 'dientes'          => $req -> dientes,
                                 'cav_eje'          => $req -> cav_eje,
                                 'cav_des'          => $req -> cav_des,
-                                'especificacion'   => $req -> especificacion,
-                                'id_material'      => $req -> id_material,
+                                'especificaciones' => $req -> especificaciones,
+                                'tipo_material'    => $req -> tipo_material,
+                                'ancho_material'   => $req -> anchor_material,
                                 'estatus'          => $req -> estatus
                             ]);
         if($id):
@@ -36,18 +39,21 @@ class suajesController extends Controller
     }
 
 	public function UpdateSuajes($id, Request $req){
-        $update = DB::update('UPDATE    suajes SET ancho=:ancho, largo=:largo, dientes=:dientes,
-                                        cav_eje=:cav_eje, cav_des=:cav_des, especificacion=:especificacion,
-                                        id_material=:id_material, estatus=:estatus
+        $update = DB::update('UPDATE    suajes SET suaje=:suaje, ancho_inch=:ancho_inch, largo_inch=:largo_inch, dientes=:dientes,
+                                        cav_eje=:cav_eje, cav_des=:cav_des, especificaciones=:especificaciones,
+                                        tipo_material=:tipo_material, ancho_material=:ancho_material, estatus=:estatus
                             WHERE id =:id',
                             [
-                                'ancho'            => $req -> ancho,
-                                'largo'            => $req -> largo,
+                                'id'               => $id,
+                                'suaje'            => $req -> suaje,
+                                'ancho_inch'       => $req -> ancho_inch,
+                                'largo_inch'       => $req -> largo_inch,
                                 'dientes'          => $req -> dientes,
                                 'cav_eje'          => $req -> cav_eje,
                                 'cav_des'          => $req -> cav_des,
-                                'especificacion'   => $req -> especificacion,
-                                'id_material'      => $req -> id_material,
+                                'especificaciones' => $req -> especificaciones,
+                                'tipo_material'    => $req -> tipo_material,
+                                'ancho_material'   => $req -> ancho_material,
                                 'estatus'          => $req -> estatus
                             ]);
 		if($update):
