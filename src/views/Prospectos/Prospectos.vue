@@ -90,6 +90,7 @@
 			created(){
 				if(!this.getUsuarios.id){ this.Salir() }
 				this.consultaProspectos(this.getUsuarios.id) // CONSULTAR CLIENTES A VUEX
+        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
 			},
 
 			computed:{
@@ -105,6 +106,8 @@
 			methods:{
 				...mapActions('Prospectos'  ,['consultaProspectos']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
      		...mapGetters('Usuarios',['Salir']),
+        ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+
 
 				abrirModal(action, items){
 					this.param = action;

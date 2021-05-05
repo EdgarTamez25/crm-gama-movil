@@ -58,7 +58,7 @@ class compromisosController extends Controller
 		$reagendacion = DB::update('UPDATE compromisos SET confirma_cita=:confirma_cita WHERE id=:id',
 																	['confirma_cita' => $req -> confirma_cita, 'id'=> $req -> id]);
 
-		return "Cita confirmada correctamente.";
+		return $reagendacion ? response('Cita confirmada correctamente',200): response('Ocurrio un error Intentelo nuevamente',500); 
 	}
 
 	public function CompromisosHechos(Request $req){

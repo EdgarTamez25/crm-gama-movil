@@ -8,6 +8,8 @@ import Entregas    from '@/modules/Entregas';
 import Prospectos  from '@/modules/Prospectos';
 import Solicitudes from '@/modules/Solicitudes';
 import OT          from '@/modules/OT';
+import Notificaciones  from '@/modules/notificaciones';
+
 
 Vue.use(Vuex)
 
@@ -25,6 +27,7 @@ export default new Vuex.Store({
     Entregas,
     Prospectos,
     Solicitudes,
-    OT
+    OT,
+    Notificaciones
   }
 })

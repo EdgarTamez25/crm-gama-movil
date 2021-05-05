@@ -153,6 +153,7 @@
 		computed:{
 			...mapGetters('Compromisos'  ,['Loading','getCompromisos']), // IMPORTANDO USO DE VUEX 
 			...mapGetters('Usuarios',['getUsuarios']),
+
 			tamanioPantalla () {
 				switch (this.$vuetify.breakpoint.name) {
 					case 'xs':
@@ -176,9 +177,11 @@
 
 		methods:{
 			...mapActions('Compromisos'  ,['consultaCompromisos']), // IMPORTANDO USO DE VUEX
-      ...mapGetters('Usuarios',['Salir']),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+
 
 			consultar(){ // CONSULTAR COMPROMISOS
+        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
 				var me = this;
 				const payload = { id_vendedor: this.getUsuarios.id , fecha: this.fecha } // FORMO ARRAY CON id DEL VENDEDOR LOGEADO Y FECHA ACTUAL
 				this.consultaCompromisos(payload)

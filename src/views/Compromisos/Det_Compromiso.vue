@@ -151,8 +151,8 @@
 
 			<v-col cols="12" align="right" class="mt-0" > <!-- BOTON PARA GUARDAR INFORMACION -->
 				<v-card-actions>
-					<v-btn color="gris" dark  small @click="Terminar = false">Cancelar</v-btn> <v-spacer></v-spacer> 
-					<v-btn color="celeste" dark  small @click="validaInfo">Guardar Información</v-btn> 
+					<v-btn color="gris" dark outlined  @click="Terminar = false">Cancelar</v-btn> <v-spacer></v-spacer> 
+					<v-btn color="celeste" dark   @click="validaInfo">Guardar Información</v-btn> 
 				</v-card-actions>
 			</v-col>
 		</v-row>
@@ -160,11 +160,21 @@
 		<!-- //!TABLA DE SOLICITUDES -->
 		<v-row v-if="!Terminar && tSolicitudes">
 			<v-col cols="12">
-				<v-card-text class="font-weight-black my-0 py-0 subtitle-1" align="center">SOLICITUD DE PEDIDO</v-card-text>
-				<v-btn color="orange" block dark @click="verDetalle(1)"> AGREGAR PRODUCTO </v-btn>
-			</v-col>
+				<v-card-text class="font-weight-black my-0 pa-0 py-0 subtitle-1" align="center">SOLICITUD DE PEDIDO</v-card-text>
+				<v-card-text class="caption">
+					DEBES DE AGREGAR LA INFORMACIÓN NECESARIA PARA PODER DARLE SEGUIMIENTO A LA SOLICITUD EJEMPLO: <br> 
+					<span class="font-weight-black">	1. NUMERO DE ORDEN DE COMPRA </span> <br>
+					<span class="font-weight-black">  2. IDENTIFICADOR DE ENVIO DE CORREO </span> <br>
+					<span class="font-weight-black">  3. URGENCIA DE LA SOLICITUD </span> <br>
+				  <span class="font-weight-black">  etc... </span>
+				</v-card-text>
+				
+				<!-- <v-btn color="orange" block dark @click="verDetalle(1)"> AGREGAR PRODUCTO </v-btn> -->
+			</v-col>	
+
 			
-			<v-col cols="12">
+			
+			<!-- <v-col cols="12">
 				<v-card outlined>
 					<v-card-text v-if="!getSolicitudes.length"> No se a registrado ningun producto </v-card-text>
 					<v-simple-table v-else>
@@ -187,19 +197,19 @@
 						</template>
 					</v-simple-table>
 				</v-card>
-			</v-col>
+			</v-col>  -->
 
 			<v-col cols="12" class="py-1 my-0 pb-0">
 				<v-textarea
-					v-model="nota" outlined rows="2" label="Comentario" placeholder="Agrega un comentario..."
+					v-model="nota" outlined rows="4" label="Nota de la solicitud" placeholder="Agrega toda la información necesaria..."
         ></v-textarea>
 			</v-col>
 
 			<!-- //!BOTON PARA GUARDAR INFORMACION -->
 			<v-col cols="12" align="right" class="py-0 my-0" > 
 				<v-card-actions>
-					<v-btn color="gris" dark  small @click="tSolicitudes = false">Cancelar</v-btn> <v-spacer></v-spacer> 
-					<v-btn color="celeste" dark  small @click="validaInfo">Guardar Información</v-btn> 
+					<v-btn color="gris" dark  outlined  @click="tSolicitudes = false">Cancelar</v-btn> <v-spacer></v-spacer> 
+					<v-btn color="celeste" dark   @click="validaInfo">Guardar Información</v-btn> 
 				</v-card-actions>
 			</v-col>
 		</v-row>
@@ -315,7 +325,7 @@
 				<v-card-actions>
 					<v-spacer></v-spacer>
 					<v-btn color="gris" text small @click="confirmarModal = false">Cancelar</v-btn>
-					<v-btn color="rosa" dark small @click="confirmarCita">Seguir </v-btn>
+					<v-btn color="rosa" dark small @click="confirmarCita()">Seguir </v-btn>
 				</v-card-actions>
 			</v-card>
 		</v-dialog> 
@@ -466,8 +476,10 @@
 				this.confirmarModal = false; 	this.dialog = true ; 					// ACTIVAR DIALOGOS DE GUARDAR
 				const payload = { id: this.detalle.id , confirma_cita: 1 }  // FORMAR ARRAY A MANDAR 
 				this.$http.post('confirmarcita', payload).then((response)=>{
+					this.snackbar = true; this.text = response.bodyText; this.color = 'green'
 					this.citaConfirmada = 1;
 				}).catch((error)=>{
+					this.snackbar = true; this.text = error.bodyText; this.color = 'error'
 					console.log('error', error)
 				}).finally(()=> this.dialog= false)
 			},

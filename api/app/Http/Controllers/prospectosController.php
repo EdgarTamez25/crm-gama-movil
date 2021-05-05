@@ -13,8 +13,21 @@ class prospectosController extends Controller {
 		return $prospectosbyId = DB::select('SELECT * FROM clientes WHERE fuente = ? AND prospecto = 1',[$id]);
 	}
 
-	public function addProspecto(Request $request){
-		$addprospecto = prospectos::create($request->all());
+	public function addProspecto(Request $req){
+		// $addprospecto = prospectos::create($request->all());
+
+		$addprospecto = DB::table('ot')->insertGetId(
+			[
+					'fuente' 				=> $req -> fuente,
+					'nombre' 	      => $req -> nombre,
+					'tipo_cliente' 	=> $req -> tipo_cliente,
+					'nivel' 	      => $req -> nivel,
+					'tel1' 			    => $req -> tel1,
+					'contacto' 		  => $req -> contacto,
+					'prospecto'     => $req -> prospecto,
+					'estatus'       => $req -> estatus,
+					'prospectado'   => 1
+			]);
 		
 		if($addprospecto):
 			return "El prospecto se ah insertado correctamente";

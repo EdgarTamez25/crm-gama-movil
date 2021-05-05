@@ -7,7 +7,7 @@
       <v-list dense nav class="py-0 white--text" >
         <v-list-item two-line>
           <v-list-item-avatar >
-            <img src="http://producciongama.com:8080/CRM-GAMA-MOVIL/img/person.png" >
+            <img src="http://producciongama.com/CRM-GAMA-MOVIL/img/person.png" >
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -54,8 +54,22 @@
       
     <!-- NAVBAR -->
     <v-app-bar app color="rosa" dark  v-if ="Logeado">
-      <img src="http://producciongama.com:8080/CRM-GAMA-MOVIL/img/logo.png" height="30" @click.stop="drawer = !drawer">
+      <img src="http://producciongama.com/CRM-GAMA-MOVIL/img/logo.png" height="30" @click.stop="drawer = !drawer">
       <v-spacer></v-spacer>
+      <v-btn text>
+        <v-badge
+        :content="Globos"
+        :value="Globos"
+        color="green"
+        overlap
+      >
+        <!-- <v-btn icon @click="abreNotificaciones()" > -->
+          <v-icon  @click="abreNotificaciones()">mdi-bell-ring</v-icon>
+        <!-- </v-btn> -->
+      </v-badge>
+      </v-btn>
+      
+      
       <v-btn icon @click="salir" >
         <v-icon>exit_to_app</v-icon>
       </v-btn>
@@ -77,7 +91,7 @@
 
                 <v-col cols="12">
                   <v-col cols="12" class="text-center my-5"> <!-- LOGO DE LA VISTA -->
-                    <img src="http://producciongama.com:8080/CRM-GAMA-MOVIL/img/logo2.png" width="120" height="100%"  > <br>
+                    <img src="http://producciongama.com/CRM-GAMA-MOVIL/img/logo2.png" width="120" height="100%"  > <br>
                   </v-col>
 
                   <v-form v-model="valid" :lazy-validation="lazy">
@@ -126,18 +140,26 @@
         </v-footer>
       </v-container>
     </v-content>
+
+     <v-dialog v-model="ModalNoti"    transition="dialog-bottom-transition">
+       <v-card class="pa-3">
+         <notificaciones @modal="ModalNoti = $event"/>
+       </v-card>
+     </v-dialog>
   </v-app>
 </template>
 
 <script>
   import {mapGetters, mapActions} from 'vuex'
+  import notificaciones from '@/views/Notificaciones/notificaciones.vue'
   export default {
     name: 'App',
     components:{
+      notificaciones
     },
     data: () => ({
-      apk_movil:'http://producciongama.com:8080/CRM-GAMA-MOVIL/crm-gama-movil.apk',
-      version_apk: 'v-2.1',
+      apk_movil:'http://producciongama.com/CRM-GAMA-MOVIL/crm-gama-movil.apk',
+      version_apk: 'v-3.0',
       descargar: true,
       iniciar: false,
       valid:true,
@@ -171,6 +193,8 @@
           ],
         },
       ],
+
+      ModalNoti: false,
     }),
 
     created(){
@@ -184,13 +208,17 @@
 
     computed:{
 			// IMPORTANDO USO DE VUEX - CLIENTES (GETTERS)
-      ...mapGetters('Usuarios',['getUsuarios']),
 			...mapGetters('Usuarios',['Logeado']),
+      ...mapGetters('Usuarios',['getUsuarios']),
+      ...mapGetters('Notificaciones',['Globos']),
+
 		},
 
     methods:{
       // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
       ...mapActions('Usuarios' ,['Login','Salir','Logear']),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+
       
       iniciarSesion(){
         this.iniciar = true;
@@ -205,8 +233,8 @@
             if(this.getUsuarios.nivel === 3){
               this.drawer= false;
               this.Logear(true);
+              this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
               this.$router.push({ name: 'compromisos'})
-              
             }else if(this.getUsuarios.nivel === 4){
               this.drawer= false;
               this.Logear(true);
@@ -221,6 +249,10 @@
           console.log('err', err)
           this.snackbar=true; this.text ="Ocurrio un error.Verifica tus datos."
         }).finally(() => this.iniciar = false) 
+      },
+
+      abreNotificaciones(){
+        this.ModalNoti = true;
       },
 
       salir(){

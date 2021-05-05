@@ -62,26 +62,28 @@
 		<v-row v-if="!Loading">
 			<v-col cols="12">
 				<v-card-text class="font-weight-black my-0 py-0 subtitle-1" align="center">DETALLE DEL PEDIDO</v-card-text>
-				<v-btn color="orange" block dark @click="verDetalle(3, detalle)"> AGREGAR PRODUCTO </v-btn>
+				<!-- <v-btn color="orange" block dark @click="verDetalle(3, detalle)"> AGREGAR PRODUCTO </v-btn> -->
 			</v-col>
 			
 			<v-col cols="12">
 				<v-card outlined>
-					<v-card-text v-if="!getPartidas.length"> No se a registrado ningun producto </v-card-text>
+					<v-card-text v-if="!getPartidas.length"> No se a registrado ningún producto </v-card-text>
 					<v-simple-table v-else>
 						<template v-slot:default>
 							<thead>
 								<tr>
-									<th class="text-left"> Referencia </th>
-									<th class="text-left"></th>
+									<th class="text-left"> Producto </th>
+									<th class="text-left"> Cantidad </th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-for="(item,i) in getPartidas" :key="i" >
-									<td class="font-weight-black">{{ item.referencia || item.ft }}</td>
+									<td class="font-weight-black">{{ item.codigo  }}</td>
+									<td class="font-weight-black">{{ item.cantidad}}</td>
+
 									<td align="right">
-										<v-btn text small color="success" class="mx-1"  @click="verDetalle(4,item)"> <v-icon>mdi-pencil</v-icon> </v-btn>
-										<v-btn text small color="error" class="mx-1" @click="alertaEliminar = true; productoAEliminar = item"> <v-icon>mdi-delete</v-icon> </v-btn>
+										<!-- <v-btn text small color="success" class="mx-1"  @click="verDetalle(4,item)"> <v-icon>mdi-pencil</v-icon> </v-btn> -->
+										<!-- <v-btn text small color="error" class="mx-1" @click="alertaEliminar = true; productoAEliminar = item"> <v-icon>mdi-delete</v-icon> </v-btn> -->
 									</td>
 								</tr>
 							</tbody>
@@ -95,16 +97,19 @@
 			
 			<!-- //!BOTON PARA GUARDAR INFORMACION -->
 			<v-col cols="12" align="right" class="py-0" v-if="detalle.estatus === 1"> 
-				<v-btn color="error" block outlined dark small @click="alertaCancelacion=true">CANCELAR SOLICITUD</v-btn> 
+				<v-btn color="error" block outlined dark  @click="alertaCancelacion=true">CANCELAR SOLICITUD</v-btn> 
+			</v-col>
+			<v-col cols="12" align="center" class="py-0" v-if="detalle.estatus === 4" > 
+				<v-alert text dense	color="error"	 >	SOLICITUD CANCELADA </v-alert>
 			</v-col>
 		</v-row>
 
 		<!-- // !ESTE ES EL BUENO ECHALE GANAS PARA ENTENDERLE TE QUIERO MUCHO -->
-		<v-dialog v-model="solicitarModal" persistent max-width="400">
-			<v-card class="pa-4 ">
-        <v-card-text class="font-weight-black my-1 " align="center">SOLICITUD DE PEDIDO</v-card-text>
+		<!-- <v-dialog v-model="solicitarModal" persistent max-width="400"> -->
+			<!-- <v-card class="pa-4 "> -->
+        <!-- <v-card-text class="font-weight-black my-1 " align="center">SOLICITUD DE PEDIDO</v-card-text> -->
 				<!-- //! SELECCION DEL DEPARTAMENTO  -->
-				<v-select
+				<!-- <v-select
 						v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
 						dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"
 						v-if="modoVista === 1 || modoVista === 3"
@@ -112,10 +117,10 @@
 					<v-select
 						v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" v-else 
 						dense hide-details  label="Departamentos" return-object placeholder ="Departamentos" disabled 
-				></v-select> 
+				></v-select>  -->
 				
 				<!-- //! FORMULARIOS  -->
-				<flexografia 
+				<!-- <flexografia 
 					:depto_id="depto.id" 
 					:modoVista="modoVista"
 					:parametros="parametros"
@@ -134,8 +139,8 @@
 					@put="actualiza = $event" 
 					v-if="activaFormulario===3"
 				/>
-			</v-card>
-		</v-dialog>
+			</v-card> -->
+		<!-- </v-dialog> -->
 
 		<!-- //!MODAL PARA GUARDAR LA INFORMACION -->
 		<v-card-actions>

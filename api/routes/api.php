@@ -12,11 +12,12 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 //==================================== COMPROMISOS ==================================================
 //  Agregue {id} para probar el endpoint
 	Route::post('compromisosxvend'           ,'compromisosController@CompromisosxVend')   -> name('CompromisosxVend');
-	Route::post('reagendar/{id}'             ,'compromisosController@Reagendar')     -> name('Reagendar');                 //* PROBADA
-	Route::post('confirmarcita/{id}'         ,'compromisosController@ConfirmarCita') -> name('ConfirmarCita');             //* PROBADA
-	Route::post('compromisos.hechos/{id}'    ,'compromisosController@CompromisosHechos')  -> name('CompromisosHechos');    //* PROBADA
+    Route::post('confirmarcita '             ,'compromisosController@ConfirmarCita')      -> name('ConfirmarCita');             //* PROBADA
+
+	Route::post('reagendar'                  ,'compromisosController@Reagendar')          -> name('Reagendar');                 //* PROBADA
+	Route::post('compromisos.hechos'         ,'compromisosController@CompromisosHechos')  -> name('CompromisosHechos');    //* PROBADA
 	Route::post('addcompromiso'  	         ,'compromisosController@addcompromiso')      -> name('addcompromiso');        //* PROBADA
-	Route::post('terminar.compromiso/{id}'   ,'compromisosController@TerminarCompromiso') -> name('TerminarCompromiso');   //* PROBADA
+	Route::post('terminar.compromiso'        ,'compromisosController@TerminarCompromiso') -> name('TerminarCompromiso');   //* PROBADA
 	// Route::post('proyectos.cotizados'     ,'compromisosController@proyectosCotizados') -> name('proyectosCotizados');   //! DEPRECATED
 	// Route::post('fase.venta'  		     ,'compromisosController@FaseVenta')   		  -> name('FaseVenta');            //! DEPRECATED
     Route::post('pendientesxvend'            ,'pendientesController@PendientesxVend')     -> name('PendientesxVend');
@@ -101,10 +102,15 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 
     Route::post('cancelar.solicitud'    ,'solicitudesController@cancelarSolicitud')     -> name('cancelarSolicitud');        //* PROBADA
 
+    Route::get('consulta.pendientes.x.validar/{id}' ,'solicitudesController@PendientesxValidar')         -> name('PendientesxValidar');
+    Route::post('actualiza.estatus.resultado'       ,'solicitudesController@ActualizaEstatusResult')    -> name('ActualizaEstatusResult');              // PROBADA ET
+
 //==================================== ORDENES DE TRABAJO =================================================
     Route::post('ordenes.trabajo.vend'   ,'ordenesTrabajoController@OrdenesTrabajoVend')     -> name('OrdenesTrabajoVend');        //* PROBADA
     Route::get('detalle.ot/{id}'         ,'ordenesTrabajoController@DetalleOT')         -> name('DetalleOT');
 
+
+    
 
 //==================================== MATERIALES ==================================================
     Route::get('materiales/{dx}' 			 ,'materialesController@Materiales')  -> name('Materiales');

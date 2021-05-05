@@ -40,6 +40,9 @@
 					</v-date-picker>
 				</v-dialog>
 			</v-col>
+			<v-col cols="12" class="py-0" >
+				<v-btn color="gris" dark block @click="init()">RECARGAR VISTA</v-btn>
+			</v-col>
 		</v-row>
 		
 		<v-container style="height: 400px;" v-if="Loading">
@@ -72,29 +75,37 @@
 							:size="100"
 							:width="15"
 							:value="porcentaje[item.estatus-1]"
-							:color="colores[item.estatus-1]"
+							:color="!item.procesado ? colores[item.estatus-1] : 'green'"
 						>
 							 {{ porcentaje[item.estatus-1]}} %
 						</v-progress-circular>
 						<v-spacer></v-spacer>
 						<span class="font-weight-bold"> ESTATUS<br> 
-							<span class="gris--text"    v-if="item.estatus===1"> {{ estatus1[item.estatus-1] }} </span>
-							<span class="celeste--text" v-if="item.estatus===2"> {{ estatus1[item.estatus-1] }} </span>
-							<span class="rosa--text"    v-if="item.estatus===3"> {{ estatus1[item.estatus-1] }} </span>
-							<span class="error--text"   v-if="item.estatus===4"> {{ estatus1[item.estatus-1] }} </span>
-
+							<span class="gris--text"    v-if="item.estatus===1 && !item.procesado"> {{ estatus1[item.estatus-1] }} </span>
+							<span class="celeste--text" v-if="item.estatus===2 && !item.procesado"> {{ estatus1[item.estatus-1] }} </span>
+							<span class="rosa--text"    v-if="item.estatus===3 && !item.procesado"> {{ estatus1[item.estatus-1] }} </span>
+							<span class="error--text"   v-if="item.estatus===4 && !item.procesado"> {{ estatus1[item.estatus-1] }} </span>
+							<span class="green--text"   v-if="item.estatus===3 && item.procesado"> PROGRAMADO </span>
 						</span>
 					</v-card-actions>
 				</v-card>
 
 			  <v-expand-transition >
 					<div v-show="item.show" >
+						<v-card class="ma-1 pa-1 mt-1" v-if="!item.detalle.length">
+							<v-alert text dense	color="warning" >	NO HAY PARTIDAS REGISTRADAS </v-alert>
+						</v-card>
 						<v-card outlined class="ma-1 pa-1 mt-1" v-for="(data, x) in item.detalle" :key ="x"  >
 							<div class="d-flex flex-no-wrap justify-space-between">
-								<v-btn  text  height="40px" class="font-weight-black caption"> {{ data.ft }}</v-btn >
-								<div>
+								<v-btn  text  height="40px" class="font-weight-black caption"> {{ data.codigo }}</v-btn >
+								<div v-if="!item.procesado">
 									<v-btn :color="colores2[data.estatus]" text dark height="40px" class="caption"> 
 										 {{ estatus2[parseInt(data.estatus)] }} 
+									</v-btn >
+								</div>
+								<div v-else>
+									<v-btn color="green" text dark height="40px" class="caption"> 
+										 PROGRAMADO
 									</v-btn >
 								</div>
 								
@@ -171,9 +182,12 @@
 
 		methods:{
 			...mapActions('Solicitudes'  ,['consultaSolicitudes']), // IMPORTANDO USO DE VUEX
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
 
 			init(){
-				this.Loading = true;
+        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+				
+				this.Solicitudes = [];   this.Loading = true;
 				const parametros = new Object();
 							parametros.id_usuario = this.getUsuarios.id;
 							parametros.fecha1     = this.fecha1;
@@ -193,6 +207,7 @@
 							"nomusuario"  : res[i].nomusuario,
 							"estatus"     : res[i].estatus,
 							"nota"        : res[i].nota,
+							"procesado"   : res[i].procesado,
 							"detalle"     : [],
 							"show"        : false
 						})

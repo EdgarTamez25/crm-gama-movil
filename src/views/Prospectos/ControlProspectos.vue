@@ -167,8 +167,11 @@
 
 		methods:{
 			...mapActions('Prospectos'  ,['consultaProspectos']),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+
 
 			validarModoVista(){
+        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
 					this.nombre 			= this.edit.nombre;
@@ -198,7 +201,7 @@
 													tel1				: this.tel1,
 													contacto		: this.contacto,
 													prospecto   : 1,
-													estatus     : 1
+													estatus     : 1,
 													// ubicacion   :''
 												}
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA

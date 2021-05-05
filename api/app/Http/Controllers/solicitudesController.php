@@ -21,7 +21,7 @@ class solicitudesController extends Controller
 
 	public function Solicitudes(Request $req){
 		$solicitud = DB::select('SELECT     s.id, s.id_cliente, c.nombre as nomcli, s.id_usuario, u.nombre as nomusuario,
-																				s.fecha, s.hora, s.nota, s.estatus 
+																				s.fecha, s.hora, s.nota, s.estatus, s.procesado
 															FROM  solicitudes s LEFT JOIN clientes c ON s.id_cliente = c.id
 																									LEFT JOIN users    u ON s.id_usuario = u.id
 														WHERE s.id_usuario = ? AND s.fecha BETWEEN ? AND ? ORDER BY s.estatus ASC' ,
@@ -33,28 +33,34 @@ class solicitudesController extends Controller
 	//! CONSULTAR DETALLE DE LA SOLICITUD
 	public function DetalleSolicitud($id){
 		// ! IR A DET_SOL PARA OBTENER TODOS LOS PRODUCTOS DE LA SOLICITUD
-		$detalle = DB::select('SELECT * FROM	det_sol WHERE id_solicitud = ?', [$id]);
-		$detSol = [];
+		$detalle = DB::select('SELECT ds.id, ds.id_solicitud, ds.id_depto, ds.id_producto, pxc.nombre, 
+																		pxc.codigo, pxc.descripcion, ds.tipo_prod, ds.cantidad, ds.estatus
+															 FROM	det_sol ds LEFT JOIN prodxcli pxc ON ds.id_producto = pxc.id  
+														WHERE id_solicitud = ?', [$id]);
+			return $detalle ? $detalle: $detalle = [];
+			
+		// $detalle = DB::select('SELECT * FROM	det_sol WHERE id_solicitud = ?', [$id]);
+		// $detSol = [];
 
-		for($i=0;$i<count($detalle);$i++ ):
-			if($detalle[$i] -> px === 1):
-				$existente = $this -> consultaProdExistente($detalle[$i] -> id_px);
-				array_push($detSol,  $existente[0]);
-			endif;
-			if($detalle[$i] -> px === 2):
-				$Modificacion = $this -> consultaProdModif($detalle[$i] -> id_px);
-				array_push($detSol, $Modificacion[0]);
-			endif;
-			if($detalle[$i] -> px === 3):
-				$Nuevos = $this -> consultaProdNuevo($detalle[$i] -> id_px);
-				array_push($detSol, $Nuevos[0]);
-			endif; 
-		endfor;
+		// for($i=0;$i<count($detalle);$i++ ):
+		// 	if($detalle[$i] -> px === 1):
+		// 		$existente = $this -> consultaProdExistente($detalle[$i] -> id_px);
+		// 		array_push($detSol,  $existente[0]);
+		// 	endif;
+		// 	if($detalle[$i] -> px === 2):
+		// 		$Modificacion = $this -> consultaProdModif($detalle[$i] -> id_px);
+		// 		array_push($detSol, $Modificacion[0]);
+		// 	endif;
+		// 	if($detalle[$i] -> px === 3):
+		// 		$Nuevos = $this -> consultaProdNuevo($detalle[$i] -> id_px);
+		// 		array_push($detSol, $Nuevos[0]);
+		// 	endif; 
+		// endfor;
 		
-		return $detSol ? $detSol: $detSol = [];
+		// return $detSol ? $detSol: $detSol = [];
 	}
 
-    public function addSolicitud(Request $req){
+  public function addSolicitud(Request $req){
 		// !EL REQUEST CONTIENE EL DETALLE DE LA SOLICITUD "req -> detalle"
 		// ! 1. CREO EL REGISTRO PARA LA SOLICITUD EN SOLICITUDES
 		$id_solicitud  = DB::table('solicitudes')->insertGetId(
@@ -583,6 +589,42 @@ class solicitudesController extends Controller
 
 	// TODO ******************** FUNCIONES PARA VALIDAR ESTATUS DE SOLICITUD ***************************
 	// TODO ********************************************************************************************
+	public function validaEstatusMovim($data){
+			$cero=0;$uno=0; $dos=0; $tres=0; $cuatro=0; $movim=[];
+
+			$movim = DB::select('SELECT * FROM movim_sol WHERE id_det_sol =? ', [$data -> id_det_sol]);
+
+			if(count($movim) === 0){
+			 $objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 1 ];
+			 $this -> actualizaEstatusDetSol($objetTemp);
+		  }
+
+			for($i=0;$i<count($movim); $i++): 
+				if($movim[$i] -> estatus === 1 ):
+					$uno++;
+				elseif($movim[$i] -> estatus === 2):
+					$dos++;
+				elseif($movim[$i] -> estatus === 3):
+					$tres++;
+				elseif($movim[$i] -> estatus === 4):
+					$cuatro++;
+				endif;
+			endfor;
+			
+			if($uno > 0):
+				$objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 2 ];
+				$this -> actualizaEstatusDetSol($objetTemp);
+			elseif($dos > 0):
+				$objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 2 ];
+				$this -> actualizaEstatusDetSol($objetTemp);
+			elseif($tres > 0):
+				$objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 3 ];
+				$this -> actualizaEstatusDetSol($objetTemp);
+			elseif($cuatro > 0):
+				$objetTemp  = ["id" => $data['id_det_sol'], "estatus" => 1 ];
+				$this -> actualizaEstatusDetSol($objetTemp);
+			endif;
+		}
 	public function	validaEstatusSolicitud($data){
 		$cero=0;$uno=0;$dos=0; $tres=0; $cuatro=0;
 	  $detalle = $this -> DetalleSolicitud($data['id_solicitud']);
@@ -622,7 +664,12 @@ class solicitudesController extends Controller
 		DB::update('UPDATE solicitudes SET estatus=:estatus 
 								 WHERE id=:id',['estatus' => $estatus, 'id' => $id_solicitud]); 
   }
-
+  public function actualizaEstatusDetSol($data){
+		 $estatusDelSol = DB::update('UPDATE det_sol SET estatus=:estatus 
+																		WHERE id=:id',['estatus' => $data['estatus'], 
+																									 'id' 		 => $data['id'] ]);
+			return $estatusDelSol ? true : false; 
+	}
 
   public function cancelarSolicitud(Request $req){
   	if( $this -> validaCancelacion($req) ):
@@ -670,6 +717,32 @@ class solicitudesController extends Controller
 		endif;
 				return "editado correctamente.";
 	}
+
+	public function PendientesxValidar($id_usuario){
+		$pendientes = DB::select('SELECT m.id, m.id_det_sol, m.id_depto, m.estatus, ds.id_producto, pxc.codigo, ds.cantidad,
+																   ds.id_solicitud, s.id_usuario, s.id_cliente, c.nombre as nomcli
+															  FROM movim_sol m LEFT JOIN det_sol ds    ON m.id_det_sol    = ds.id
+															                   LEFT JOIN prodxcli pxc  ON ds.id_producto  = pxc.id
+																			   				 LEFT JOIN solicitudes s ON ds.id_solicitud = s.id
+																			   				 LEFT JOIN clientes c    ON s.id_cliente    = c.id
+															WHERE m.estatus = 2 AND s.id_usuario = ?', [$id_usuario]);
+
+		return $pendientes ? $pendientes:[];
+
+
+	}
+
+	public function ActualizaEstatusResult(Request $req ){
+			$actualiza = DB::update('UPDATE movim_sol SET estatus=:estatus WHERE id=:id', 
+																			[ 'estatus'  => $req -> estatus, 
+																				'id' 		   => $req -> id  
+																			]);
+			
+			$this -> validaEstatusMovim($req);
+			$this -> validaEstatusSolicitud($req);
+			return $actualiza? response('Se finalizo correctamente.',200):
+			 									 response('Ocurrio un error intentalo mas tarde.',500);
+		}
 
 }
 

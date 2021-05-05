@@ -41,6 +41,11 @@
 				</v-dialog>
 			</v-col>
 
+			<v-col cols="12" class="py-0" >
+				<v-btn color="gris" dark block @click="init()">RECARGAR VISTA</v-btn>
+			</v-col>
+
+
 			<v-col cols="12" v-if="!Solicitudes.length && !Loading">
 				<v-alert color="error" outlined dark icon="sentiment_very_dissatisfied" >
 					No hay Solicitudes  para tí. 
@@ -146,9 +151,11 @@
 
 		methods:{
 			...mapActions('Solicitudes'  ,['consultaSolicitudes']), // IMPORTANDO USO DE VUEX
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
 
 			init(){
-				this.Loading = true;
+        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+				this.Solicitudes = []; this.Loading = true;
 				const parametros = new Object();
 							parametros.id_usuario = this.getUsuarios.id;
 							parametros.fecha1     = this.fecha1;

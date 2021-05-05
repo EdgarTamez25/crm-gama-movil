@@ -93,14 +93,15 @@
 					<v-card class="pa-0 ">
 						<v-card-title class="subtitle-2 "> RESULTADO DEL COMPROMISO {{ resultados.id }} </v-card-title>
 						<!-- <v-divider class="black"></v-divider> -->
-						<v-card-subtitle class="overline mt-3 font-weight-black ">Fecha Cierre: <br> 
+						<v-card-subtitle class="caption mt-3 font-weight-black ">FECHA CIERRE: <br> 
 							{{  moment(resultados.fecha_cierre).format('LL') }}  
 						</v-card-subtitle> 
-						<v-card-subtitle class="overline font-weight-black ">     Hora Cierre:  <br> 
+						<v-card-subtitle class="caption font-weight-black ">     HORA CIERRE:  <br> 
 							{{ resultados.hora_cierre >='12:00'? resultados.hora_cierre +' '+'pm': resultados.hora_cierre+ ' '+'am' }}
 						</v-card-subtitle>
 						<v-divider class="gris"></v-divider>
-						<v-card-text class="overline font-weight-black  mt-2"> {{ resultados.obs_usuario }} </v-card-text>
+						<v-alert text dense	color="green"	icon="mdi-clock-fast" v-if="!resultados.obs_usuario">	SE GENERÓ UNA SOLICITUD </v-alert>
+						<v-card-text class="caption font-weight-black  mt-2" v-else> {{ resultados.obs_usuario }} </v-card-text>
 						<v-card-actions>
 							<v-btn small dark block color="celeste" @click="Historial = false">Cerrar</v-btn> 
 						</v-card-actions>
@@ -201,8 +202,11 @@
 		methods:{
 			...mapActions('Compromisos'  ,['consultaCompromisoshechos']), // IMPORTANDO USO DE VUEX
       ...mapGetters('Usuarios',['Salir']),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+
 
 			init(){ // CONSULTAR COMPROMISOS
+        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
 				const parametros = new Object();
 							parametros.id = this.getUsuarios.id;
 							parametros.fecha1 = this.fecha1;

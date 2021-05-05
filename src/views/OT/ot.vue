@@ -40,6 +40,16 @@
 					</v-date-picker>
 				</v-dialog>
 			</v-col>
+			<v-col cols="6" class="py-0">
+					<v-select
+							v-model="estatus" :items="Estatus" item-text="nombre" item-value="id"  dense color="celeste"
+								hide-details  placeholder="Estatus " return-object outlined append-icon="mdi-circle-slice-5"
+						></v-select> 
+				</v-col>
+
+			<v-col cols="6" class="py-0 " >
+				<v-btn color="gris" dark block @click="init()">RECARGAR VISTA</v-btn>
+			</v-col>
 		</v-row>
 
     <v-container style="height: 400px;" v-if="Loading">
@@ -68,12 +78,12 @@
 
 			<v-card  class="mt-6 pa-1 elevation-10" >
 				<v-card flat>
-					<v-card-title class=" py-1 font-weight-bold"> {{ item.depto }}  </v-card-title>
-					<v-divider></v-divider>
+					<!-- <v-card-title class=" py-1 font-weight-bold"> {{ item.depto }}  </v-card-title>
+					<v-divider></v-divider> -->
 					<v-card-text class="py-1"> <span class="font-weight-bold">  ORDEN DE TRABAJO: </span>  {{ item.id }}  																										 </v-card-text>
 					<v-card-text class="py-1"> <span class="font-weight-bold">  CLIENTE:          </span>  {{ item.nomcli }}  																							   </v-card-text>
 					<v-card-text class="py-1"> <span class="font-weight-bold">  OC:               </span>  {{ item.oc }}  																							   </v-card-text>
-					<v-card-text class="py-1"> <span class="font-weight-bold">  REFERENCIA:       </span>  {{ item.referencia }}  																							   </v-card-text>
+					<v-card-text class="py-1"> <span class="font-weight-bold">  REFERENCIA:       </span>  {{ item.id_solicitud }}  																							   </v-card-text>
 					<v-card-text class="py-1"> <span class="font-weight-bold">  FECHA:            </span>  {{  moment(item.fecha).format('LL') }}   													 </v-card-text>
 					<v-card-text class="py-1"> <span class="font-weight-bold">  HORA: 						</span>  {{ item.hora >='12:00'? item.hora +' '+'pm': item.hora+ ' '+'am' }} </v-card-text>
 					<v-card-actions class="pa-1"/>
@@ -83,7 +93,7 @@
 					<div v-show="item.show" >
 						<v-card outlined class="ma-1 pa-1 mt-1" v-for="(data, x) in item.detalle" :key ="x" style="border-color: #0096cb;" >
 							<div class="d-flex flex-no-wrap justify-space-between">
-								<v-btn  text  height="40px" class="font-weight-black caption"> {{ data.codigo }} </v-btn>
+								<v-btn  text  height="40px" class="font-weight-black caption"> {{ data.producto }} </v-btn>
 								<div>
 									<v-btn :color="colores2[data.estatus]" text dark height="40px" class="caption"> 
 										 {{ estatus2[parseInt(data.estatus)] }} 
@@ -122,11 +132,16 @@
 		data(){
 			return{
 				estatus1:['EN CALL-CENTER','EN DESARROLLO','A PROGRAMAR'],
-				estatus2:['','PENDIENTE','EN CALL-CENTER','EN DESARROLLO','A PROGRAMAR'],
+				estatus2:['','PENDIENTE','','FINALIZADO','CANCELADO'],
+
+				estatus: {  id: 1, nombre:'Pendiente'},
+				Estatus:[ { id: 1, nombre:'Pendiente'},
+									{ id: 3, nombre:'Finalizado'},
+				],
 
 				porcentaje:['33','66','100'],
 				colores:['gris','celeste','rosa'],
-				colores2:['error','gris','celeste','rosa'],
+				colores2:['error','gris','celeste','green','error'],
 
 				search: '',
 
@@ -158,6 +173,9 @@
 			},
 			fecha2(){
 				this.init();
+			},
+			estatus(){
+				this.init();
 			}
 		},
 
@@ -167,14 +185,16 @@
 
 		methods:{
 			...mapActions('OT'  ,['consultaOT']), // IMPORTANDO USO DE VUEX
-
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+			
 			init(){
-				this.Loading = true;
+        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+				this.OT = []; this.Loading = true;
 				const payload = new Object();
-							payload.id_vendedor = this.getUsuarios.id;
+							payload.id_solicitante = this.getUsuarios.id;
 							payload.fecha1     = this.fecha1;
               payload.fecha2     = this.fecha2;
-              payload.estatus    = 1;
+              payload.estatus    = this.estatus.id;
         
         this.$http.post('ordenes.trabajo.vend',payload).then(res =>{
 					this.OT = [];
@@ -183,12 +203,12 @@
 						this.OT.push({
 							"id"  				: res.body[i].id,
 							"id_depto"    : res.body[i].id_depto,
-							"depto"				: this.buscaDeptos(res.body[i].id_depto),
-							"id_vendedor" : res.body[i].id_vendedor,
+							// "depto"				: this.buscaDeptos(res.body[i].id_depto),
+							"id_vendedor" : res.body[i].id_solicitante,
 							"id_cliente"  : res.body[i].id_cliente,
 							"nomcli"      : res.body[i].nomcli,
 							"oc"  				: res.body[i].oc,
-							"referencia"  : res.body[i].referencia,
+							"id_solicitud"  : res.body[i].id_solicitud,
 							"fecha"     	: res.body[i].fecha,
 							"hora"        : res.body[i].hora,
 							"estatus"     : res.body[i].estatus,
