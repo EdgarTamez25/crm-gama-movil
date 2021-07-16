@@ -1,10 +1,12 @@
 <template>
-	<v-content class="pa-0">
+	<v-main class="pa-0">
 		<v-row justify="center" no-gutters>
 			<v-col cols="12">
-				
-				<v-snackbar top v-model="snackbar" :timeout="1000"  :color="color"> {{text}}
-					<v-btn color="white" text @click="snackbar = false" > Cerrar </v-btn>
+				<v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+					<strong> {{alerta.text}} </strong>
+					<template v-slot:action="{ attrs }">
+						<v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+					</template>
 				</v-snackbar>
 
 				<v-card-actions class="pa-0" >
@@ -88,39 +90,31 @@
 				<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
 				<v-card-actions>
 					<v-spacer></v-spacer>
-					 <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-if="param === 1">
+					 <v-btn small :disabled="overlay" persistent :loading="overlay" dark center class="white--text" color="success" @click="validaInfo" v-if="param === 1">
              Confirmar  
           </v-btn>
-					<v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-else>
+					<v-btn small :disabled="overlay" persistent :loading="overlay" dark center class="white--text" color="success" @click="validaInfo" v-else>
              Actualizar  
           </v-btn>
-
-          <v-dialog v-model="dialog" hide-overlay persistent width="300">
-            <v-card color="blue darken-4" dark >
-              <v-card-text> <th style="font-size:17px;" align="center">{{ textDialog }}</th>
-                <br>
-                <v-progress-linear indeterminate color="white" class="mb-0" persistent></v-progress-linear>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
-					
-					<v-dialog v-model="Correcto" hide-overlay persistent width="350">
-            <v-card color="success"  dark class="pa-3">
-							<h3><strong>{{ textCorrecto }} </strong></h3>
-            </v-card>
-          </v-dialog>
 				</v-card-actions>
 			</v-col>
 		</v-row>
-	</v-content >
+
+    <overlay v-if="overlay"/>
+
+	</v-main >
 </template>
 
 <script>
 	// import  SelectMixin from '@/mixins/SelectMixin.js';
 	import {mapGetters, mapActions} from 'vuex'
+	import metodos from '@/mixins/metodos.js';
+  import overlay from '@/components/overlay.vue'
+	
 	export default {
-		// mixins:[SelectMixin],
+		mixins:[metodos],
 	  components: {
+      overlay
 		},
 		props:[
 			'param',
@@ -128,7 +122,7 @@
 	  ],
 	  data () {
 			return {
-				dialog : false,
+				overlay : false,
 				textDialog : "Guardando Información",
 				Correcto   : false,
 				textCorrecto: '',
@@ -142,9 +136,11 @@
 				contacto    : '',
 			
 			 // ALERTAS
-				snackbar: false,
-				text		: '',
-				color		: 'error',
+				alerta: { 
+						activo: false,
+						text: '',
+						color: 'error',
+				},
 				
 				}
 		},
@@ -167,11 +163,10 @@
 
 		methods:{
 			...mapActions('Prospectos'  ,['consultaProspectos']),
-      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar','consultaAutorizados']),
 
 
 			validarModoVista(){
-        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
 				if(this.param === 2){
 					// ASIGNAR VALORES AL FORMULARIO
 					this.nombre 			= this.edit.nombre;
@@ -185,59 +180,63 @@
 			},
 
 			validaInfo(){
-				if(!this.nombre)	  	{ this.snackbar = true; this.text="No puedes omitir el NOMBRE DEL CLIENTE"   ; return }
-				if(!this.tipo_cliente){ this.snackbar = true; this.text="No puedes omitir el TIPO DE CLIENTE"; return }
-				if(!this.nivel)				{ this.snackbar = true; this.text="No puedes omitir el NIVEL"; return }
-				if(!this.tel1)	      { this.snackbar = true; this.text="Debes de ingresar al menos un telefono"	; return }
+				
+				if(!this.nombre)	  	{ this.alerta = { activo: true, text:'NO PUEDES OMITIR EL NOMBRE DEL CLIENTE' , color:'error'}; return }
+				if(!this.tipo_cliente){ this.alerta = { activo: true, text:'NO PUEDES OMITIR EL TIPO DE CLIENTE'    , color:'error'}; return }
+				if(!this.nivel)				{ this.alerta = { activo: true, text:'NO PUEDES OMITIR EL NIVEL'    					, color:'error'}; return }
+				if(!this.tel1)	      { this.alerta = { activo: true, text:'DEBES INGRESAR AL MENOS UN TELEFONO'    , color:'error'}; return }
 				this.PrepararPeticion() // MANDO A FORMAR EL OBJETO PARA GUARDAR
 			},
 
 			PrepararPeticion(){
+				this.overlay = true ;
+
 				// FORMAR ARRAY A MANDAR
-				const payload = { fuente 			: this.getUsuarios.id,
-												  nombre			: this.nombre,
-													tipo_cliente: this.tipo_cliente === 'Nacional'? 1:2,
-													nivel       : this.nivel.id,
-													tel1				: this.tel1,
-													contacto		: this.contacto,
-													prospecto   : 1,
-													estatus     : 1,
-													// ubicacion   :''
-												}
+				const payload = new Object({
+					fuente 			: this.getUsuarios.id,
+					nombre			: this.nombre,
+					tipo_cliente: this.tipo_cliente === 'Nacional'? 1:2,
+					nivel       : this.nivel.id,
+					tel1				: this.tel1,
+					contacto		: this.contacto,
+					prospecto   : 1,
+					estatus     : 1,
+					fecha       : this.traerFechaActual()
+				})
+				
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA
 				this.param === 1 ? this.Crear(payload): this.Actualizar(payload);
 			},
 
 			Crear(payload){
-				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ;
-				setTimeout(() => (this.dialog = false), 2000)
-				
-				// MANDO A INSERTAR CLIENTE
 				this.$http.post('add.prospecto', payload).then((response)=>{
 					this.TerminarProceso(response.body);					
 				}).catch(err =>{
+					this.alerta = { activo: true, text:err.bodyText , color:'error'};
 					console.log('err',err)
-				})
+				}).finally(()=>{ this.overlay = false})
 			},
 
 			Actualizar(payload){
-				// ACTIVO DIALOGO -> GUARDANDO INFO
-				this.dialog = true ; this.textDialog ="Actualizando Información"
-				setTimeout(() => (this.dialog = false), 2000)
-
 				this.$http.put('update.prospecto/'+ this.edit.id, payload).then((response)=>{
 					this.TerminarProceso(response.body);					
-				})
+				}).catch( err =>{
+					this.alerta = { activo: true, text:err.bodyText , color:'error'};
+				}).finally(()=>{ this.overlay = false})
 			},
 
 			TerminarProceso(mensaje){
 				var me = this ;
-				this.dialog = false; this.Correcto = true ; this.textCorrecto = mensaje;
-
-				setTimeout(function(){ me.$emit('modal',false)}, 2000);
-				this.limpiarCampos();  //LIMPIAR FORMULARIO
+				this.alerta = { activo: true, text: mensaje  , color:'success'};
 				this.consultaProspectos(this.getUsuarios.id) //ACTUALIZAR CONSULTA DE CLIENTES
+        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+				const autorizadas = new Object({
+						fecha     : this.traerFechaActual(),
+						id_usuario: this.getUsuarios.id,
+				});
+        this.consultaAutorizados(autorizadas); // traer los pendientes por validar
+				setTimeout(() => { me.$emit('modal',false)}, 1500);
+				this.limpiarCampos();  //LIMPIAR FORMULARIO
 			},
 
 			limpiarCampos(){

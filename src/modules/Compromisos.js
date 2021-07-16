@@ -8,7 +8,8 @@ export default{
 		compromisos_hechos:[],
 		loading: true,
 		proyectos: [],
-		seguimiento:[]
+		seguimiento:[],
+		prodxcot: [],
 	},
 
 	mutations:{
@@ -26,10 +27,80 @@ export default{
 		},
 		SEGUIMIENTO(state, data){
 			state.seguimiento = data 
-		}
+		},
+		PRODUCTOS_X_COTIZAR(state, data){
+			state.prodxcot.push(data); 
+		},
+		ELIMINA_PRODUCTO_A_COTIZAR(state,id_producto){
+			// console.log('id_producto', id_producto)
+			for(let i =0; i < state.prodxcot.length;i++){
+				if(state.prodxcot[i].id_producto === id_producto){
+					state.prodxcot.splice(i,1);
+				}
+			}
+		},
+		ACTUALIZA_PRODUCTOS_X_COTIZAR(state, data){
+			for(let i =0; i < state.prodxcot.length;i++){
+				if(state.prodxcot[i].id_producto === data.id_producto && state.prodxcot[i].tipo === data.tipo){
+					// console.log( 'data', data)
+					// console.log( 'state.prodxcot[i]', state.prodxcot[i])
+					state.prodxcot[i] = data;
+				}
+
+				// if(state.prodxcot[i].id_producto === data.id_producto && data.tipo === 2){
+				// 	state.prodxcot[i] = data;
+				// }
+			}
+			//!NUNCA HAGAN ESTO AMIGITOS - SOLCION POCO OPTIMA
+			var temporal = state.prodxcot;
+			state.prodxcot = [];
+			state.prodxcot = temporal;
+		},
+		VACIAR_PROD_X_COTIZAR(state){
+			state.prodxcot = [];
+		},
 	},
 
 	actions:{
+		agregar_producto_a_cotizar({commit}, payload){
+			return new Promise(resolve => {
+        commit('PRODUCTOS_X_COTIZAR', payload);
+        resolve(true)
+			})
+		},
+
+		elimina_producto_a_cotizar({commit}, id_producto){
+			// console.log('eliminar', id_producto)
+			return new Promise(resolve => {
+        commit('ELIMINA_PRODUCTO_A_COTIZAR', id_producto);
+        resolve(true)
+			})
+		},
+
+		actualiza_producto_a_cotizar({commit}, payload){
+			return new Promise(resolve => {
+        commit('ACTUALIZA_PRODUCTOS_X_COTIZAR', payload);
+        resolve(true)
+			})
+		},
+
+		vaciar_prod_x_cot({commit}){
+			commit('VACIAR_PROD_X_COTIZAR');
+		},
+
+		consulta_productos_x_cotizar({commit}, id){
+			Vue.http.get('obten.productos.x.compromiso/' + id).then( response =>{
+				for(let i=0; i< response.body.length; i++){
+				// console.log('productos', response.body[i])
+					commit('PRODUCTOS_X_COTIZAR', response.body[i]);
+				}
+			}).catch( error =>{
+				console.log('error', error.body)
+			})
+		},
+
+		
+
 		consultaCompromisos({commit}, payload){
 				commit('LOADING',true); commit('COMPROMISOS', []) // Limpio Arreglo y Genero Consulta
 				Vue.http.post('compromisosxvend', payload).then(response=>{
@@ -117,6 +188,10 @@ export default{
 
 		getSeguimiento(state){
 			return state.seguimiento;
+		},
+
+		productosxCotizar(state){
+			return state.prodxcot;
 		}
 
 	}

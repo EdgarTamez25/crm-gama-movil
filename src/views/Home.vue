@@ -119,7 +119,7 @@
 
 		created(){
 			moment.locale('es') /// inciar Moment 
-			this.consultaSeguimiento(this.getUsuarios.id);
+			this.init();
 		},
 
 		watch:{
@@ -145,28 +145,37 @@
   	},
 
 		methods:{
-			...mapActions('Compromisos'  ,['consultaSeguimiento']), // IMPORTANDO USO DE VUEX
+			...mapActions('Compromisos'    ,['consultaSeguimiento']), // IMPORTANDO USO DE VUEX
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar','consultaAutorizados']),
+
+			init(){
+				this.consultaSeguimiento(this.getUsuarios.id);
+				this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+				const payload = new Object({
+					fecha: this.traerFechaActual(),
+					id_usuario: this.getUsuarios.id,
+				});
+        this.consultaAutorizados(payload);
+			}
 		},
 		mounted(){
-    // Jquey para activar la animacion del boton hacia arriba
-    $(document).ready(function(){
+			// Jquey para activar la animacion del boton hacia arriba
+			$(document).ready(function(){
 
-      $('.ir-arriba').click(function(){
-        $('body, html').animate({
-          scrollTop: '0px'
-        }, 300);
-      });
-      
-      $(window).scroll(function(){
-        if( $(this).scrollTop() > 0 ){
-          $('.ir-arriba').slideDown(300);
-        } else {
-          $('.ir-arriba').slideUp(300);
-        }
-      });
-      
-    });
-
-  },
+				$('.ir-arriba').click(function(){
+					$('body, html').animate({
+						scrollTop: '0px'
+					}, 300);
+				});
+				
+				$(window).scroll(function(){
+					if( $(this).scrollTop() > 0 ){
+						$('.ir-arriba').slideDown(300);
+					} else {
+						$('.ir-arriba').slideUp(300);
+					}
+				});
+			});
+  	},
 	}
 </script>

@@ -6,7 +6,7 @@
 		</v-btn>
 
 		<v-row justify="center" >
-			<v-col cols="12" class="text-center py-1">
+			<v-col cols="12" class="text-center py-1 mt-3">
 				<span class=" font-weight-bold">ORDENES DE TRABAJO </span>
 			</v-col>
 			<v-col cols="6"  > <!-- FECHA DE COMPROMISO -->
@@ -57,7 +57,7 @@
     </v-container>
 
 
-		<v-col cols="12" v-if="!OT.length && !Loading">
+		<v-col cols="12" class="pa-0 mt-6" v-if="!OT.length && !Loading">
 			<v-alert prominent text color="rosa">
 				<v-row align="center">
 					<v-col class="grow">No hay ordenes de trabajo para ti.</v-col>
@@ -185,10 +185,18 @@
 
 		methods:{
 			...mapActions('OT'  ,['consultaOT']), // IMPORTANDO USO DE VUEX
-      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar','consultaAutorizados']),
 			
 			init(){
         this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+
+				const autorizadas = new Object({
+					fecha: this.traerFechaActual(),
+					id_usuario: this.getUsuarios.id,
+				});
+        this.consultaAutorizados(autorizadas);
+
+				
 				this.OT = []; this.Loading = true;
 				const payload = new Object();
 							payload.id_solicitante = this.getUsuarios.id;

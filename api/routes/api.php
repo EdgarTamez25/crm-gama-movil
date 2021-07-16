@@ -12,15 +12,20 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 //==================================== COMPROMISOS ==================================================
 //  Agregue {id} para probar el endpoint
 	Route::post('compromisosxvend'           ,'compromisosController@CompromisosxVend')   -> name('CompromisosxVend');
-    Route::post('confirmarcita '             ,'compromisosController@ConfirmarCita')      -> name('ConfirmarCita');             //* PROBADA
+  Route::post('confirmarcita '             ,'compromisosController@ConfirmarCita')      -> name('ConfirmarCita');             //* PROBADA
 
 	Route::post('reagendar'                  ,'compromisosController@Reagendar')          -> name('Reagendar');                 //* PROBADA
 	Route::post('compromisos.hechos'         ,'compromisosController@CompromisosHechos')  -> name('CompromisosHechos');    //* PROBADA
-	Route::post('addcompromiso'  	         ,'compromisosController@addcompromiso')      -> name('addcompromiso');        //* PROBADA
+	Route::post('addcompromiso'  	           ,'compromisosController@addcompromiso')      -> name('addcompromiso');        //* PROBADA
 	Route::post('terminar.compromiso'        ,'compromisosController@TerminarCompromiso') -> name('TerminarCompromiso');   //* PROBADA
 	// Route::post('proyectos.cotizados'     ,'compromisosController@proyectosCotizados') -> name('proyectosCotizados');   //! DEPRECATED
-	// Route::post('fase.venta'  		     ,'compromisosController@FaseVenta')   		  -> name('FaseVenta');            //! DEPRECATED
-    Route::post('pendientesxvend'            ,'pendientesController@PendientesxVend')     -> name('PendientesxVend');
+	// Route::post('fase.venta'  		         ,'compromisosController@FaseVenta')   		  -> name('FaseVenta');            //! DEPRECATED
+  Route::post('pendientesxvend'            ,'pendientesController@PendientesxVend')     -> name('PendientesxVend');
+
+	Route::put('cliente/{id}'                ,'clientesController@update')             -> name('updateCliente');          //PROBADA
+	Route::post('obtener.prodxcli.depto'     ,'productosController@ProdxClixDeptos')        -> name('ProdxClixDeptos');
+    
+    
 
 //==================================== ENTREGAS ========================================================
 	Route::post('entregas'                   ,'entregasController@Entregas')           -> name('Entregas');
@@ -87,23 +92,28 @@ Route::post('login' ,'userController@IniciarSesion')   -> name('IniciarSesion');
 //==================================== SOLICITUDES =================================================
     Route::post('solicitudes.vend'		 ,'solicitudesController@Solicitudes')  	  -> name('Solicitudes');
     Route::get('detalle.solicitud/{id}'  ,'solicitudesController@DetalleSolicitud')   -> name('DetalleSolicitud');
+    Route::get('modificaciones/{id}'     ,'solicitudesController@Modificaciones')     -> name('Modificaciones');
+    Route::post('caracteristicas'   	 ,'solicitudesController@Caracteristicas')    -> name('Caracteristicas');
+    Route::post('actualiza.producto'     ,'solicitudesController@ActualizaProducto')  -> name('ActualizaProducto');
+    Route::post('anadir.producto.sol'    ,'solicitudesController@AgregarProductoSol') -> name('AgregarProductoSol');
+    Route::post('eliminar.producto'   	 ,'solicitudesController@EliminaProducto')    -> name('EliminaProducto');
+    Route::post('add.Solicitud'          ,'solicitudesController@addSolicitud')       -> name('addSolicitud');        //* PROBADA
+    Route::put('update.Solicitud/{id}'   ,'solicitudesController@UpdateSolicitud')    -> name('UpdateSolicitud');     //! PROBADA
+    Route::post('cancelar.solicitud'     ,'solicitudesController@cancelarSolicitud')  -> name('cancelarSolicitud');        //* PROBADA
+    Route::post('consulta.pendientes.x.validar','solicitudesController@PendientesxValidar')          -> name('PendientesxValidar');
+    Route::post('consulta.cot.autorizadas','solicitudesController@consulta_cot_autorizadas')          -> name('consulta_cot_autorizadas');
 
-    Route::get('modificaciones/{id}'     ,'solicitudesController@Modificaciones')   -> name('Modificaciones');
-    Route::post('caracteristicas'   	 ,'solicitudesController@Caracteristicas')  -> name('Caracteristicas');
+    
 
-    Route::post('actualiza.producto'   ,'solicitudesController@ActualizaProducto') -> name('ActualizaProducto');
-    Route::post('anadir.producto.sol'  ,'solicitudesController@AgregarProductoSol') -> name('AgregarProductoSol');
+    Route::post('actualiza.estatus.resultado'      ,'solicitudesController@ActualizaEstatusResult')      -> name('ActualizaEstatusResult');
+                 
+    Route::post('genera.solicitud.cotizacion'     ,'solicitudesController@generar_solicitud_cotizacion')   -> name('generar_solicitud_cotizacion');    
+    Route::get('obten.productos.x.compromiso/{id}','solicitudesController@obten_productos_x_compromiso')   -> name('obten_productos_x_compromiso'); 
+    Route::post('actualiza.solicitud.cotizacion'  ,'solicitudesController@actualiza_solicitud_cotizacion') -> name('actualiza_solicitud_cotizacion'); 
+    Route::post('cancelar.prod.a.cotizar'         ,'solicitudesController@cancelar_prod_a_cotizar')        -> name('cancelar_prod_a_cotizar'); 
 
+    Route::post('genera.solicitud.ft'     ,'solicitudesController@generar_solicitud_ft')   -> name('generar_solicitud_ft');    
 
-    Route::post('eliminar.producto'   	 ,'solicitudesController@EliminaProducto') -> name('EliminaProducto');
-
-    Route::post('add.Solicitud'          ,'solicitudesController@addSolicitud')     -> name('addSolicitud');        //* PROBADA
-    Route::put('update.Solicitud/{id}'   ,'solicitudesController@UpdateSolicitud')  -> name('UpdateSolicitud');     //! PROBADA
-
-    Route::post('cancelar.solicitud'    ,'solicitudesController@cancelarSolicitud')     -> name('cancelarSolicitud');        //* PROBADA
-
-    Route::get('consulta.pendientes.x.validar/{id}' ,'solicitudesController@PendientesxValidar')         -> name('PendientesxValidar');
-    Route::post('actualiza.estatus.resultado'       ,'solicitudesController@ActualizaEstatusResult')    -> name('ActualizaEstatusResult');              // PROBADA ET
 
 //==================================== ORDENES DE TRABAJO =================================================
     Route::post('ordenes.trabajo.vend'   ,'ordenesTrabajoController@OrdenesTrabajoVend')     -> name('OrdenesTrabajoVend');        //* PROBADA

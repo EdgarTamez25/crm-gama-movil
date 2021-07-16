@@ -182,10 +182,17 @@
 
 		methods:{
 			...mapActions('Solicitudes'  ,['consultaSolicitudes']), // IMPORTANDO USO DE VUEX
-      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar','consultaAutorizados']),
 
 			init(){
         this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+
+				const payload = new Object({
+					fecha: this.traerFechaActual(),
+					id_usuario: this.getUsuarios.id,
+				});
+        this.consultaAutorizados(payload);
+
 				
 				this.Solicitudes = [];   this.Loading = true;
 				const parametros = new Object();

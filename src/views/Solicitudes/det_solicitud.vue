@@ -1,5 +1,5 @@
 <template>
-	<v-content class="pa-0">
+	<v-main class="pa-0">
 		<v-row>
 			<!-- //! SNACK BAR  -->
 			<v-snackbar v-model="snackbar" multi-line :timeout="3000" top :color="color"> {{text}}
@@ -211,7 +211,7 @@
 		</v-dialog>
 
 		<div id="fase"></div>
-	</v-content>
+	</v-main>
 </template>
 
 <script>

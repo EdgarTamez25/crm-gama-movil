@@ -75,7 +75,7 @@
       </v-btn>
     </v-app-bar>
 
-    <v-content class="">
+    <v-main class="">
       <v-container >
         <router-view v-if="Logeado"/>
 
@@ -90,32 +90,42 @@
               <v-row col="12" justify="center" class="pa-3" >
 
                 <v-col cols="12">
-                  <v-col cols="12" class="text-center my-5"> <!-- LOGO DE LA VISTA -->
+                  <v-col cols="12" class="text-center my-8"> <!-- LOGO DE LA VISTA -->
                     <img src="http://producciongama.com/CRM-GAMA-MOVIL/img/logo2.png" width="120" height="100%"  > <br>
                   </v-col>
 
                   <v-form v-model="valid" :lazy-validation="lazy">
+                     <!-- CORREO -->
                     <v-text-field  
-                      label="Usuario" :rules="usarioRules" v-model="correo" append-icon="person" color="rosa" clearable outlined dense > <!-- CORREO -->
+                      v-model="correo"
+                      label="Usuario" 
+                      :rules="usarioRules"  
+                      append-icon="person" 
+                      color="rosa" 
+                      clearable 
+                      filled
+                      dense
+                      class="font-weight-bold text-h6"
+                    >
                     </v-text-field>
-
+                    <!-- CONTRASEÑA -->
                     <v-text-field
                       :append-icon="show ? 'visibility' : 'visibility_off'"
                       :type="show ? 'text' : 'password'"
-                      name="input-10-2"
                       label="Contraseña"
                       v-model="contrasenia"
                       @click:append="show = !show"
                       clearable
-                      outlined
+                      filled
                       dense
                       color="rosa"
                       :rules="contraRules"
                       @keyup.enter="iniciarSesion"
-                    ></v-text-field> <!-- CONTRASEÑA -->
+                      class="font-weight-bold text-h6"
+                    ></v-text-field> 
                   </v-form>
 
-                  <v-card-actions> <!-- INICIAR SESION -->
+                  <v-card-actions class="pa-0 mt-5"> <!-- INICIAR SESION -->
                     <v-spacer></v-spacer>
 
                     <v-btn block 
@@ -139,7 +149,7 @@
           <v-col class="text-center" cols="12" > <strong>Gama Etiquetas</strong>  —  {{ new Date().getFullYear() }}</v-col>
         </v-footer>
       </v-container>
-    </v-content>
+    </v-main>
 
      <v-dialog v-model="ModalNoti"    transition="dialog-bottom-transition">
        <v-card class="pa-3">
@@ -152,7 +162,10 @@
 <script>
   import {mapGetters, mapActions} from 'vuex'
   import notificaciones from '@/views/Notificaciones/notificaciones.vue'
+	import metodos     from '@/mixins/metodos.js'
+
   export default {
+		mixins:[metodos],
     name: 'App',
     components:{
       notificaciones
@@ -217,7 +230,7 @@
     methods:{
       // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
       ...mapActions('Usuarios' ,['Login','Salir','Logear']),
-      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar','consultaAutorizados']),
 
       
       iniciarSesion(){
@@ -234,6 +247,14 @@
               this.drawer= false;
               this.Logear(true);
               this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+              
+              const payload = new Object({
+                fecha: this.traerFechaActual(),
+                id_usuario: this.getUsuarios.id,
+              });
+              
+              this.consultaAutorizados(payload);
+              
               this.$router.push({ name: 'compromisos'})
             }else if(this.getUsuarios.nivel === 4){
               this.drawer= false;

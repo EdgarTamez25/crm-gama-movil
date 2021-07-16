@@ -1,46 +1,51 @@
 <template>
- <v-content class="pa-0">
+ <v-main class="pa-0">
 		<v-row no-gutters>
 
   		<v-col cols="12">
-				<v-card-actions class="font-weight-bold"> PROSPECTOS </v-card-actions>
-
-				<v-card  flat >
-					<v-card-actions>
-			      <v-text-field
-			        v-model="search"
-			        append-icon="search"
-			        label="Buscar prospectos"
-			        single-line
-			        hide-details
-			      ></v-text-field>
-			      <v-spacer></v-spacer>
-			      <v-btn  class="celeste" icon dark @click="abrirModal(1)">
+				<v-card-actions class="font-weight-black text-h6"> 
+					PROSPECTOS 
+					<v-spacer></v-spacer>
+			      <v-btn  class="celeste"  dark @click="abrirModal(1)">
 							<v-icon>person</v-icon>
 						</v-btn>
 			      <v-btn  class="gris" icon dark @click="consultaProspectos(getUsuarios.id)" ><v-icon>refresh</v-icon> </v-btn>
-			    </v-card-actions>
+				</v-card-actions>
 
-			    <v-data-table
-			      :headers="headers"
-			      :items="getProspectos"
-			      :search="search"
-			      fixed-header
-						:height="pantalla"
-						hide-default-footer
-						hide-default-header
-						:loading ="Loading"
-						loading-text="Cargando... Por favor espere."
-						:page.sync="page"
-      			:items-per-page="itemsPerPage"
-						@page-count="pageCount = $event"
-						
-			    >
-			    	<template v-slot:item.action="{ item }" > 
-			    		<v-btn  class="celeste" icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
-				    </template>
+				<v-card-actions>
+					<v-text-field
+						v-model="search"
+						append-icon="search"
+						label="Buscar prospectos"
+						single-line
+						hide-details
+						outlined
+						dense
+					></v-text-field>
+				</v-card-actions>
 
-			    </v-data-table>
+				<v-card  outlined >
+						<v-data-table
+							:headers="headers"
+							:items="getProspectos"
+							:search="search"
+							fixed-header
+							:height="pantalla"
+							hide-default-footer
+							:loading ="Loading"
+							loading-text="Cargando... Por favor espere."
+							:page.sync="page"
+							:items-per-page="itemsPerPage"
+							@page-count="pageCount = $event"
+							
+						>
+							<template v-slot:item.action="{ item }" > 
+								<v-btn  class="green "  icon dark @click="abrirModal(2, item)"><v-icon> create </v-icon></v-btn> 
+							</template>
+
+						</v-data-table>
+					<!-- </v-card> -->
+
 			  </v-card>
 
 				<!-- PAGINACION -->
@@ -56,7 +61,7 @@
   		</v-col>
 
   	</v-row>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
@@ -78,7 +83,7 @@
 					param: 0,
 					edit:'',
 					headers:[
-						{ text: '#'  		   , align: 'left'  , value: 'id'		  },
+						// { text: '#'  		   , align: 'left'  , value: 'id'		  },
 						{ text: 'Nombre'	 , align: 'left'  , value: 'nombre' },
 						{ text: 'Telefono' , align: 'left'  , value: 'tel1' },
 						{ text: 'Contacto' , align: 'left'  , value: 'contacto' },
@@ -89,8 +94,8 @@
 
 			created(){
 				if(!this.getUsuarios.id){ this.Salir() }
-				this.consultaProspectos(this.getUsuarios.id) // CONSULTAR CLIENTES A VUEX
-        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+				this.init();
+				
 			},
 
 			computed:{
@@ -106,8 +111,16 @@
 			methods:{
 				...mapActions('Prospectos'  ,['consultaProspectos']), // IMPORTANDO USO DE VUEX - CLIENTES(ACCIONES)
      		...mapGetters('Usuarios',['Salir']),
-        ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+        ...mapActions('Notificaciones' ,['consultaPendientesxValidar','consultaAutorizados']),
 
+				init(){
+					this.consultaProspectos(this.getUsuarios.id) // CONSULTAR CLIENTES A VUEX
+          const autorizadas = new Object({
+						fecha     : this.traerFechaActual(),
+						id_usuario: this.getUsuarios.id,
+					});
+        	this.consultaAutorizados(autorizadas); // traer los pendientes por validar
+				},
 
 				abrirModal(action, items){
 					this.param = action;

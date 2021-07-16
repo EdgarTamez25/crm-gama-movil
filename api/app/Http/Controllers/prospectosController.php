@@ -16,7 +16,7 @@ class prospectosController extends Controller {
 	public function addProspecto(Request $req){
 		// $addprospecto = prospectos::create($request->all());
 
-		$addprospecto = DB::table('ot')->insertGetId(
+		$addprospecto = DB::table('clientes')->insertGetId(
 			[
 					'fuente' 				=> $req -> fuente,
 					'nombre' 	      => $req -> nombre,

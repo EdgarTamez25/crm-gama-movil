@@ -30,12 +30,13 @@ class compromisosController extends Controller
 	public function CompromisosxVend(Request $request){
 		$compromisos = DB::select('SELECT c.id, c.id_vendedor, v.nombre as nomvend, c.tipo, c.id_categoria, ca.nombre as nomcatego,
 																			c.fecha, c.hora, c.id_cliente,cli.nombre as nomcli, cli.tel1, cli.tel2, c.obs, 
-																			c.fuente, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.confirma_cita
+																			c.fuente, u.nombre as nomuser, c.obs_usuario, c.cumplimiento, c.confirma_cita, c.estatus
 																FROM compromisos c LEFT JOIN users v   	   ON v.id   = c.id_vendedor
 																									 LEFT JOIN categorias ca ON ca.id  = c.id_categoria
 																									 LEFT JOIN clientes  cli ON cli.id = c.id_cliente
 																									 LEFT JOIN users u       ON u.id   = c.fuente
-															WHERE c.id_vendedor =  ? AND c.fecha = ? AND c.cumplimiento=0', [$request -> id_vendedor, $request -> fecha]);
+															WHERE c.id_vendedor =  ? AND c.cumplimiento=0 
+															ORDER BY c.fecha DESC, c.estatus DESC', [$request -> id_vendedor]);
 		return $compromisos;
 
 	}

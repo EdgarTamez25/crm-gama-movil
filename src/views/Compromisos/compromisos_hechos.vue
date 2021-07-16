@@ -1,5 +1,5 @@
 <template>
-	<v-content class="pa-0">
+	<v-main class="pa-0">
 		<v-row no-gutters>
 			<v-col cols="12" class="text-center my-2">
 				<span class="font-weight-bold mt-3">COMPROMISOS REALIZADOS </span>
@@ -119,7 +119,7 @@
 				</v-alert>
 			</v-col>
 		</v-row>
-	</v-content>
+	</v-main>
 </template>
 
 <script>
@@ -184,6 +184,7 @@
 		computed:{
 			...mapGetters('Compromisos'  ,['Loading','getCompromisosHechos']), // IMPORTANDO USO DE VUEX 
       ...mapGetters('Usuarios',['getUsuarios']),
+      ...mapGetters('Usuarios',['Salir']),
 
 			filterCompromisos: function(){
 				return this.getCompromisosHechos.filter((comp)=>{
@@ -201,12 +202,18 @@
 
 		methods:{
 			...mapActions('Compromisos'  ,['consultaCompromisoshechos']), // IMPORTANDO USO DE VUEX
-      ...mapGetters('Usuarios',['Salir']),
-      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar','consultaAutorizados']),
 
 
 			init(){ // CONSULTAR COMPROMISOS
         this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+        this.consultaAutorizados(this.getUsuarios.id); 
+				const autorizadas = new Object({
+					fecha     : this.traerFechaActual(),
+					id_usuario: this.getUsuarios.id,
+				});
+        this.consultaAutorizados(autorizadas); // traer los pendientes por validar
+
 				const parametros = new Object();
 							parametros.id = this.getUsuarios.id;
 							parametros.fecha1 = this.fecha1;
