@@ -12,11 +12,13 @@
       <v-btn  outlined text  small color="error"  @click="$emit('modal',false)"> <v-icon>mdi-close</v-icon>  </v-btn>
     </v-col>
 
+    <!-- VISTA PRINCIPAL-->
     <v-col cols="12" class=" py-0 " >
       <v-tabs color="rosa" centered  show-arrows >
         <v-tab> PENDIENTES </v-tab>
         <v-tab> AUTORIZADOS </v-tab>
 
+        <!-- TAB PENDIENTE  -->
         <v-tab-item justify="center" class="mt-2">
           <v-row justify="center"> 
             <v-col cols="12" v-if="!Loading" class="pa-4">
@@ -32,7 +34,12 @@
                       <v-list-item-subtitle class="font-weight-black caption"> {{ item.nomcli }}</v-list-item-subtitle>
                     </v-list-item-content>
                     <v-list-item-action>
-                      <v-btn fab color="celeste" small dark  @click="alertaRespuesta = true; itemAEditar= item"> 
+                      <v-btn 
+                        fab small dark  
+                        color="celeste"
+                        @click="alertaRespuesta = true; 
+                        itemAEditar= item"
+                      > 
                         <v-icon > mdi-account-check </v-icon> 
                       </v-btn>
                     </v-list-item-action>
@@ -42,7 +49,7 @@
             </v-col>
           </v-row>
         </v-tab-item>
-
+        <!-- TAB AUTORIZADOS -->
         <v-tab-item justify="center" class="mt-2">
           <v-row justify="center"> 
             <v-col cols="12">
@@ -107,14 +114,30 @@
       <v-card class="pa-1 " v-if="!solicitarFTModal">
         <v-card-actions>
           <v-spacer></v-spacer>
-           <v-btn  outlined text  small color="error"  @click="alertaRespuesta = false"> <v-icon>mdi-close</v-icon>  </v-btn>
+          <v-btn  
+            outlined text small
+            color="error"  
+            @click="alertaRespuesta = false"
+          > <v-icon>mdi-close</v-icon>  
+          </v-btn>
         </v-card-actions>
+
         <v-card-text class="mt-3" v-if="itemAEditar.estatus != 3">
-           <v-btn  block large color="green" dark @click="respuestaCliente(3)"> AUTORIZADO  </v-btn>
+          <v-btn  
+            block large dark
+            color="success"  
+            @click="respuestaCliente(3)"
+          > AUTORIZADO  
+          </v-btn>
         </v-card-text>
+
         <!-- SE MUESTRA SIEMPRE Y CUANDO SEA COTIZAION Y NO FT -->
         <v-card-text class="my-3" v-if="itemAEditar.tipo === 2 && itemAEditar.estatus != 3"> 
-           <v-btn  block large color="celeste" height="80px" dark @click="solicitarFTModal = true; autorizar = true; ">
+           <v-btn  
+            block large color="celeste" height="80px" dark 
+            @click="solicitarFTModal = true; 
+            autorizar = true; "
+          >
               SOLICITAR FICHA TECNICA  <br> Y <br> AUTORIZAR COTIZACION 
           </v-btn>
         </v-card-text>
@@ -126,7 +149,13 @@
         </v-card-text>
         
         <v-card-text class="my-3" v-if="itemAEditar.estatus != 3">
-           <v-btn  block large color="error" outlined dark @click="respuestaCliente(1)"> RECHAZADO  </v-btn>
+          <v-btn 
+            block large outlined dark 
+            color="error"
+            @click="respuestaCliente(1)"
+          >
+            RECHAZADO   
+          </v-btn>
         </v-card-text>
       </v-card>
 
@@ -182,7 +211,7 @@
     },
 
     watch:{
-			fecha: function(){
+			fecha(){
         this.init();
 			}
 		},
@@ -196,32 +225,29 @@
     methods:{
       ...mapActions('Notificaciones' ,['consultaPendientesxValidar','consultaAutorizados']),
       
-      init(){
+      async init(){
         this.consultaPendientesxValidar(this.getUsuarios.id);
-        const payload = new Object({
+        const payload = {
           fecha: this.fecha ? this.fecha: this.traerFechaActual(),
           id_usuario: this.getUsuarios.id,
-        });
-        this.consultaAutorizados(payload);
+        }
+        // console.log('payload init', payload);
+        await this.consultaAutorizados(payload);
       },
 
       respuestaCliente(estatus){
-        this.alertaRespuesta = false; this.overlay = true;
-        // console.log('itemAEdit', this.itemAEditar)
-        const payload = new Object({
+        this.alertaRespuesta = false; 
+        this.overlay = true;
+
+        const payload = { 
           id           : this.itemAEditar.id,  // id para actualizar
-          id_det_sol   : this.itemAEditar.id_det_sol,
-          id_solicitud : this.itemAEditar.id_solicitud,
-          estatus      : estatus,  // estatus a actualizar,
+          estatus      : estatus,              // estatus a actualizar 1 O 3 ,
           fecha        : this.traerFechaActual(),
           id_compromiso: this.itemAEditar.id_compromiso
-        });
-
-        // console.log('itemAEdit', this.itemAEditar)
-
+        }
        // ESTA FUNCION CAEE EN EL CONTROLADOR DE REGISTROS DE ACTIVIDAD
         this.$http.post('actualiza.estatus.resultado', payload ).then( response =>{
-          console.log('response', response.body)
+          // console.log('response', response.body)
           this.alerta = { activo: true, text: response.bodyText , color:'green'}
           this.init();
         }).catch( error =>{

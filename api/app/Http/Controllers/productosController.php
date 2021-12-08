@@ -16,7 +16,9 @@ class productosController extends Controller
 
 		public function ProdxClixDeptos(Request $req)
 		{
-			$productos = DB::select('SELECT id, nombre, codigo FROM prodxcli WHERE id_cliente = ? AND dx = ?',[$req -> id_cliente, $req -> dx]);
-			return $productos;
+			$productos = DB::select('SELECT id, nombre, codigo 
+																FROM prodxcli 
+															 WHERE id_cliente = ?',[$req -> id_cliente]);
+			return $productos? $productos : [];
 		}
 }

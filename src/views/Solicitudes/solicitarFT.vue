@@ -78,7 +78,7 @@
 			...mapGetters('Usuarios' ,['getUsuarios']),
     },
     methods:{
-      ...mapActions('',[]),
+      ...mapActions('Notificaciones' ,['consultaPendientesxValidar']),
       solicitar_FT(){
         this.overlay = true; 
 				const payload = new Object({
@@ -100,7 +100,12 @@
           console.log('resp', response.body);
 					var me = this
 					this.alerta =  { activo: true, texto: response.bodyText , color:'green'};
-          setTimeout(() =>{ me.$emit('modal',false); me.$emit('CerrarAll',false)}, 1000);
+          setTimeout(() =>{ 
+            me.$emit('modal',false); 
+            me.$emit('CerrarAll',false)
+          }, 1000);
+
+          this.consultaPendientesxValidar(this.getUsuarios.id); // RECARGO LA VISTA DE NOTIFICACIONES PENDIENTES
           if(this.$router.currentRoute.name != 'compromisos'){  // COMPARO LA RUTA EN LA QUE ME ENCUENTRO 
 			  	  setTimeout(()=>{ me.$router.push({name: 'compromisos' })}, 1000); // SI ES DIFERENTE ENRUTO A PAGINA ARRANQUE
           }
@@ -111,3 +116,4 @@
     }
   }
 </script>
+  

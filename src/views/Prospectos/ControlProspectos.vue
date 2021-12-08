@@ -201,7 +201,7 @@
 					contacto		: this.contacto,
 					prospecto   : 1,
 					estatus     : 1,
-					fecha       : this.traerFechaActual()
+					fecha       : this.traerFechaActual() + ' ' + this.traerHoraActual()
 				})
 				
 				// VALIDO QUE ACCION VOY A EJECUTAR SEGUN EL MODO DE LA VISTA

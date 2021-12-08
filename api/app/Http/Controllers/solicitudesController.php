@@ -9,6 +9,7 @@ class solicitudesController extends Controller
 	// SOLICITUD DE COTIZACION
 		public function generar_solicitud_cotizacion(Request $req){
 			$id_producto = null;
+
 			for($i=0;$i<count($req -> productos);$i++ ):
 				if($req -> productos[$i]['tipo'] === 2):
 					$id_producto = $this -> crear_nuevo_producto($req -> productos[$i], $req -> fecha, $req -> id_cliente);
@@ -17,7 +18,7 @@ class solicitudesController extends Controller
 				$movimiento = DB::table('movim_sol')->insertGetId(
 					[
 							'id_producto'   => $req -> productos[$i]['tipo'] === 2? $id_producto : $req -> productos[$i]['id_producto'],
-							'id_depto'			=> 1,
+							'id_depto'			=> 1, // SE PONE UNO POR QUE VA DIRECTO A DESARROLLO 
 							'fecha'					=> $req -> fecha,
 							'hora'					=> $req -> hora,
 							'id_creador'    => $req -> id_creador,
@@ -33,6 +34,7 @@ class solicitudesController extends Controller
 													 response("Ocurrio un error, intentelo mas tarde.",500);
 
 		}
+
 		public function actualiza_solicitud_cotizacion(Request $req){
 			$id_producto = null;
 			for($i=0;$i<count($req -> productos);$i++ ):
@@ -77,7 +79,8 @@ class solicitudesController extends Controller
 			$fichaTecnica = DB::table('movim_sol')->insertGetId(
 				[
 						'id_producto'   => $req -> id_producto,
-						'id_depto'			=> $req -> dx === 1 ? 3:2 ,
+						'id_depto'			=> 2 , // ARTE Y DISEÑO
+						// 'id_depto'			=> $req -> dx === 1 ? 3:2 ,
 						'fecha'					=> $req -> fecha,
 						'hora'					=> $req -> hora,
 						'id_creador'    => $req -> id_creador,
@@ -101,7 +104,7 @@ class solicitudesController extends Controller
 								'descripcion'	=> $producto['descripcion'], 
 								'dx'    			=> $producto['id_depto'], 
 								'id_cliente'  => $id_cliente,
-								'fecha'			  => $fecha 
+								// 'fecha'			  => $fecha 
 							]
 						);
 		}
@@ -860,14 +863,15 @@ class solicitudesController extends Controller
 
 		
 		public function ActualizaEstatusResult(Request $req ){
+			$response = null;
 			if($req -> estatus  === 3):
-			  DB::update('UPDATE movim_sol SET estatus=:estatus, autorizacion=:autorizacion WHERE id=:id', 
+			  $response = DB::update('UPDATE movim_sol SET estatus=:estatus, autorizacion=:autorizacion WHERE id=:id', 
 																				[ 'estatus'      => $req -> estatus, 
 																				  'autorizacion' => $req -> fecha, 
 																					'id' 		       => $req -> id 
 																				]);
 			elseif($req -> estatus === 1):
-			  DB::update('UPDATE movim_sol SET estatus=:estatus WHERE id=:id', 
+			  $response = DB::update('UPDATE movim_sol SET estatus=:estatus WHERE id=:id', 
 																				[ 'estatus'  => $req -> estatus, 
 																					'id' 		   => $req -> id ,
 																				]);
@@ -875,7 +879,8 @@ class solicitudesController extends Controller
 			endif;
 			
 			$this -> validaEstatusCompromiso($req);
-			return response('Se finalizo correctamente.',200);
+			return $response? response('Se finalizo correctamente.',200):
+											  response('Ocurrio un error, intentelo mas tarde.',500)	;
 		}
 
 		public function validaEstatusCompromiso($data){

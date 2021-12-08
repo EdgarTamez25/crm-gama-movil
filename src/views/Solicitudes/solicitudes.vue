@@ -49,9 +49,9 @@
       <loading/>
     </v-container>
 	
-		<v-col cols="12" v-if="!Solicitudes.length && !Loading">
+		<v-col cols="12" class="mt-5 pa-0" v-if="!Solicitudes.length && !Loading">
 			<v-alert color="error" outlined dark icon="sentiment_very_dissatisfied" >
-				No hay Solicitudes  para tí. 
+				No hay solicitudes  para tí. 
 			</v-alert>
 		</v-col> 
 

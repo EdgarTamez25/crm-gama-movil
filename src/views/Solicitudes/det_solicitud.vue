@@ -79,7 +79,7 @@
 							<tbody>
 								<tr v-for="(item,i) in getPartidas" :key="i" >
 									<td class="font-weight-black">{{ item.codigo  }}</td>
-									<td class="font-weight-black">{{ item.cantidad}}</td>
+									<td class="font-weight-black">{{ item.cantidad | currency(0)}}</td>
 
 									<td align="right">
 										<!-- <v-btn text small color="success" class="mx-1"  @click="verDetalle(4,item)"> <v-icon>mdi-pencil</v-icon> </v-btn> -->
@@ -216,6 +216,8 @@
 
 <script>
 	var moment = require('moment'); moment.locale('es') /// inciar Moment 
+	var accounting = require('accounting');
+
 	import {mapGetters, mapActions} from 'vuex'
 	import metodos     from '@/mixins/metodos.js'
 	import overlay     from '@/components/overlay.vue'
@@ -278,6 +280,12 @@
 				overlay           : false
 			}
 		},
+		
+		filters:{
+      currency(val, dec){
+        return accounting.formatMoney(val, '', dec) 
+      }
+    },
 
 		created(){
 			if(!this.$route.params.detalle){  window.history.go(-1); } // SI NO OBTENGO LA INFORMACION RETORNO VISTA.

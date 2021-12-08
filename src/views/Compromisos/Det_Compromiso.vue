@@ -1,14 +1,13 @@
 <template>
 	<v-main class="pa-0">
+		<!-- //! SNACK BAR  -->
+		<v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+			<strong> {{alerta.texto}} </strong>
+			<template v-slot:action="{ attrs }">
+				<v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+			</template>
+		</v-snackbar>
 		<v-row >
-			<!-- //! SNACK BAR  -->
-			<v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
-      	<strong> {{alerta.texto}} </strong>
-				<template v-slot:action="{ attrs }">
-					<v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
-				</template>
-			</v-snackbar>
-			
 			<!--//! TITILO DE LA VISTA -->
 			<v-card-actions class="mx-3 pa-0"> 
 				<v-btn color="gris" dark small fab @click="evualuaRetorno()">
@@ -133,7 +132,6 @@
 				</v-card-actions>
 			</v-col>
 		</v-row>
-<!-- {{ detalle }} -->
 
 		<!-- //! OPCIONES DE ACCION **FINALIZAR**SOLICITAR-PEDIDO***SOLICITAR-COTIZACION -->
 		<v-row justify="center" v-if="citaConfirmada ===1 && !Terminar && !tSolicitudes && !SCotizacion">
@@ -179,8 +177,18 @@
 
 			<v-col cols="12" align="right" class="mt-0" > <!-- BOTON PARA GUARDAR INFORMACION -->
 				<v-card-actions>
-					<v-btn color="gris" dark outlined  @click="Terminar = false">Cancelar</v-btn> <v-spacer></v-spacer> 
-					<v-btn color="celeste" dark   @click="validaInfo">Guardar Información</v-btn> 
+					<v-btn 
+						color="gris" dark outlined  
+						@click="Terminar = false"
+						class="subtitle-2"
+					>Cancelar </v-btn> 
+					<v-spacer></v-spacer> 
+					<v-btn 
+						color="celeste" dark   
+						@click="validaInfo"
+						class="subtitle-2"
+						>Guardar Información
+					</v-btn> 
 				</v-card-actions>
 			</v-col>
 		</v-row>
@@ -236,22 +244,34 @@
 			<!-- //!BOTON PARA GUARDAR INFORMACION -->
 			<v-col cols="12" align="right" class="py-0 my-0" > 
 				<v-card-actions>
-					<v-btn color="gris"    dark  outlined  @click="tSolicitudes = false">Cancelar</v-btn> <v-spacer></v-spacer> 
-					<v-btn color="celeste" dark            @click="validaInfo"> Guardar Información</v-btn> 
+					<v-btn 
+						color="gris" dark  outlined  
+						@click="tSolicitudes = false"
+						class="subtitle-2"
+					>Cancelar  
+					</v-btn> 
+					<v-spacer></v-spacer>
+					<v-btn 
+						color="celeste" dark            
+						@click="validaInfo"
+						class="subtitle-2"
+					> Guardar Información
+					</v-btn> 
 				</v-card-actions>
 			</v-col>
 		</v-row>
 
 		<!-- //!SOLICITAR COTIZACION -->
 		<v-row v-if="!Terminar && !tSolicitudes && SCotizacion" class="mt-5">
+			<!--
 			<v-col cols="12" >
 				<v-select
 						v-model="depto" :items="deptos" item-text="nombre" item-value="id" outlined color="celeste" 
 						dense hide-details  label="Departamentos" return-object placeholder ="Departamentos"
 				></v-select>
 			</v-col>
-
-			<v-col cols="12" class="py-0" >
+			-->
+			<v-col cols="12" class="" >
 				<v-select
 						v-model="tipo" :items="tipos" item-text="nombre" item-value="id" outlined color="pink" 
 						dense hide-details label="Tipos de productos" return-object placeholder ="Tipo de producto"
@@ -326,6 +346,7 @@
 				</v-btn>
 			</v-col>
 		</v-row>
+
 		<!-- //! PRODUCTO NUEVO  -->
 		<v-row v-if="SCotizacion && tipo.id === 2">
 			<v-col cols="12" class="py-0" >
@@ -361,6 +382,7 @@
 				</v-btn>
 			</v-col>
 		</v-row>
+
 		<!-- //! TABLA DE PRODUCTOS -->
 		<v-row v-if="SCotizacion && productosxCotizar.length || modoResumen">
 			<v-col cols="12" align="center" class="">
@@ -374,18 +396,18 @@
 							<thead>
 								<tr>
 									<th class="text-left"> Producto </th>
-									<th class="text-left" v-if="modo === 2"> Depto </th>
+									<!-- <th class="text-left" v-if="modo === 2"> Depto </th>-->
 									<th class="text-left"> </th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-for="(item,i) in productosxCotizar" :key="i" >
 									<td class="font-weight-black caption">{{ item.codigo }}</td>
-
+									<!--
 									<td class="font-weight-black caption" v-if="item.id_depto === 1 && modo === 2"> Desarrollo </td>
 									<td class="font-weight-black caption" v-if="item.id_depto === 2 && modo === 2"> Digital    </td>
 									<td class="font-weight-black caption" v-if="item.id_depto === 3 && modo === 2"> Diseño     </td>
-
+									-->
 
 									<!-- SE MUESTRA SOLO CUANDO NO HAY NINGUNA COTIZACION REALIZADA -->
 									<td align="right" v-if="modo === 1"> 
@@ -436,12 +458,26 @@
 					<v-btn color="gris" dark outlined 
 								 @click="SCotizacion = false"
 								 v-if="modo===1"
-					>Cancelar
+								 class="subtitle-2"
+					>Cancelar 
 					</v-btn> <v-spacer></v-spacer> 
-					<v-btn color="celeste" dark @click="validaInfo" v-if="!modoResumen"> 
+
+					<!-- ESTE BOTON ES EL DE LA SOLICITUD DE DESARROLLO -->
+					<v-btn 
+						color="celeste" dark 
+						@click="validaInfo()" 
+						v-if="!modoResumen" 
+						class="subtitle-2"
+					> 
 						{{ modo === 1 ? 'Guardar Información': 'Actualizar Información ' }}
 					</v-btn> 
-					<v-btn color="error" dark @click="modo=1;modoResumen=false; vaciar_prod_x_cot()" v-if="modoResumen"> 
+
+					<v-btn 
+						color="error" dark 
+						@click="modo=1;modoResumen=false; vaciar_prod_x_cot()" 
+						v-if="modoResumen"
+						class="subtitle-2"
+					> 
 						Esconder resumen 
 					</v-btn>
 				</v-card-actions>
@@ -630,20 +666,23 @@
 			}
 		},
 		created(){
-			if(!this.$route.params.detalle){  window.history.go(-1); } // SI NO OBTENGO LA INFORMACION RETORNO VISTA.
-			this.detalle = this.$route.params.detalle; 								 // PARAMETROS QUE RECIBO DE LA VISTA 
-			if(this.detalle.estatus === 1 ){ this.init_modo_2()  }     // EVALUAR SI ESTOY EN ESTATUS DE COTIZACION 
+			// SI NO OBTENGO LA INFORMACION RETORNO VISTA.
+			if(!this.$route.params.detalle){  
+				window.history.go(-1); 
+			} 
+			// PARAMETROS QUE RECIBO DE LA VISTA 
+			this.detalle = this.$route.params.detalle; 								 
+			// EVALUAR SI ESTOY EN ESTATUS DE COTIZACION 
+			if(this.detalle.estatus === 1 ){ 
+				this.init_modo_2()  
+			}     
+			// CORRER INIT
 			this.init();
 				
 		},
 		watch:{ 
 			depto(){
 				// this.activaFormulario = this.depto.id
-				this.productos = { id:null, nombre:''}; this.productos = []; 
-				const payload = new Object({ id_cliente : this.detalle.id_cliente, dx: this.depto.id })
-				this.$http.post('obtener.prodxcli.depto',payload).then( res =>{
-					this.productos = res.body;
-				}).catch( error =>{ console.log('err prod', error)})
 			}
 		},
 		computed:{ 
@@ -669,6 +708,8 @@
 				this.hora           = this.traerHoraActual(); 	  // ASIGNAR HORA ACTUAL
 				this.citaConfirmada = this.detalle.confirma_cita; // CONFIRMACION DE CITA
 				this.consultaDeptos();
+				this.consultar_productos();
+				
 			},
 			init_modo_2(){
 				this.SCotizacion = true;
@@ -676,6 +717,23 @@
 				this.cotizar = true;
 				this.vaciar_prod_x_cot();
 				this.consulta_productos_x_cotizar(this.detalle.id);
+			},
+
+			consultar_productos(){
+				this.productos = []; 
+				this.productos = { 
+					id:null,
+					nombre:''
+				}; 
+				const payload = {
+					id_cliente : this.detalle.id_cliente, 
+					// dx : this.depto.id
+				}
+				this.$http.post('obtener.prodxcli.depto',payload).then( res =>{
+					this.productos = res.body;
+				}).catch( error =>{ 
+					console.log('err prod', error)
+				})
 			},
 
 			verDetalle(modo,item){
@@ -753,7 +811,7 @@
 					}
 				}else if(this.SCotizacion){
 					if(!this.productosxCotizar.length){
-						this.alerta =  { activo: true, texto:"DEBES AGREGAR AL MENOS UN PRODUCTO PARA COTIZAR.", color:'error'};
+						this.alerta = { activo: true, texto:"DEBES AGREGAR AL MENOS UN PRODUCTO PARA COTIZAR.", color:'error'};
 					 	return;
 					}
 				}
@@ -853,11 +911,10 @@
 			},
 
 			agrega_producto_nuevo(){
-				if(!this.depto.id){ 
-					this.alerta = { activo: true, texto:'Debes seleccionar un departamento', color:'error'};
-					return;
-				}
-
+				// if(!this.depto.id){ 
+				// 	this.alerta = { activo: true, texto:'Debes seleccionar un departamento', color:'error'};
+				// 	return;
+				// }
 				const prodnuevo = new Object({
 					'id'			   : null,
 					'id_producto': 'PN'+this.count ,
@@ -951,18 +1008,21 @@
 			},
 
 			EnviarSolCotizacion(){
-				this.overlay = true; this.terminarCompromiso = false;
-				const payload = new Object({
+				console.log('SI ENTRE AQUI ');
+				
+				this.overlay = true; 
+				this.terminarCompromiso = false;
+				const payload = {
 					'id_cliente'   : this.detalle.id_cliente, 
 					'fecha'				 : this.traerFechaActual(),
 					'hora'				 : this.traerHoraActual(),
 					'id_creador'   : this.getUsuarios.id,
 					'id_compromiso': this.detalle.id,
-					'productos'    : this.productosxCotizar,
+					'productos'    : this.productosxCotizar, // ARREGLO DE PRODUCTOS
 					'estatus'      : 1
-				});
+				}
 
-				// console.log('payload', payload);
+				console.log('payload de enviar cot', payload);
 
 				this.$http.post('genera.solicitud.cotizacion', payload).then(response =>{
 					this.alerta =  { activo: true, texto: response.bodyText , color:'green'};

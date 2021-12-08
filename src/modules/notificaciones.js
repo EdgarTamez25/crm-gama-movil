@@ -46,11 +46,13 @@ export default{
 
 		consultaAutorizados({commit}, payload){
 			
-			return new Promise(resolve => {
+			return new Promise((resolve, reject) => {
         commit('LOADING', true); commit('AUTORIZADAS', []);
 				Vue.http.post('consulta.cot.autorizadas',payload ).then(response=>{
           commit('AUTORIZADAS', response.body)
+					resolve(true);
 				}).catch((error)=>{
+					reject(false)
 					console.log('error',error)
 				}).finally(()=>{
           commit('LOADING', false);

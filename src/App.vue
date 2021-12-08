@@ -37,9 +37,10 @@
           </v-list-item>
         </template>
       </v-list>
+      
       <v-footer absolute color="celeste" v-if="descargar">
-        <span> {{ version_apk }}</span> <v-spacer></v-spacer>
-        <v-btn text small @click="descargar = false"> Actualizar </v-btn>
+        <span> {{ version_apk }} </span> <v-spacer> </v-spacer>
+        <v-btn text small @click="descargar = false">Actualizar</v-btn>
       </v-footer>
 
       <v-footer absolute color="rosa" v-else>
@@ -55,6 +56,7 @@
     <!-- NAVBAR -->
     <v-app-bar app color="rosa" dark  v-if ="Logeado">
       <img src="http://producciongama.com/CRM-GAMA-MOVIL/img/logo.png" height="30" @click.stop="drawer = !drawer">
+
       <v-spacer></v-spacer>
       <v-btn text>
         <v-badge
@@ -83,17 +85,34 @@
           <v-row class="pa-3">
             <v-col cols="12">
 
-              <v-snackbar v-model="snackbar" :timeout="3000" top color= "red darken-4" > {{ text }}
+             <!-- <v-snackbar v-model="snackbar" :timeout="3000" top color= "red darken-4" > {{ text }}
                 <v-btn color="white" text @click="snackbar = false"> <v-icon>clear</v-icon></v-btn>
+              </v-snackbar> -->
+
+              <v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
+                <strong> {{alerta.texto}} </strong>
+                <template v-slot:action="{ attrs }">
+                  <v-btn color="white" text @click="alerta.activo = false" v-bind="attrs"> Cerrar </v-btn>
+                </template>
               </v-snackbar>
+
 
               <v-row col="12" justify="center" class="pa-3" >
 
-                <v-col cols="12">
                   <v-col cols="12" class="text-center my-8"> <!-- LOGO DE LA VISTA -->
-                    <img src="http://producciongama.com/CRM-GAMA-MOVIL/img/logo2.png" width="120" height="100%"  > <br>
+                    <v-card align="center" flat clas="pa-0 py-0">
+                    <v-img 
+                        src="http://producciongama.com/CRM-GAMA-MOVIL/img/pantalla_principal.png" 
+                        width="150" 
+                        height="100%"  
+                        class="shrink "
+                        transition="fab-transition"
+                        contain
+                    /> <br>
+                    </v-card>
+                    
                   </v-col>
-
+                <v-col cols="12" class="py-0">
                   <v-form v-model="valid" :lazy-validation="lazy">
                      <!-- CORREO -->
                     <v-text-field  
@@ -172,16 +191,26 @@
     },
     data: () => ({
       apk_movil:'http://producciongama.com/CRM-GAMA-MOVIL/crm-gama-movil.apk',
-      version_apk: 'v-3.0',
+      version_apk: 'v-4.0.0',
+
       descargar: true,
       iniciar: false,
       valid:true,
       lazy:false,
+
       correo: '',
       contrasenia: '',
+
       // ALERTAS
-      snackbar: false,
-      text: '',
+      // snackbar: false,
+      // text: '',
+
+      alerta: { 
+        activo: false,
+        texto: '',
+        color: 'error',
+      },
+
       show: false,
       drawer: false,
       usarioRules: [v => !!v || 'Es requerido'],
@@ -193,15 +222,23 @@
           model: false,
           children: [
             // ballot
-            { text: 'Seguimiento Solicitudes' ,path: 'solicitudes'     , icon: 'mdi-text-box-search-outline'  , nivel:{vend:3, chofer:false}},
-            { text: 'Ordenes de Trabajo'      ,path: 'ot'              , icon: 'mdi-clipboard-search-outline' , nivel:{vend:3, chofer:false}},
-            { text: 'Compromisos Pendientes'  ,path: 'compromisos'      , icon: 'chrome_reader_mode'          , nivel:{vend:3, chofer:false}},
-            // { text: 'Proyectos Cotizados'   ,path: 'fases.venta'      , icon: 'business_center'     ,nivel:{vend:3, chofer:false}},
+            { 
+              text: 'Seguimiento Solicitudes' ,
+              path:'solicitudes', 
+              icon: 'mdi-text-box-search-outline',
+              nivel:{
+                vend:3, 
+                chofer:false
+              }
+            },
+            { text: 'Ordenes de Trabajo'      ,path:'ot'                 , icon: 'mdi-clipboard-search-outline' , nivel:{vend:3, chofer:false}},
+            { text: 'Compromisos Pendientes'  ,path:'compromisos'        , icon: 'chrome_reader_mode'          , nivel:{vend:3, chofer:false}},
+            { text: 'Solicitudes Realizadas'  ,path:'solicitudes.hechos' , icon:'ballot'               , nivel:{vend:3, chofer:false}   },
+            { text: 'Compromisos Realizados'  ,path:'compromisos.hechos' , icon:'assignment_turned_in' , nivel:{vend:3, chofer:false}   },
+            { text: 'Entregas'                ,path:'entregas'           , icon:'airport_shuttle'      , nivel:{vend:false, chofer:true}},
+            { text: 'Prospectos'              ,path:'prospectos'         , icon:'person'               , nivel:{vend:3, chofer:false}   },
             // { text: 'Pendientes'            ,path: 'pendientes'       , icon: 'calendar_today'      ,nivel:{vend:3, chofer:false}},
-            { text: 'Solicitudes Realizadas',path:'solicitudes.hechos' , icon:'ballot'               , nivel:{vend:3, chofer:false}   },
-            { text: 'Compromisos Realizados',path:'compromisos.hechos' , icon:'assignment_turned_in' , nivel:{vend:3, chofer:false}   },
-            { text: 'Entregas'              ,path:'entregas'           , icon:'airport_shuttle'      , nivel:{vend:false, chofer:true}},
-            { text: 'Prospectos'            ,path:'prospectos'         , icon:'person'               , nivel:{vend:3, chofer:false}   },
+            // { text: 'Proyectos Cotizados'   ,path: 'fases.venta'      , icon: 'business_center'     ,nivel:{vend:3, chofer:false}},
 
           ],
         },
@@ -261,14 +298,19 @@
               this.Logear(true);
               this.$router.push({ name: 'entregas'})
             }else{
-              this.snackbar = true; this.text="Tu nivel no tiene acceso a la aplicación"; return;
+              // this.snackbar = true; this.text="Tu nivel no tiene acceso a la aplicación"; return;
+              this.alerta={ activo: true, texto: 'Tu nivel no tiene acceso a la aplicación', color:'error'};
+              return;
             }
           }else{
-            this.snackbar = true; this.text="Está cuenta no se encuentra registrada."; return;
+            // this.snackbar = true; this.text="Está cuenta no se encuentra registrada."; return;
+            this.alerta={ activo: true, texto: 'Está cuenta no se encuentra registrada.', color:'error'};
+            return;
           }
         }).catch(err =>{
           console.log('err', err)
-          this.snackbar=true; this.text ="Ocurrio un error.Verifica tus datos."
+          // this.snackbar=true; this.text ="Ocurrio un error.Verifica tus datos."
+          this.alerta={ activo: true, texto: 'Ocurrio un error.Verifica tus datos.', color:'error'};
         }).finally(() => this.iniciar = false) 
       },
 
@@ -283,3 +325,22 @@
     }
   };
 </script>
+
+
+<style >
+    ::-webkit-scrollbar {
+    width: 2px;
+    height : 2px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: rgb(255, 255, 255);
+    /* background: transparent; */
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #bf1c7f;
+  }
+</style>

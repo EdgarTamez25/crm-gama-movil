@@ -13,9 +13,9 @@ Vue.use(VueResource)
 Vue.prototype.moment = moment
 moment.locale('es');
 
-Vue.http.options.root = 'http://localhost:80/Proyectos/crm-gama-movil/api/public/api/'
+// Vue.http.options.root = 'http://localhost:80/Proyectos/crm-gama-movil/api/public/api/'
 // Vue.http.options.root = 'http://producciongama.com:8080/CRM-GAMA-MOVIL/api/public/api/'
-// Vue.http.options.root = 'http://producciongama.com/CRM-GAMA-MOVIL/api/public/api/'   // ROOT PARA PODUCCON 
+Vue.http.options.root = 'http://producciongama.com/CRM-GAMA-MOVIL/api/public/api/'   // ROOT PARA PODUCCON 
 
  
 Vue.http.interceptors.push((request, next) => {

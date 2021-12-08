@@ -67,7 +67,10 @@
 <script>
 	import ControlProspectos  from '@/views/Prospectos/ControlProspectos.vue';
 	import {mapGetters, mapActions} from 'vuex';
+  import metodos from '@/mixins/metodos.js'
+
 	export default {
+    mixins:[metodos],
 		components: {
 			ControlProspectos
 		},

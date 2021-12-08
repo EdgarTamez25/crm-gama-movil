@@ -79,7 +79,7 @@
 
 			<!-- NUEVO COMPROMISO -->
 			<v-dialog persistent v-model="compromisoModal" width="700px" >	
-				<v-card class="">
+				<v-card class="pa-4">
 					<ControlCompromiso :param="param" :edit="edit" @modal="compromisoModal = $event" />
 				</v-card>
 			</v-dialog>

@@ -23,6 +23,7 @@
     "cordova-serve-osx": "cross-env CORDOVA_PLATFORM=osx vue-cli-service cordova-serve-osx"
   },
   "dependencies": {
+    "accounting": "^0.4.1",
     "jquery": "^3.5.1",
     "md5": "^2.2.1",
     "moment": "^2.25.3",

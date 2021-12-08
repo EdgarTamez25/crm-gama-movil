@@ -5,7 +5,7 @@
 				<span class="font-weight-bold mt-3">COMPROMISOS REALIZADOS </span>
 			</v-col>
 
-			<v-col cols="5" sm="5" xl="2" class=" mx-1" > <!-- FECHA DE COMPROMISO -->
+			<v-col cols="6" sm="6" xl="2" class="pa-1" > <!-- FECHA DE COMPROMISO -->
 				<v-dialog ref="fecha1" v-model="fechamodal1" :return-value.sync="fecha1" persistent width="290px">
 					<template v-slot:activator="{ on }">
 						<v-text-field
@@ -21,7 +21,7 @@
 				</v-dialog>
 			</v-col>
 
-			<v-col cols="5" sm="5" xl="2" class=" mx-1" > <!-- FECHA DE COMPROMISO -->
+			<v-col cols="6" sm="6" xl="2" class="pa-1" > <!-- FECHA DE COMPROMISO -->
 				<v-dialog ref="fecha2" v-model="fechamodal2" :return-value.sync="fecha2" persistent width="290px">
 					<template v-slot:activator="{ on }">
 						<v-text-field
@@ -37,11 +37,12 @@
 				</v-dialog>
 			</v-col>
 
+			<!--
 			<v-col cols="1"  class="mx-1">
 				<v-btn color="rosa" fab small dark @click="init()"><v-icon>search</v-icon> </v-btn>
-			</v-col>	
+			</v-col>	-->
 
-			<v-col cols="12" class="mx-1 my-2">
+			<v-col cols="12" class="pa-1">
 				<v-text-field
 						label="Buscar por cliente"
 						dense
@@ -175,6 +176,12 @@
 		},
 
 		watch:{
+			fechamodal1(){
+				this.init(); 
+			},
+			fechamodal2(){
+				this.init(); 
+			}
 			// fecha: function(){
 			// 	const payload = { id_vendedor: this.getUsuarios.id, fecha1: this.fecha1, fecha2:this.fecha2}
 			// 	this.busxFecha(payload)
@@ -206,20 +213,23 @@
 
 
 			init(){ // CONSULTAR COMPROMISOS
-        this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
-        this.consultaAutorizados(this.getUsuarios.id); 
-				const autorizadas = new Object({
-					fecha     : this.traerFechaActual(),
-					id_usuario: this.getUsuarios.id,
-				});
-        this.consultaAutorizados(autorizadas); // traer los pendientes por validar
-
 				const parametros = new Object();
 							parametros.id = this.getUsuarios.id;
 							parametros.fecha1 = this.fecha1;
 							parametros.fecha2 = this.fecha2;
 
-				this.consultaCompromisoshechos(parametros)
+				this.consultaCompromisoshechos(parametros);
+				this.notificaciones();
+			},
+
+			notificaciones(){
+				this.consultaPendientesxValidar(this.getUsuarios.id); // traer los pendientes por validar
+        this.consultaAutorizados(this.getUsuarios.id); 
+				const autorizadas = {
+					id_usuario: this.getUsuarios.id,	
+					fecha     : this.traerFechaActual(),
+				}
+        this.consultaAutorizados(autorizadas); // traer los pendientes por validar
 			},
 
 			verResumen(item){

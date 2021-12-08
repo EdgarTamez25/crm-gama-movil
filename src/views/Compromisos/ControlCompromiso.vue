@@ -1,5 +1,5 @@
 <template>
-	<v-row justify="center" class="pa-3 ">
+	<v-row justify="center" class="">
 		<v-col cols="12" class="">
 			
 			<v-snackbar v-model="alerta.activo" multi-line vertical top right :color="alerta.color" > 
@@ -10,10 +10,12 @@
 			</v-snackbar>
 
 
-			<v-card-actions class="">
-				<h3> <strong> {{ param === 1? 'Nuevo Compromiso':'Editar Compromiso' }} </strong></h3> 
+			<v-card-actions class="pa-0">
+				<v-card-text class="font-weight-black subtitle-1 pa-0"> 
+					{{ param === 1? 'NUEVO COMPROMISO':'EDITAR COMPROMISO' }} 
+				</v-card-text>
 				<v-spacer></v-spacer>
-				<v-btn color="error" small @click="$emit('modal',false)" text><v-icon>clear</v-icon></v-btn>
+				<v-btn color="error" fab x-small @click="$emit('modal',false)" ><v-icon>clear</v-icon></v-btn>
 			</v-card-actions>
 			
 			<v-row class="mt-1">
@@ -79,44 +81,37 @@
 
 			</v-row>
 
+			<div class="mt-10"></div>
+
 			<!-- //DIALOG PARA GUARDAR LA INFORMACION -->
-			<v-card-actions>
+			<v-footer absolute fixed  class="">
 				<v-spacer></v-spacer>
-					<v-btn small :disabled="overlay" persistent :loading="overlay" dark center  color="success" @click="validaInfo" >
+					<v-btn 
+						small persistent dark center
+						color="success"
+						:disabled="overlay" 
+						:loading="overlay" 
+						@click="validaInfo()"
+					>
 					Guardar Información
 				</v-btn>
 				<!-- <v-btn small :disabled="dialog" persistent :loading="dialog" dark center class="white--text" color="success" @click="validaInfo" v-else>
 						Actualizar  
 				</v-btn> -->
+			</v-footer>
 
-				<!-- <v-dialog v-model="overlay" hide-overlay persistent width="300">
-					<v-card color="blue darken-4" dark >
-						<v-card-text> <th style="font-size:17px;" align="center">{{ textDialog }}</th>
-							<br>
-							<v-progress-linear indeterminate color="white" class="mb-0" persistent></v-progress-linear>
-						</v-card-text>
-					</v-card>
-				</v-dialog> -->
-
-				<v-dialog v-model="confirmaProceso" persistent max-width="400" > <!-- PROCESO PARA TERMINAR  -->
-					<v-card>
-						<v-col cols="12" class="pa-4">
-							<strong >EL COMPROMISO SE GUARDARA</strong> <br> ¿Esta seguro de continuar?
-						</v-col>
-						<v-card-actions>
-							<v-spacer></v-spacer>
-							<v-btn color="gris" text small @click="confirmaProceso = false">Cancelar</v-btn>
-							<v-btn color="rosa" dark small @click="PrepararPeticion()">Continuar</v-btn>
-						</v-card-actions>
-					</v-card>
-				</v-dialog> <!-- FIN DEL PROCESO PARA TERMINAR  -->
-
-				<!-- <v-dialog v-model="Correcto" hide-overlay persistent width="350">
-					<v-card color="success"  dark class="pa-3">
-						<h3><strong>{{ textCorrecto }} </strong></h3>
-					</v-card>
-				</v-dialog> -->
-			</v-card-actions>
+			<v-dialog v-model="confirmaProceso" persistent max-width="400" > <!-- PROCESO PARA TERMINAR  -->
+				<v-card>
+					<v-col cols="12" class="pa-4">
+						<strong >EL COMPROMISO SE GUARDARA</strong> <br> ¿Esta seguro de continuar?
+					</v-col>
+					<v-card-actions>
+						<v-spacer></v-spacer>
+						<v-btn color="gris" text small @click="confirmaProceso = false">Cancelar</v-btn>
+						<v-btn color="rosa" dark small @click="PrepararPeticion()">Continuar</v-btn>
+					</v-card-actions>
+				</v-card>
+			</v-dialog>
 
 		</v-col>
 		
